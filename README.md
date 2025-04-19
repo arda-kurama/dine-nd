@@ -1,2 +1,2 @@
-# nd-mealmate
-Your friendly companion for ND Hall menus and nutrition.
+# DineND
+Your friendly companion for Notre Dame dining hall menus and nutrition.

@@ -45,7 +45,7 @@ food_items = [
 ]
 
 # Setup output directory for nutrition labels
-OUTPUT_DIR = "nutrition_labels"
+OUTPUT_DIR = "ndh_nutrition_labels"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Get all items on page

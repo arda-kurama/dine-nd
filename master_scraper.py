@@ -83,70 +83,75 @@ def discover_tasks():
     driver.quit()
     return tasks
 
-# Scrape one task
+# Scrape one (hall, meal) with grouping by food line
 def scrape_one(hall, meal):
-    # Setup output directory for nutrition labels
-    if hall == "North Dining Hall":
-        out_dir = os.path.join(BASE_DIR, f"NDH_{meal.replace(' ', '_')}")
-    elif hall == "South Dining Hall":
-        out_dir = os.path.join(BASE_DIR, f"SDH_{meal.replace(' ', '_')}")
-    elif hall == "Saint Mary's Dining Hall":
-        out_dir = os.path.join(BASE_DIR, f"SMC_{meal.replace(' ', '_')}")
-    elif hall == "Holy Cross College Dining Hall":
-        out_dir = os.path.join(BASE_DIR, f"HCC_{meal.replace(' ', '_')}")
-    os.makedirs(out_dir, exist_ok=True)
+    # Setup directories for output
+    prefix = {
+        "North Dining Hall": "NDH",
+        "South Dining Hall": "SDH",
+        "Saint Mary's Dining Hall": "SMC",
+        "Holy Cross College Dining Hall": "HCC",
+    }[hall]
+    base_out = os.path.join(BASE_DIR, f"{prefix}_{meal.replace(' ', '_')}")
+    os.makedirs(base_out, exist_ok=True)
 
-    # Launch Chrome
+    # Launch new Chrome session
     driver = make_chrome()
-
-    # Fast wait config
     wait = WebDriverWait(driver, 3)
-
-    # Visit NetNutrition
     driver.get(URL)
 
-    # Select the hall
+    # Select hall
     wait.until(EC.element_to_be_clickable((By.LINK_TEXT, hall))).click()
     wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "td.cbo_nn_menuCell")))
 
-    # Locate the date cell that holds our meals
+    # Locate the date cell and the meal links inside of it 
     date_cell = driver.find_element(
         By.XPATH,
         f"//td[@class='cbo_nn_menuCell'][contains(normalize-space(.), '{DATE_STR}')]"
     )
-
-    # Find the link for this meal by its link text
     meal_link = date_cell.find_element(By.LINK_TEXT, meal)
-    wait.until(EC.element_to_be_clickable((By.LINK_TEXT, meal)))
-    meal_link.click()
+    wait.until(EC.element_to_be_clickable((By.LINK_TEXT, meal))).click()
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "cbo_nn_itemGridTable")))
 
-    # Wait for the items to show
-    wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "cbo_nn_itemHover")))
+    # Grab the table of rows (group headers and item rows)
+    table = driver.find_element(By.CLASS_NAME, "cbo_nn_itemGridTable")
+    rows = table.find_elements(By.TAG_NAME, "tr")
 
-    # Get all items on page
-    items = driver.find_elements(By.CLASS_NAME, "cbo_nn_itemHover")
+    current_group = None
+    for row in rows:
+        # Check if row is a group header
+        group_cells = row.find_elements(By.CSS_SELECTOR, "td.cbo_nn_itemGroupRow")
+        if group_cells:
+            grp_name = group_cells[0].text.strip()
+            sanitized = grp_name.replace(' ', '_').replace('/', '_') or 'Ungrouped'
+            current_group = sanitized
+            continue
 
-    # Loop through all items
-    for idx, item in enumerate(items):
-        # Scroll item into view so click() actually hits
-        driver.execute_script("arguments[0].scrollIntoView(true);", item)
+        # Otherwise check if it is an item row
+        item_cells = row.find_elements(By.CSS_SELECTOR, "td.cbo_nn_itemHover")
+        if not item_cells:
+            continue
 
-        # Click item
-        item.click()
+        # Make sure subdirectory for this group exists
+        group_dir = os.path.join(base_out, current_group or 'Ungrouped')
+        os.makedirs(group_dir, exist_ok=True)
 
-        # Wait for the table inside the nutrition panel, not just the wrapper div
+        # Click on the item and extract its nutrition label
+        item_td = item_cells[0]
+        driver.execute_script("arguments[0].scrollIntoView(true);", item_td)
+        item_td.click()
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#nutritionLabelPanel table")))
 
-        # Grab the filled panel HTML
+        # Extract HTML and save it to a file
         html = driver.find_element(By.ID, "nutritionLabelPanel").get_attribute("outerHTML")
-
-        # Save the panel HTML to a file
-        with open(os.path.join(out_dir, f"label_{idx}.html"), "w", encoding="utf-8") as f:
+        idx = len([f for f in os.listdir(group_dir) if f.startswith('label_')])
+        with open(os.path.join(group_dir, f"label_{idx}.html"), 'w', encoding='utf-8') as f:
             f.write(html)
 
-        # Close the label
+        # Close nutrition label
         driver.find_element(By.CSS_SELECTOR, "#nutritionLabelPanel button.cbo_nn_closeButton").click()
 
+    # Finished with this meal, close the browser session
     driver.quit()
 
 if __name__ == "__main__":

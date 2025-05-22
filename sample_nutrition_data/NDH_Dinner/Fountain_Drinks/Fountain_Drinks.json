@@ -1,0 +1,218 @@
+[
+  {
+    "file": "label_0.html",
+    "name": "2%",
+    "serving_size": "12flz\u00a0(340g)",
+    "nutrients": {
+      "Calories180Calories from Fat63": "Calories180",
+      "Calories180": "Calories from Fat63",
+      "Total Fat7g11%": "Total Fat7g11%",
+      "Total Fat": "7g",
+      "7g": "11%",
+      "Saturated Fat5g26%": "Saturated Fat5g26%",
+      "Saturated Fat": "5g",
+      "5g": "26%",
+      "Cholesterol30mg10%": "Cholesterol30mg10%",
+      "Cholesterol": "30mg",
+      "30mg": "10%",
+      "Sodium180mg7%": "Sodium180mg7%",
+      "Sodium": "180mg",
+      "180mg": "7%",
+      "Potassium520mg": "Potassium520mg",
+      "Potassium": "520mg",
+      "Total Carbohydrate16g5%": "Total Carbohydrate16g5%",
+      "Total Carbohydrate": "16g",
+      "16g": "5%",
+      "Dietary Fiber0g": "Dietary Fiber0g",
+      "Dietary Fiber": "0g",
+      "Sugars16g": "Sugars16g",
+      "Sugars": "16g",
+      "Protein12g12%": "Protein12g12%",
+      "Protein": "12g",
+      "12g": "12%",
+      "Calcium": "45%",
+      "Iron": "0%",
+      "Ingredients:Grade A Reduced Fat Milk, Vitamin A Palmitate & Vitamin D3": "Ingredients:Grade A Reduced Fat Milk, Vitamin A Palmitate & Vitamin D3"
+    }
+  },
+  {
+    "file": "label_1.html",
+    "name": "Barq's Root Beer",
+    "serving_size": "12z Cups\u00a0(315g)",
+    "nutrients": {
+      "Calories0Calories from Fat0": "Calories0",
+      "Calories0": "Calories from Fat0",
+      "Sodium10mg%": "Sodium10mg%",
+      "Sodium": "10mg",
+      "Calcium": "0%",
+      "Iron": "0%"
+    }
+  },
+  {
+    "file": "label_2.html",
+    "name": "Cherry Coke",
+    "serving_size": "12z Cups\u00a0(340g)",
+    "nutrients": {
+      "Calories80Calories from Fat0": "Calories80",
+      "Calories80": "Calories from Fat0",
+      "Total Fat0g0%": "Total Fat0g0%",
+      "Total Fat": "0g",
+      "0g": "0%",
+      "Saturated Fat0g0%": "Saturated Fat0g0%",
+      "Saturated Fat": "0g",
+      "Cholesterol0mg0%": "Cholesterol0mg0%",
+      "Cholesterol": "0mg",
+      "0mg": "0%",
+      "Sodium30mg1%": "Sodium30mg1%",
+      "Sodium": "30mg",
+      "30mg": "1%",
+      "Potassium0mg": "Potassium0mg",
+      "Potassium": "0mg",
+      "Total Carbohydrate24g8%": "Total Carbohydrate24g8%",
+      "Total Carbohydrate": "24g",
+      "24g": "8%",
+      "Dietary Fiber0g": "Dietary Fiber0g",
+      "Dietary Fiber": "0g",
+      "Sugars24g": "Sugars24g",
+      "Sugars": "24g",
+      "Protein0g0%": "Protein0g0%",
+      "Protein": "0g",
+      "Calcium": "0%",
+      "Iron": "0%"
+    }
+  },
+  {
+    "file": "label_3.html",
+    "name": "Coke Classic",
+    "serving_size": "12z Cup\u00a0(299g)",
+    "nutrients": {
+      "Calories0Calories from Fat0": "Calories0",
+      "Calories0": "Calories from Fat0",
+      "Sodium10mg%": "Sodium10mg%",
+      "Sodium": "10mg",
+      "Calcium": "0%",
+      "Iron": "0%"
+    }
+  },
+  {
+    "file": "label_4.html",
+    "name": "Coke Zero",
+    "serving_size": "12z Cups\u00a0(376g)",
+    "nutrients": {
+      "Calories0Calories from Fat0": "Calories0",
+      "Calories0": "Calories from Fat0",
+      "Sodium15mg1%": "Sodium15mg1%",
+      "Sodium": "15mg",
+      "15mg": "1%",
+      "Calcium": "2%",
+      "Iron": "0%"
+    }
+  },
+  {
+    "file": "label_5.html",
+    "name": "Diet Coke",
+    "serving_size": "12z Cup\u00a0(340g)",
+    "nutrients": {
+      "Calories0Calories from Fat0": "Calories0",
+      "Calories0": "Calories from Fat0",
+      "Sodium10mg1%": "Sodium10mg1%",
+      "Sodium": "10mg",
+      "10mg": "1%",
+      "Calcium": "0%",
+      "Iron": "0%"
+    }
+  },
+  {
+    "file": "label_6.html",
+    "name": "Diet Sprite",
+    "serving_size": "12z Cup\u00a0(326g)",
+    "nutrients": {
+      "Calories0Calories from Fat0": "Calories0",
+      "Calories0": "Calories from Fat0",
+      "Total Fat0g0%": "Total Fat0g0%",
+      "Total Fat": "0g",
+      "0g": "0%",
+      "Cholesterol0mg0%": "Cholesterol0mg0%",
+      "Cholesterol": "0mg",
+      "0mg": "0%",
+      "Sodium20mg1%": "Sodium20mg1%",
+      "Sodium": "20mg",
+      "20mg": "1%",
+      "Potassium0mg": "Potassium0mg",
+      "Potassium": "0mg",
+      "Total Carbohydrate0g0%": "Total Carbohydrate0g0%",
+      "Total Carbohydrate": "0g",
+      "Protein0g0%": "Protein0g0%",
+      "Protein": "0g",
+      "Calcium": "0%",
+      "Iron": "0%"
+    }
+  },
+  {
+    "file": "label_7.html",
+    "name": "Lemonade",
+    "serving_size": "1 dining hall glass\u00a0(62g)",
+    "nutrients": {}
+  },
+  {
+    "file": "label_8.html",
+    "name": "Pibb Extra",
+    "serving_size": "12 Flz Cup\u00a0(340g)",
+    "nutrients": {
+      "Calories0Calories from Fat0": "Calories0",
+      "Calories0": "Calories from Fat0",
+      "Sodium10mg1%": "Sodium10mg1%",
+      "Sodium": "10mg",
+      "10mg": "1%",
+      "Calcium": "0%",
+      "Iron": "0%"
+    }
+  },
+  {
+    "file": "label_9.html",
+    "name": "Powerade Mountain Blast",
+    "serving_size": "12 Flz Cup\u00a0(340g)",
+    "nutrients": {
+      "Calories80Calories from Fat0": "Calories80",
+      "Calories80": "Calories from Fat0",
+      "Total Fat0g0%": "Total Fat0g0%",
+      "Total Fat": "0g",
+      "0g": "0%",
+      "Saturated Fat0g0%": "Saturated Fat0g0%",
+      "Saturated Fat": "0g",
+      "Cholesterol0mg0%": "Cholesterol0mg0%",
+      "Cholesterol": "0mg",
+      "0mg": "0%",
+      "Sodium250mg11%": "Sodium250mg11%",
+      "Sodium": "250mg",
+      "250mg": "11%",
+      "Potassium80mg": "Potassium80mg",
+      "Potassium": "80mg",
+      "Total Carbohydrate21g7%": "Total Carbohydrate21g7%",
+      "Total Carbohydrate": "21g",
+      "21g": "7%",
+      "Dietary Fiber21g": "Dietary Fiber21g",
+      "Dietary Fiber": "21g",
+      "Sugars21g": "Sugars21g",
+      "Sugars": "21g",
+      "Protein0g0%": "Protein0g0%",
+      "Protein": "0g",
+      "Calcium": "0%",
+      "Iron": "0%",
+      "Ingredients:Water (Filtered Tap Water.),\u00a0Syrup Powerade Mountain Blast BIB (Water, High Fructose Corn Syrup, Less Than 0.5% Of: Citric Acid, Electrolytes (Salt, Sodium Citrate, Magnesium And Calcium Chlorides, Mono-Potassium Phosphate), Vitamins B12 And C (Cyanocobalamin And Ascorbic Acid), Natural Flavors, Modified Food Starch, Calcium Disodium Edta (To Protect Color), Medium Chain Triglycerides, Sucrose Acetate Isobutyrate, Blue 1.)": "Ingredients:Water (Filtered Tap Water.),\u00a0Syrup Powerade Mountain Blast BIB (Water, High Fructose Corn Syrup, Less Than 0.5% Of: Citric Acid, Electrolytes (Salt, Sodium Citrate, Magnesium And Calcium Chlorides, Mono-Potassium Phosphate), Vitamins B12 And C (Cyanocobalamin And Ascorbic Acid), Natural Flavors, Modified Food Starch, Calcium Disodium Edta (To Protect Color), Medium Chain Triglycerides, Sucrose Acetate Isobutyrate, Blue 1.)"
+    }
+  },
+  {
+    "file": "label_10.html",
+    "name": "Sprite",
+    "serving_size": "12 Flz Cup\u00a0(326g)",
+    "nutrients": {
+      "Calories0Calories from Fat0": "Calories0",
+      "Calories0": "Calories from Fat0",
+      "Sodium10mg%": "Sodium10mg%",
+      "Sodium": "10mg",
+      "Calcium": "0%",
+      "Iron": "0%"
+    }
+  }
+]

@@ -1,13 +1,16 @@
 import os
+import sys
 import shutil
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from itertools import product
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 # GLOBAL VARS
 HALLS = [
@@ -17,9 +20,18 @@ HALLS = [
     "South Dining Hall",
 ]
 
+PREFIX = {
+    "North Dining Hall":      "NDH",
+    "South Dining Hall":      "SDH",
+    "Saint Mary's Dining Hall":"SMC",
+    "Holy Cross College Dining Hall": "HCC",
+}
+
+EXPECTED_MEALS = ["Breakfast", "Lunch", "Late Lunch", "Dinner"]
+
 BASE_DIR = "all_nutrition_data"
-# DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
-DATE_STR = "Tuesday, April 22, 2025"
+DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
+# DATE_STR = "Tuesday, April 22, 2025"
 URL      = "https://netnutrition.cbord.com/nn-prod/ND"
 
 # SELENIUM SETUP
@@ -161,7 +173,28 @@ if __name__ == "__main__":
     os.makedirs(BASE_DIR)
 
     # Build [(hall, meal), …] argument list for parallelization
-    tasks = discover_tasks()
+    try:
+        tasks = discover_tasks()
+
+    # Catch any errors in the discovery phase
+    except (RuntimeError, NoSuchElementException, WebDriverException) as e:
+        for hall, meal in product(HALLS, EXPECTED_MEALS):
+            # Format the hall and meal names for the file system
+            prefix = PREFIX[hall]
+            meal_safe = meal.replace(" ", "_")
+
+            # Create a directory for the meal
+            combo_dir = os.path.join(BASE_DIR, f"{prefix}_{meal_safe}")
+            os.makedirs(combo_dir, exist_ok=True)
+
+            # Create a marker file indicating no menu was found
+            marker = os.path.join(combo_dir, "NO_MENU.txt")
+            with open(marker, "w", encoding="utf-8") as f:
+                f.write(f"No {meal} menu available at {hall} on {DATE_STR}\n")
+                f.write(f"Error: {e}\n")
+
+        print(f"[!] No menus—wrote {len(HALLS)*len(EXPECTED_MEALS)} markers under {BASE_DIR}")
+        sys.exit(0)
 
     # Parallelize the scrape
     with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:

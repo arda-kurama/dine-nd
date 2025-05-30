@@ -4,9 +4,13 @@ import shutil
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from itertools import product
+import subprocess
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -30,20 +34,28 @@ PREFIX = {
 EXPECTED_MEALS = ["Breakfast", "Lunch", "Late Lunch", "Dinner"]
 
 BASE_DIR = "all_nutrition_data"
-DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
-# DATE_STR = "Tuesday, April 22, 2025"
+# DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
+DATE_STR = "Friday, May 30, 2025"
 URL      = "https://netnutrition.cbord.com/nn-prod/ND"
 
 # SELENIUM SETUP
 def make_chrome():
     opts = Options()
-    opts.add_argument("--headless")
+    # opts.add_argument("--headless")
     opts.add_argument("--disable-gpu")
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--disable-extensions")
     opts.add_argument("--blink-settings=imagesEnabled=false")
-    return webdriver.Chrome(options=opts)
+    
+    # Essential for cloud environments
+    opts.add_argument("--disable-background-timer-throttling")
+    opts.add_argument("--disable-backgrounding-occluded-windows")
+    opts.add_argument("--disable-renderer-backgrounding")
+    
+    # Use system ChromeDriver (no webdriver-manager)
+    service = Service("/usr/bin/chromedriver")
+    return webdriver.Chrome(service=service, options=opts)
 
 # Helper to find all meal links
 def get_meal_links(driver, wait):
@@ -68,6 +80,7 @@ def discover_tasks():
     wait = WebDriverWait(driver, 3)
 
     # Visit NetNutrition
+    print(f"Visiting {URL}")
     driver.get(URL)
 
     tasks = []

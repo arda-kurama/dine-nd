@@ -44,6 +44,7 @@ jobs:
               with:
                   ref: backend-deployment
                   fetch-depth: 0
+                  persist-credentials: true
 
             # 3. Copy JSON from /tmp into backend-deployment root
             - name: Copy JSON into backend-deployment

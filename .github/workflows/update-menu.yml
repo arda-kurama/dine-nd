@@ -1,69 +1,65 @@
 name: Daily Menu Update
 
-# Run once a day at 05:00 UTC (midnight-1 AM Eastern)
 on:
     schedule:
         - cron: "0 5 * * *"
-    # Also allow manual triggers to re‐run by hand:
     workflow_dispatch:
 
 jobs:
     scrape_and_publish:
         runs-on: ubuntu-latest
         steps:
-            # 1. Check out main
+            # 1. Check out main and run scraper
             - uses: actions/checkout@v3
               with:
                   ref: main
                   fetch-depth: 0
 
-            # 2. Set up Python
             - name: Set up Python
               uses: actions/setup-python@v4
               with:
                   python-version: "3.12.3"
 
-            # 3. Install system deps
             - name: Install system dependencies
               run: |
                   sudo apt-get update
                   sudo apt-get install -y libnss3-dev xvfb chromium-browser chromium-chromedriver
 
-            # 4. Install Python packages from requirements.txt
             - name: Install Python dependencies
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
 
-            # 5. Run scraper/consolidator module
-            - name: Run the dining-hall scraper
+            - name: Run the dining-hall scraper and stash JSON
               run: |
                   python -m backend.main
+                  mkdir -p /tmp/menu_json
+                  # Move the freshly generated JSON out of the main workspace and into /tmp
+                  mv menu_summary.json /tmp/menu_json/menu_summary.json
+                  mv consolidated_menu.json /tmp/menu_json/consolidated_menu.json
 
-            # 6. Now switch to backend-deployment branch
+            # 2. Switch to backend-deployment
             - name: Checkout backend-deployment
               uses: actions/checkout@v3
               with:
                   ref: backend-deployment
                   fetch-depth: 0
 
-            # 7. Overwrite JSON on backend-deployment with the freshly built copies from main
-            - name: Overwrite JSON from main
+            # 3. Copy JSON from /tmp into backend-deployment root
+            - name: Copy JSON into backend-deployment
               run: |
-                  # Fetch the main branch locally so we can pull its output
-                  git fetch origin main:main
+                  cp /tmp/menu_json/menu_summary.json  ./menu_summary.json
+                  cp /tmp/menu_json/consolidated_menu.json ./consolidated_menu.json
 
-                  # Copy exactly what main has, into our current backend-deployment checkout:
-                  git checkout main -- menu_summary.json
-                  git checkout main -- consolidated_menu.json
-
-            # 8. Commit and push only if there is a difference
+            # 4. Commit & push if changed
             - name: Commit & push updated JSON
               run: |
                   git add menu_summary.json consolidated_menu.json
                   if ! git diff --cached --quiet; then
+                    git config user.name "github-actions[bot]"
+                    git config user.email "github-actions[bot]@users.noreply.github.com"
                     git commit -m "ci: daily menu update $(date -u +'%Y-%m-%d')"
                     git push origin backend-deployment
                   else
-                    echo "No changes to JSON—skipping commit."
+                    echo "No changes to JSON on backend-deployment—skipping commit."
                   fi

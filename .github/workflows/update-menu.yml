@@ -1,0 +1,68 @@
+name: Daily Menu Update
+
+# Run once a day at 05:00 UTC (midnight-1 AM Eastern)
+on:
+    schedule:
+        - cron: "0 5 * * *"
+    # Also allow manual triggers to re‐run by hand:
+    workflow_dispatch:
+
+jobs:
+    scrape_and_publish:
+        runs-on: ubuntu-latest
+        steps:
+            # 1. Check out main
+            - uses: actions/checkout@v3
+              with:
+                  ref: main
+
+            # 2. Set up Python
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.12.3"
+
+            # 3. Install system deps
+            - name: Install system dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libnss3-dev xvfb chromium-browser chromium-chromedriver
+
+            # 4. Install Python packages from requirements.txt
+            - name: Install Python dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            # 5. Run scraper/consolidator module
+            - name: Run the dining-hall scraper
+              run: |
+                  # Adjust this to your actual Python entry-point
+                  python -m backend.main
+
+            # 6. Clone the backend-deployment branch to overwrite JSON there
+            - name: Checkout backend-deployment branch
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git fetch origin backend-deployment:backend-deployment
+                  git checkout backend-deployment
+
+            # 7. Copy the newly generated JSON files to the backend-deployment branch
+            - name: Copy JSON to backend-deployment
+              run: |
+                  # Assume your backend wrote the files to the repo root;
+                  # adjust paths if they live in a subfolder.
+                  cp consolidated_menu.json menu_summary.json $GITHUB_WORKSPACE
+
+            # 8. Commit and push changes if any
+            - name: Commit & push updated JSON
+              run: |
+                  git add menu_summary.json consolidated_menu.json
+                  # Check if there are any changes: if not, skip commit
+                  if ! git diff --cached --quiet; then
+                    git commit -m "ci: daily menu update $(date -u +'%Y-%m-%d')"
+                    git push origin backend-deployment
+                  else
+                    echo "No changes to JSON—skipping commit."
+                  fi

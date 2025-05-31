@@ -1,43 +1,93 @@
 // src/screens/ItemList.tsx
-import React from "react";
+
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
     FlatList,
     TouchableOpacity,
+    ActivityIndicator,
     StyleSheet,
 } from "react-native";
-import detail from "../../assets/data/consolidated_menu.json";
-import type { MenuDetail, MenuItem } from "../types";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../navigation";
 
-type NavProp = NativeStackNavigationProp<RootStackParamList, "Items">;
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RouteProp } from "@react-navigation/native";
+import type { RootStackParamList } from "../navigation";
+import type { MenuDetail, MenuItem } from "../types";
+
+import { DETAIL_URL } from "../config";
+
+type ItemNavProp = NativeStackNavigationProp<RootStackParamList, "Items">;
+type ItemRouteProp = RouteProp<RootStackParamList, "Items">;
 
 export default function ItemList({
     navigation,
     route,
 }: {
-    navigation: NavProp;
-    route: { params: { hall: string; meal: string; category: string } };
+    navigation: ItemNavProp;
+    route: ItemRouteProp;
 }) {
     const { hall, meal, category } = route.params;
-    const data = detail as MenuDetail;
+
+    const [detail, setDetail] = useState<MenuDetail | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetch(DETAIL_URL)
+            .then((res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json() as Promise<MenuDetail>;
+            })
+            .then((json) => {
+                setDetail(json);
+            })
+            .catch((e) => {
+                console.warn("Failed to fetch consolidated_menu:", e);
+                setError("Unable to load items. Please try again.");
+            });
+    }, []);
+
+    if (!detail && !error) {
+        return (
+            <View style={styles.center}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.center}>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
+    }
+
+    if (!detail) {
+        return (
+            <View style={styles.center}>
+                <Text style={styles.errorText}>
+                    Unexpected error: missing items data.
+                </Text>
+            </View>
+        );
+    }
+
+    // Extract the array of MenuItem for this hall/meal/category
     const items: MenuItem[] =
-        data.dining_halls[hall][meal].categories[category] || [];
+        detail.dining_halls[hall][meal].categories[category] || [];
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>
-                {hall} – {meal} – {category}
+                {hall} — {meal} — {category}
             </Text>
             <FlatList
                 data={items}
-                keyExtractor={(i) => i.name}
+                keyExtractor={(item) => item.name}
                 renderItem={({ item }) => (
-                    // Wrap each item in a TouchableOpacity:
                     <TouchableOpacity
-                        style={styles.itemRow}
+                        style={styles.itemTouchable}
                         onPress={() =>
                             navigation.navigate("ItemDetail", { item })
                         }
@@ -54,9 +104,34 @@ export default function ItemList({
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16 },
-    header: { fontSize: 22, marginBottom: 12, fontWeight: "600" },
-    itemRow: { marginBottom: 12, paddingVertical: 8 },
-    itemName: { fontSize: 18 },
-    itemServing: { color: "#555" },
+    container: {
+        flex: 1,
+        padding: 16,
+    },
+    center: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    header: {
+        fontSize: 20,
+        fontWeight: "600",
+        marginBottom: 12,
+    },
+    itemTouchable: {
+        marginBottom: 12,
+        paddingVertical: 8,
+    },
+    itemName: {
+        fontSize: 18,
+    },
+    itemServing: {
+        color: "#555",
+    },
+    errorText: {
+        color: "red",
+        fontSize: 16,
+        textAlign: "center",
+        padding: 16,
+    },
 });

@@ -41,9 +41,3 @@ export interface MenuDetail {
         >
     >;
 }
-export interface MenuSummary {
-    dining_halls: Record<
-        string,
-        Record<string, { available: boolean; categories?: string[] }>
-    >;
-}

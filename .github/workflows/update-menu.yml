@@ -15,6 +15,7 @@ jobs:
             - uses: actions/checkout@v3
               with:
                   ref: main
+                  fetch-depth: 0
 
             # 2. Set up Python
             - name: Set up Python
@@ -37,41 +38,29 @@ jobs:
             # 5. Run scraper/consolidator module
             - name: Run the dining-hall scraper
               run: |
-                  # Adjust this to your actual Python entry-point
                   python -m backend.main
 
-            # 6. Clone the backend-deployment branch to overwrite JSON there
-            - name: Checkout backend-deployment branch
+            # 6. Now switch to backend-deployment branch
+            - name: Checkout backend-deployment
+              uses: actions/checkout@v3
+              with:
+                  ref: backend-deployment
+                  fetch-depth: 0
+
+            # 7. Overwrite JSON on backend-deployment with the freshly built copies from main
+            - name: Overwrite JSON from main
               run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git fetch origin backend-deployment:backend-deployment
-                  git checkout backend-deployment
+                  # Fetch the main branch locally so we can pull its output
+                  git fetch origin main:main
 
-            # 7. Copy the newly generated JSON files to the backend-deployment branch
-            - name: Copy JSON to backend-deployment
-              run: |
-                  # Compare the freshly generated JSON (in the workspace) to the one already on gh-pages.
-                  # If they differ, overwrite; otherwise, do nothing.
-                  if ! git diff --quiet HEAD -- consolidated_menu.json; then
-                    echo "Updating consolidated_menu.json"
-                    git checkout main -- consolidated_menu.json
-                  else
-                    echo "consolidated_menu.json unchanged; skipping copy"
-                  fi
+                  # Copy exactly what main has, into our current backend-deployment checkout:
+                  git checkout main -- menu_summary.json
+                  git checkout main -- consolidated_menu.json
 
-                  if ! git diff --quiet HEAD -- menu_summary.json; then
-                    echo "Updating menu_summary.json"
-                    git checkout main -- menu_summary.json
-                  else
-                    echo "menu_summary.json unchanged; skipping copy"
-                  fi
-
-            # 8. Commit and push changes if any
+            # 8. Commit and push only if there is a difference
             - name: Commit & push updated JSON
               run: |
                   git add menu_summary.json consolidated_menu.json
-                  # Check if there are any changes: if not, skip commit
                   if ! git diff --cached --quiet; then
                     git commit -m "ci: daily menu update $(date -u +'%Y-%m-%d')"
                     git push origin backend-deployment

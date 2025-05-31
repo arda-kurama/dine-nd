@@ -1,0 +1,166 @@
+{
+  "last_updated": "2025-05-31T18:22:56.062719",
+  "date": "Saturday, May 31, 2025",
+  "dining_halls": {
+    "Holy Cross College Dining Hall": {
+      "Breakfast": {
+        "available": false
+      },
+      "Lunch": {
+        "available": false
+      },
+      "Late Lunch": {
+        "available": false
+      },
+      "Dinner": {
+        "available": false
+      }
+    },
+    "North Dining Hall": {
+      "Late Lunch": {
+        "available": false
+      },
+      "Dinner": {
+        "available": false
+      },
+      "Breakfast": {
+        "available": true,
+        "category_count": 20,
+        "item_count": 99,
+        "categories": [
+          "Breakfast",
+          "Waffle And Pancake Batter",
+          "Waffle And Pancake Toppings",
+          "Cereal",
+          "Toasting Station Bagels",
+          "Toasting Station Breads",
+          "Toasting Station Spreads",
+          "Oatmeal",
+          "Oatmeal Toppings",
+          "Myo Omelette Eggs",
+          "Myo Omelette Protein",
+          "Myo Omelette Cheese",
+          "Myo Omelette Toppings",
+          "Fresh Fruit",
+          "Yogurt Toppings",
+          "Yogurt",
+          "Coffee & Tea",
+          "Fountain Drinks",
+          "Milk",
+          "Juice"
+        ]
+      },
+      "Lunch": {
+        "available": true,
+        "category_count": 40,
+        "item_count": 219,
+        "categories": [
+          "Southwest Salad",
+          "Homestyle",
+          "Grill",
+          "Grill Condiments",
+          "Grill Vegetable Toppings",
+          "Pizzaria",
+          "Pastaria",
+          "Asian",
+          "Quesadilla Bar",
+          "Dessert",
+          "Mexican Tortillas And Chips",
+          "Mexican Cheese",
+          "Mexican",
+          "Mexican Salsas And Dips",
+          "Deli Breads & Wraps",
+          "Deli Meat",
+          "Deli Cheese",
+          "Deli Topping",
+          "Deli Condiments",
+          "Toasting Station Bagels",
+          "Toasting Station Breads",
+          "Toasting Station Spreads",
+          "Vegan Entrees",
+          "Fresh Fruit",
+          "Yogurt Toppings",
+          "Yogurt",
+          "Salad Bar Greens",
+          "Salad Bar Vegetables",
+          "Salad Bar Toppings",
+          "Salad Bar Cheese",
+          "Salad Bar Proteins",
+          "Salad Bar Dressing",
+          "Vegan",
+          "Protein Bar",
+          "Soft Serve",
+          "Toppings",
+          "Coffee & Tea",
+          "Fountain Drinks",
+          "Milk",
+          "Juice"
+        ]
+      }
+    },
+    "Saint Mary's Dining Hall": {
+      "Late Lunch": {
+        "available": false
+      },
+      "Dinner": {
+        "available": false
+      },
+      "Breakfast": {
+        "available": true,
+        "category_count": 11,
+        "item_count": 57,
+        "categories": [
+          "Ungrouped",
+          "Breakfast",
+          "Zbreakfast Entrees",
+          "Soup",
+          "Cereal",
+          "Fruit",
+          "Interactive Pancake Station",
+          "Omelette Cheese",
+          "Salad Bar",
+          "Whole Fruit",
+          "Beverage"
+        ]
+      },
+      "Lunch": {
+        "available": true,
+        "category_count": 17,
+        "item_count": 117,
+        "categories": [
+          "Ungrouped",
+          "Beverages",
+          "Zbreakfast Entrees",
+          "Soup",
+          "Bistro",
+          "Deli",
+          "Cereal",
+          "Extras",
+          "Fruit",
+          "Sandwiches",
+          "Pastries",
+          "Salad Bar",
+          "Vegan",
+          "Salads",
+          "Soft Serve",
+          "Toppings",
+          "Beverage"
+        ]
+      }
+    },
+    "South Dining Hall": {
+      "Breakfast": {
+        "available": false
+      },
+      "Lunch": {
+        "available": false
+      },
+      "Late Lunch": {
+        "available": false
+      },
+      "Dinner": {
+        "available": false
+      }
+    }
+  }
+}

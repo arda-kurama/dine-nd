@@ -51,9 +51,21 @@ jobs:
             # 7. Copy the newly generated JSON files to the backend-deployment branch
             - name: Copy JSON to backend-deployment
               run: |
-                  # Assume your backend wrote the files to the repo root;
-                  # adjust paths if they live in a subfolder.
-                  cp consolidated_menu.json menu_summary.json $GITHUB_WORKSPACE
+                  # Compare the freshly generated JSON (in the workspace) to the one already on gh-pages.
+                  # If they differ, overwrite; otherwise, do nothing.
+                  if ! git diff --quiet HEAD -- consolidated_menu.json; then
+                    echo "Updating consolidated_menu.json"
+                    git checkout main -- consolidated_menu.json
+                  else
+                    echo "consolidated_menu.json unchanged; skipping copy"
+                  fi
+
+                  if ! git diff --quiet HEAD -- menu_summary.json; then
+                    echo "Updating menu_summary.json"
+                    git checkout main -- menu_summary.json
+                  else
+                    echo "menu_summary.json unchanged; skipping copy"
+                  fi
 
             # 8. Commit and push changes if any
             - name: Commit & push updated JSON

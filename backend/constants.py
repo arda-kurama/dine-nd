@@ -18,8 +18,7 @@ PREFIX = {
 HALL_MAPPING = {v: k for k, v in PREFIX.items()}
 
 EXPECTED_MEALS = ["Breakfast", "Lunch", "Late Lunch", "Dinner"]
-# DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
-DATE_STR = "Friday, May 30, 2025"
+DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
 URL = "https://netnutrition.cbord.com/nn-prod/ND"
 
 # Data structures for in-memory processing

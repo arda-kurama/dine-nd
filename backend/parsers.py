@@ -56,11 +56,13 @@ def parse_nutrition_html(html_content):
         "serving_size": serving_size,
         "nutrition": {
             "calories": extract_numeric_value(nutrition_dict.get("Calories", {}).get("amount", "0")),
+            "calories_from_fat": extract_numeric_value(nutrition_dict.get("Calories from Fat", {}).get("amount", "0")),
             "total_fat": nutrition_dict.get("Total Fat", {}).get("amount", "N/A"),
             "saturated_fat": nutrition_dict.get("Saturated Fat", {}).get("amount", "N/A"),
             "cholesterol": nutrition_dict.get("Cholesterol", {}).get("amount", "N/A"),
             "sodium": nutrition_dict.get("Sodium", {}).get("amount", "N/A"),
-            "total_carbs": nutrition_dict.get("Total Carbohydrate", {}).get("amount", "N/A"),
+            "potassium": nutrition_dict.get("Potassium", {}).get("amount", "N/A"),
+            "total_carbohydrate": nutrition_dict.get("Total Carbohydrate", {}).get("amount", "N/A"),
             "dietary_fiber": nutrition_dict.get("Dietary Fiber", {}).get("amount", "N/A"),
             "sugars": nutrition_dict.get("Sugars", {}).get("amount", "N/A"),
             "protein": nutrition_dict.get("Protein", {}).get("amount", "N/A")
@@ -70,8 +72,8 @@ def parse_nutrition_html(html_content):
             "saturated_fat": nutrition_dict.get("Saturated Fat", {}).get("daily_value", "N/A"),
             "cholesterol": nutrition_dict.get("Cholesterol", {}).get("daily_value", "N/A"),
             "sodium": nutrition_dict.get("Sodium", {}).get("daily_value", "N/A"),
-            "total_carbs": nutrition_dict.get("Total Carbohydrate", {}).get("daily_value", "N/A"),
-            "dietary_fiber": nutrition_dict.get("Dietary Fiber", {}).get("daily_value", "N/A")
+            "total_carbohydrate": nutrition_dict.get("Total Carbohydrate", {}).get("daily_value", "N/A"),
+            "protein": nutrition_dict.get("Protein", {}).get("daily_value", "N/A")
         },
         "ingredients": ingredients,
         "allergens": allergens

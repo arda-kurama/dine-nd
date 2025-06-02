@@ -57,6 +57,11 @@ export default function ItemDetail({ route }: Props) {
                     <View style={styles.tableContainer}>
                         {renderNutrientRow("Calories", nutrition.calories, "")}
                         {renderNutrientRow(
+                            "Calories from Fat",
+                            nutrition.calories_from_fat,
+                            ""
+                        )}
+                        {renderNutrientRow(
                             "Total Fat",
                             nutrition.total_fat,
                             daily_values.total_fat
@@ -77,17 +82,26 @@ export default function ItemDetail({ route }: Props) {
                             daily_values.sodium
                         )}
                         {renderNutrientRow(
-                            "Total Carbs",
-                            nutrition.total_carbs,
-                            daily_values.total_carbs
+                            "Potassium",
+                            nutrition.potassium,
+                            ""
+                        )}
+                        {renderNutrientRow(
+                            "Total Carbohydrate",
+                            nutrition.total_carbohydrate,
+                            daily_values.total_carbohydrate
                         )}
                         {renderNutrientRow(
                             "Dietary Fiber",
                             nutrition.dietary_fiber,
-                            daily_values.dietary_fiber
+                            ""
                         )}
                         {renderNutrientRow("Sugars", nutrition.sugars, "")}
-                        {renderNutrientRow("Protein", nutrition.protein, "")}
+                        {renderNutrientRow(
+                            "Protein",
+                            nutrition.protein,
+                            daily_values.protein
+                        )}
                     </View>
                 </View>
 

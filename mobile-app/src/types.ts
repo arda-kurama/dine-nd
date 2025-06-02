@@ -16,11 +16,13 @@ export type MenuItem = {
     serving_size: string;
     nutrition: {
         calories: number;
+        calories_from_fat: number;
         total_fat: string;
         saturated_fat: string;
         cholesterol: string;
         sodium: string;
-        total_carbs: string;
+        potassium: string;
+        total_carbohydrate: string;
         dietary_fiber: string;
         sugars: string;
         protein: string;
@@ -30,8 +32,8 @@ export type MenuItem = {
         saturated_fat: string;
         cholesterol: string;
         sodium: string;
-        total_carbs: string;
-        dietary_fiber: string;
+        total_carbohydrate: string;
+        protein: string;
     };
     ingredients: string;
     allergens: string;

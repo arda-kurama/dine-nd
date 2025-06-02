@@ -49,9 +49,9 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         const hr = now.getHours();
 
         let tentative: string;
-        if (hr < 10) tentative = "Breakfast";
+        if (hr < 11) tentative = "Breakfast";
         else if (hr < 14) tentative = "Lunch";
-        else if (hr < 17) tentative = "Late Lunch";
+        else if (hr < 16.5) tentative = "Late Lunch";
         else tentative = "Dinner";
 
         const order = [
@@ -266,6 +266,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             <ScrollView
                 style={styles.body}
                 contentContainerStyle={{ paddingBottom: 32 }}
+                showsVerticalScrollIndicator={false}
             >
                 {categories.length === 0 ? (
                     <View style={styles.noCategories}>
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#0C234B", // ND blue
         paddingHorizontal: 16,
         paddingVertical: 12,
-        flexDirection: "row",
+        flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
     },
@@ -378,6 +379,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 8,
         borderRadius: 4,
+        marginTop: 12,
     },
     buttonText: {
         color: "#0C234B",

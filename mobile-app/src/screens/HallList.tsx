@@ -9,11 +9,10 @@ import {
     ImageBackground,
     Dimensions,
 } from "react-native";
-
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "../navigation/index"; // adjust path if needed
-import type { MenuSummary } from "../types";
 
+import type { RootStackParamList } from "../navigation/index";
+import type { MenuSummary } from "../types";
 import { SUMMARY_URL } from "../config";
 
 type HallListNavProp = NativeStackNavigationProp<RootStackParamList, "Halls">;
@@ -92,7 +91,10 @@ export default function HallList({ navigation }: Props) {
                 data={halls}
                 keyExtractor={(hallName) => hallName}
                 renderItem={({ item: hallName }) => {
-                    // Choose the correct image or fallback to a placeholder.
+                    const mealCount = summary.dining_halls[hallName] ?? 0;
+                    const hasMeals = mealCount > 0;
+
+                    // Choose the correct image or fallback placeholder
                     const imageSource = hallImages[hallName] || {
                         uri: "https://your‐cdn.com/images/placeholder.jpg",
                     };
@@ -117,6 +119,24 @@ export default function HallList({ navigation }: Props) {
                                     <Text style={styles.hallTitle}>
                                         {hallName}
                                     </Text>
+
+                                    {/* Row with colored indicator + mealCount text */}
+                                    <View style={styles.statusRow}>
+                                        <View
+                                            style={[
+                                                styles.statusIndicator,
+                                                {
+                                                    backgroundColor: hasMeals
+                                                        ? "#28a745"
+                                                        : "#dc3545",
+                                                },
+                                            ]}
+                                        />
+                                        <Text style={styles.mealCountText}>
+                                            {mealCount} meal
+                                            {mealCount !== 1 ? "s" : ""}
+                                        </Text>
+                                    </View>
                                 </View>
                             </ImageBackground>
                         </TouchableOpacity>
@@ -176,7 +196,7 @@ const styles = StyleSheet.create({
 
     /* Caption (gold bar + white text) */
     captionContainer: {
-        backgroundColor: "#C99700",
+        backgroundColor: "#C99700", // ND gold
         paddingVertical: 8,
         paddingHorizontal: 12,
     },
@@ -184,5 +204,22 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
         fontSize: 18,
         fontWeight: "600",
+    },
+
+    /* ─── STATUS ROW ────────────────────────────────────────────────────────────── */
+    statusRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 4,
+    },
+    statusIndicator: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        marginRight: 6,
+    },
+    mealCountText: {
+        color: "#FFFFFF",
+        fontSize: 14,
     },
 });

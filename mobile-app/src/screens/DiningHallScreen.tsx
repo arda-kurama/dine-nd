@@ -10,8 +10,10 @@ import {
     Alert,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import type { RootStackParamList } from "../navigation/index"; // Adjust path if needed
 import type { MenuItem, ConsolidatedMenu } from "../types";
+import { CONSOLIDATED_URL } from "../config";
 
 // Keeps the fetched JSON in memory for the entire app‐lifecycle.
 let cachedMenu: ConsolidatedMenu | null = null;
@@ -89,7 +91,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         setLoading(true);
         setLoadError(null);
 
-        fetch("https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
+        fetch(CONSOLIDATED_URL)
             .then((res) => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 return res.json() as Promise<ConsolidatedMenu>;
@@ -173,21 +175,40 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
     // At this point, `consolidatedMenu` is guaranteed non-null and loaded (either from cache or fresh fetch).
     const hallObj = consolidatedMenu.dining_halls[hallId];
-    if (!hallObj) {
+    // ─── If no meal period is available today, show a “No menus” message ─────────────
+    if (Object.keys(hallObj).length === 0) {
         return (
             <SafeAreaView style={styles.container}>
-                <View style={styles.loadingContainer}>
-                    <Text style={styles.errorText}>
-                        No menu data for “{hallId}”
+                {/** Header stays unchanged **/}
+                <View style={styles.header}>
+                    <Text style={styles.hallName}>{hallName}</Text>
+                    <TouchableOpacity
+                        style={styles.platePlannerButton}
+                        onPress={() =>
+                            navigation.navigate("PlatePlanner", {
+                                hallId,
+                                hallName,
+                                mealPeriod: "",
+                            })
+                        }
+                        activeOpacity={0.7}
+                    >
+                        <Text style={styles.buttonText}>Plate Planner</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* “No menus available today” placeholder */}
+                <View style={styles.noMenusContainer}>
+                    <Text style={styles.noMenusText}>
+                        No menus available today.
                     </Text>
                 </View>
             </SafeAreaView>
         );
     }
 
-    const allMeals = Object.keys(hallObj);
-
     // 2) Sort them in a stable order, if desired
+    const allMeals = Object.keys(hallObj);
     const PRIORITY = [
         "Breakfast",
         "Continental",
@@ -357,6 +378,16 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
 // ─── STYLES (Notre Dame Colors) ─────────────────────────────────────────────────
 const styles = StyleSheet.create({
+    noMenusContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    noMenusText: {
+        color: "#FFFFFF",
+        fontSize: 18,
+        fontWeight: "500",
+    },
     container: {
         flex: 1,
         backgroundColor: "#000000",

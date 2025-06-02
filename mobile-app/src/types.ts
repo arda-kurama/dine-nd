@@ -1,14 +1,7 @@
 export interface MenuSummary {
-    dining_halls: Record<
-        string,
-        Record<
-            string,
-            {
-                available: boolean;
-                categories?: string[];
-            }
-        >
-    >;
+    last_updated: string;
+    date: string;
+    dining_halls: Record<string, number>;
 }
 
 export type MenuItem = {

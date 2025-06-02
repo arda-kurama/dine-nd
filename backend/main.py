@@ -64,7 +64,6 @@ def main():
     print(f"✅ Successfully processed: {completed} meals")
     if failed > 0:
         print(f"✗ Failed: {failed} meals")
-    print(f"📊 Summary: {consolidated_data['summary']}")
     print(f"📱 Full menu data: {output_file} (~{os.path.getsize(output_file) / 1024:.1f} KB)")
     print(f"⚡ Lightweight summary: {summary_file} (~{os.path.getsize(summary_file) / 1024:.1f} KB)")
     print("🚀 Ready for React Native deployment!")

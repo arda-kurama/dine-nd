@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     StyleSheet,
-    ImageBackground,
+    Image,
     Dimensions,
 } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -110,35 +110,34 @@ export default function HallList({ navigation }: Props) {
                             }
                             style={styles.cardContainer}
                         >
-                            <ImageBackground
+                            {/* ─── IMAGE ─────────────────────────────────────────────────────────── */}
+                            <Image
                                 source={imageSource}
                                 style={styles.hallImage}
-                                imageStyle={styles.imageStyle}
-                            >
-                                <View style={styles.captionContainer}>
-                                    <Text style={styles.hallTitle}>
-                                        {hallName}
-                                    </Text>
+                            />
 
-                                    {/* Row with colored indicator + mealCount text */}
-                                    <View style={styles.statusRow}>
-                                        <View
-                                            style={[
-                                                styles.statusIndicator,
-                                                {
-                                                    backgroundColor: hasMeals
-                                                        ? "#28a745"
-                                                        : "#dc3545",
-                                                },
-                                            ]}
-                                        />
-                                        <Text style={styles.mealCountText}>
-                                            {mealCount} meal
-                                            {mealCount !== 1 ? "s" : ""}
-                                        </Text>
-                                    </View>
+                            {/* ─── CAPTION (gold bar) GOES HERE ──────────────────────────────────── */}
+                            <View style={styles.captionContainer}>
+                                <Text style={styles.hallTitle}>{hallName}</Text>
+
+                                {/* Row with colored indicator + mealCount text */}
+                                <View style={styles.statusRow}>
+                                    <View
+                                        style={[
+                                            styles.statusIndicator,
+                                            {
+                                                backgroundColor: hasMeals
+                                                    ? "#28a745"
+                                                    : "#dc3545",
+                                            },
+                                        ]}
+                                    />
+                                    <Text style={styles.mealCountText}>
+                                        {mealCount} meal
+                                        {mealCount !== 1 ? "s" : ""}
+                                    </Text>
                                 </View>
-                            </ImageBackground>
+                            </View>
                         </TouchableOpacity>
                     );
                 }}
@@ -151,7 +150,7 @@ export default function HallList({ navigation }: Props) {
 
 // ─── STYLES ────────────────────────────────────────────────────────────────────
 const { width } = Dimensions.get("window");
-const CARD_HEIGHT = 150;
+const CARD_HEIGHT = 120;
 const CARD_WIDTH = width - 32; // 16px padding on each side
 
 const styles = StyleSheet.create({

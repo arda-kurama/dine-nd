@@ -1,35 +1,12 @@
 {
-  "last_updated": "2025-06-01T05:15:43.381260",
-  "date": "Sunday, June 1, 2025",
+  "last_updated": "2025-06-02T04:10:31.149825",
+  "date": "Monday, June 2, 2025",
   "dining_halls": {
-    "Holy Cross College Dining Hall": {
-      "Breakfast": {
-        "available": false
-      },
-      "Lunch": {
-        "available": false
-      },
-      "Late Lunch": {
-        "available": false
-      },
-      "Dinner": {
-        "available": false
-      }
-    },
     "North Dining Hall": {
-      "Lunch": {
-        "available": false
-      },
-      "Late Lunch": {
-        "available": false
-      },
-      "Dinner": {
-        "available": false
-      },
       "Breakfast": {
         "available": true,
-        "category_count": 18,
-        "item_count": 87,
+        "category_count": 20,
+        "item_count": 98,
         "categories": [
           "Breakfast",
           "Waffle And Pancake Batter",
@@ -48,52 +25,167 @@
           "Yogurt Toppings",
           "Yogurt",
           "Coffee & Tea",
-          "Fountain Drinks"
+          "Fountain Drinks",
+          "Milk",
+          "Juice"
         ]
-      }
-    },
-    "Saint Mary's Dining Hall": {
-      "Breakfast": {
-        "available": false
       },
       "Lunch": {
-        "available": false
-      },
-      "Late Lunch": {
-        "available": false
-      },
-      "Dinner": {
-        "available": false
-      },
-      "Brunch": {
         "available": true,
-        "category_count": 9,
-        "item_count": 88,
+        "category_count": 44,
+        "item_count": 237,
         "categories": [
-          "Ungrouped",
-          "Breakfast",
-          "Zbreakfast Entrees",
+          "Korean Rice Bowl",
+          "Homestyle",
           "Soup",
-          "Deli",
-          "Cereal",
-          "Fruit",
-          "Pastries",
-          "Salad Bar"
+          "Grill",
+          "Grill Condiments",
+          "Grill Vegetable Toppings",
+          "Pizzaria",
+          "Pastaria",
+          "Quesadilla Bar",
+          "Dessert",
+          "Asian Stir Fry Protein",
+          "Asian Stir Fry Rice & Noodles",
+          "Asian Stir Fry Toppings",
+          "Asian Stir Fry Sauces",
+          "Mexican Tortillas And Chips",
+          "Mexican Cheese",
+          "Mexican",
+          "Mexican Salsas And Dips",
+          "Deli Breads & Wraps",
+          "Deli Meat",
+          "Deli Cheese",
+          "Deli Topping",
+          "Deli Condiments",
+          "Toasting Station Bagels",
+          "Toasting Station Breads",
+          "Toasting Station Spreads",
+          "Vegan Entrees",
+          "Fresh Fruit",
+          "Yogurt Toppings",
+          "Yogurt",
+          "Salad Bar Greens",
+          "Salad Bar Vegetables",
+          "Salad Bar Toppings",
+          "Salad Bar Cheese",
+          "Salad Bar Proteins",
+          "Salad Bar Dressing",
+          "Vegan",
+          "Protein Bar",
+          "Soft Serve",
+          "Toppings",
+          "Coffee & Tea",
+          "Fountain Drinks",
+          "Milk",
+          "Juice"
+        ]
+      },
+      "Dinner": {
+        "available": true,
+        "category_count": 47,
+        "item_count": 246,
+        "categories": [
+          "Homestyle",
+          "Soup",
+          "Grill",
+          "Grill Condiments",
+          "Grill Vegetable Toppings",
+          "Pasta Stir Fry Cheese Toppings",
+          "Pasta Stir Fry Pasta",
+          "Pasta Stir Fry Protein",
+          "Pasta Stir Fry",
+          "Mexican",
+          "Pasta Stir Fry Sauce",
+          "Dessert",
+          "Asian Stir Fry Protein",
+          "Asian Stir Fry Rice & Noodles",
+          "Asian Stir Fry Toppings",
+          "Asian Stir Fry Sauces",
+          "Mexican Tortillas And Chips",
+          "Mexican Cheese",
+          "Mexican Salsas And Dips",
+          "Deli Breads & Wraps",
+          "Deli Meat",
+          "Deli Cheese",
+          "Deli Topping",
+          "Deli Condiments",
+          "Myo Pizza Crust",
+          "Myo Pizza Sauce",
+          "Myo Pizza Protein",
+          "Myo Pizza Cheese",
+          "Myo Pizza Toppings",
+          "Vegan Entrees",
+          "Fresh Fruit",
+          "Yogurt Toppings",
+          "Yogurt",
+          "Salad Bar Greens",
+          "Salad Bar Vegetables",
+          "Salad Bar Toppings",
+          "Salad Bar Cheese",
+          "Salad Bar Proteins",
+          "Salad Bar Dressing",
+          "Vegan",
+          "Protein Bar",
+          "Soft Serve",
+          "Toppings",
+          "Coffee & Tea",
+          "Fountain Drinks",
+          "Milk",
+          "Juice"
         ]
       }
     },
-    "South Dining Hall": {
-      "Breakfast": {
-        "available": false
+    "Holy Cross College Dining Hall": {
+      "Dinner": {
+        "available": true,
+        "category_count": 17,
+        "item_count": 109,
+        "categories": [
+          "Homestyle",
+          "Bread",
+          "Deli",
+          "Deli Breads & Wraps",
+          "Deli Meat",
+          "Deli Cheese",
+          "Deli Topping",
+          "Deli Condiments",
+          "Cereal",
+          "Fresh Fruit",
+          "Salad Bar",
+          "Salad Bar Dressing",
+          "Soft Serve",
+          "Coffee & Tea",
+          "Fountain Drinks",
+          "Milk",
+          "Juice"
+        ]
       },
       "Lunch": {
-        "available": false
-      },
-      "Late Lunch": {
-        "available": false
-      },
-      "Dinner": {
-        "available": false
+        "available": true,
+        "category_count": 19,
+        "item_count": 114,
+        "categories": [
+          "Homestyle",
+          "Grill",
+          "Pizzaria",
+          "Bread",
+          "Deli",
+          "Deli Breads & Wraps",
+          "Deli Meat",
+          "Deli Cheese",
+          "Deli Topping",
+          "Deli Condiments",
+          "Cereal",
+          "Fresh Fruit",
+          "Salad Bar",
+          "Salad Bar Dressing",
+          "Soft Serve",
+          "Coffee & Tea",
+          "Fountain Drinks",
+          "Milk",
+          "Juice"
+        ]
       }
     }
   }

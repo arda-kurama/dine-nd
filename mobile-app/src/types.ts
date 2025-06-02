@@ -1,19 +1,3 @@
-// src/types.ts
-
-/**
- * Represents a single menu item with all its details.
- */
-export interface MenuItem {
-    name: string;
-    serving_size: string;
-    nutrition: Record<string, number | string>;
-    ingredients: string;
-    allergens: string;
-}
-
-/**
- * A summary of available meals and categories per dining hall.
- */
 export interface MenuSummary {
     dining_halls: Record<
         string,
@@ -27,17 +11,46 @@ export interface MenuSummary {
     >;
 }
 
-/**
- * Detailed menu structure including categories and items per meal per hall.
- */
-export interface MenuDetail {
-    dining_halls: Record<
-        string,
-        Record<
-            string,
-            {
-                categories: Record<string, MenuItem[]>;
-            }
-        >
-    >;
-}
+export type MenuItem = {
+    name: string;
+    serving_size: string;
+    nutrition: {
+        calories: number;
+        total_fat: string;
+        saturated_fat: string;
+        cholesterol: string;
+        sodium: string;
+        total_carbs: string;
+        dietary_fiber: string;
+        sugars: string;
+        protein: string;
+    };
+    daily_values: {
+        total_fat: string;
+        saturated_fat: string;
+        cholesterol: string;
+        sodium: string;
+        total_carbs: string;
+        dietary_fiber: string;
+    };
+    ingredients: string;
+    allergens: string;
+    // In case your JSON ever has extra fields, we allow them here:
+    [key: string]: any;
+};
+
+// This describes the entire `consolidated_menu.json` shape.
+export type ConsolidatedMenu = {
+    last_updated: string;
+    date: string;
+    dining_halls: {
+        [hallId: string]: {
+            [mealPeriod: string]: {
+                available: boolean;
+                categories: {
+                    [categoryName: string]: MenuItem[];
+                };
+            };
+        };
+    };
+};

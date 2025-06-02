@@ -1,99 +1,116 @@
-// src/screens/ItemDetail.tsx
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RouteProp } from "@react-navigation/native";
-import type { RootStackParamList } from "../navigation";
+import { SafeAreaView, Text, ScrollView, StyleSheet, View } from "react-native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../navigation/index"; // adjust path if needed
 
-type NavProp = NativeStackNavigationProp<RootStackParamList, "ItemDetail">;
-type RouteProps = RouteProp<RootStackParamList, "ItemDetail">;
+type Props = NativeStackScreenProps<RootStackParamList, "ItemDetail">;
 
-export default function ItemDetail({
-    navigation,
-    route,
-}: {
-    navigation: NavProp;
-    route: RouteProps;
-}) {
-    const { item } = route.params;
-
-    // Convert nutrition object ({ calories: 200, fat: 5, ... }) into an array
-    const nutritionEntries = Object.entries(item.nutrition) as [
-        string,
-        number | string
-    ][];
+export default function ItemDetail({ route }: Props) {
+    const { itemDetail } = route.params;
+    const {
+        name,
+        serving_size,
+        nutrition,
+        daily_values,
+        ingredients,
+        allergens,
+    } = itemDetail;
 
     return (
-        <ScrollView style={styles.container}>
-            {/* 1. Item name */}
-            <Text style={styles.title}>{item.name}</Text>
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.content}>
+                {/** ITEM NAME & SERVING SIZE **/}
+                <Text style={styles.title}>{name}</Text>
+                <Text
+                    style={styles.subtitle}
+                >{`Serving Size: ${serving_size}`}</Text>
 
-            {/* 2. Serving size */}
-            <Text style={styles.subHeader}>
-                Serving Size: {item.serving_size}
-            </Text>
+                {/** NUTRITION FACTS **/}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Nutrition Facts</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Calories: ${nutrition.calories}`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Total Fat: ${nutrition.total_fat} (${daily_values.total_fat})`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Saturated Fat: ${nutrition.saturated_fat} (${daily_values.saturated_fat})`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Cholesterol: ${nutrition.cholesterol} (${daily_values.cholesterol})`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Sodium: ${nutrition.sodium} (${daily_values.sodium})`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Total Carbs: ${nutrition.total_carbs} (${daily_values.total_carbs})`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Dietary Fiber: ${nutrition.dietary_fiber} (${daily_values.dietary_fiber})`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Sugars: ${nutrition.sugars}`}</Text>
+                    <Text
+                        style={styles.nutriLine}
+                    >{`Protein: ${nutrition.protein}`}</Text>
+                </View>
 
-            {/* 3. Nutrition Facts */}
-            <Text style={styles.sectionHeader}>Nutrition Facts</Text>
-            <View style={styles.nutritionContainer}>
-                {nutritionEntries.map(([key, value]) => (
-                    <View key={key} style={styles.nutritionRow}>
-                        <Text style={styles.nutrientName}>
-                            {capitalize(key)}
-                        </Text>
-                        <Text style={styles.nutrientValue}>{value}</Text>
-                    </View>
-                ))}
-            </View>
+                {/** INGREDIENTS **/}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Ingredients</Text>
+                    <Text style={styles.paragraph}>{ingredients}</Text>
+                </View>
 
-            {/* 4. Ingredients */}
-            <Text style={styles.sectionHeader}>Ingredients</Text>
-            <Text style={styles.bodyText}>{item.ingredients || "N/A"}</Text>
-
-            {/* 5. Allergens */}
-            <Text style={styles.sectionHeader}>Allergens</Text>
-            <Text style={styles.bodyText}>
-                {item.allergens || "None listed"}
-            </Text>
-        </ScrollView>
+                {/** ALLERGENS **/}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Allergens</Text>
+                    <Text style={styles.paragraph}>{allergens}</Text>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
-// Helper to capitalize nutrient keys (e.g. "calories" → "Calories")
-function capitalize(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
+// ─── STYLES ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16 },
-    title: { fontSize: 24, fontWeight: "700", marginBottom: 8 },
-    subHeader: {
-        fontSize: 16,
-        fontWeight: "500",
-        marginBottom: 16,
-        color: "#333",
+    container: {
+        flex: 1,
+        backgroundColor: "#000000",
     },
-    sectionHeader: {
+    content: {
+        padding: 16,
+        backgroundColor: "#0C234B", // ND‐blue
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: "700",
+        color: "#FFFFFF",
+        marginBottom: 4,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: "#CCCCCC",
+        marginBottom: 12,
+    },
+    section: {
+        marginBottom: 16,
+    },
+    sectionTitle: {
         fontSize: 18,
         fontWeight: "600",
-        marginTop: 16,
-        marginBottom: 8,
+        color: "#FFFFFF",
+        marginBottom: 6,
     },
-    nutritionContainer: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 4,
-        overflow: "hidden",
+    nutriLine: {
+        fontSize: 14,
+        color: "#FFFFFF",
+        marginBottom: 2,
     },
-    nutritionRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderBottomColor: "#eee",
-        borderBottomWidth: 1,
+    paragraph: {
+        fontSize: 14,
+        color: "#FFFFFF",
+        lineHeight: 20,
     },
-    nutrientName: { fontSize: 16, color: "#444" },
-    nutrientValue: { fontSize: 16, color: "#444" },
-    bodyText: { fontSize: 16, color: "#555", lineHeight: 22, marginBottom: 12 },
 });

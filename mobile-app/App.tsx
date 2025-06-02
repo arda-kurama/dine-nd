@@ -1,4 +1,4 @@
-import "react-native-gesture-handler"; // if you haven’t already
+import "react-native-gesture-handler";
 import React from "react";
 import AppNavigator from "./src/navigation";
 import { GestureHandlerRootView } from "react-native-gesture-handler";

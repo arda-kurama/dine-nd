@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-06-02T05:16:11.446140",
+  "last_updated": "2025-06-02T16:51:49.776673",
   "date": "Monday, June 2, 2025",
   "dining_halls": {
     "North Dining Hall": {
@@ -17170,30 +17170,30 @@
           "Salad Bar": [
             {
               "name": "6\" Pita Bread",
-              "serving_size": "Pita (79g)",
+              "serving_size": "Pita (71g)",
               "nutrition": {
-                "calories": 220,
-                "calories_from_fat": 36,
-                "total_fat": "4g",
-                "saturated_fat": "0.5g",
+                "calories": 200,
+                "calories_from_fat": 32,
+                "total_fat": "3.5g",
+                "saturated_fat": "0g",
                 "cholesterol": "0mg",
-                "sodium": "380mg",
+                "sodium": "340mg",
                 "potassium": "0mg",
-                "total_carbohydrate": "38g",
+                "total_carbohydrate": "34g",
                 "dietary_fiber": "2g",
                 "sugars": "2g",
-                "protein": "7g"
+                "protein": "6g"
               },
               "daily_values": {
                 "total_fat": "6%",
-                "saturated_fat": "3%",
+                "saturated_fat": "2%",
                 "cholesterol": "0%",
-                "sodium": "16%",
-                "total_carbohydrate": "13%",
-                "protein": "7%"
+                "sodium": "14%",
+                "total_carbohydrate": "11%",
+                "protein": "6%"
               },
-              "ingredients": "Wheat Flour Enriched (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboflavin And Folic Acid), Water, Soybean Oil, Yeast, Vital Wheat Gluten, Sugar, Salt, Dough Conditioner (Mono & Diglycerides, Guar Gum, L-Cysteine (Vegetable Source), Enzymes), Calcium Propionate As A Mold Inhibitor, Oat Fiber. Common Allergens Present: Wheat, Soy.",
-              "allergens": "Soy, Wheat"
+              "ingredients": "Wheat Flour Enriched (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboflavin And Folic Acid), Water, Soybean Oil, Yeast, Vital Wheat Gluten, Sugar, Salt, Dough Conditioner (Mono & Diglycerides, Guar Gum, L-Cysteine (Vegetable Source), Enzymes), Calcium Propionate As A Mold Inhibitor, Oat Fiber. Common Allergens Present: Wheat.",
+              "allergens": "Wheat"
             },
             {
               "name": "A1 Steak Sauce 0.5z Pc",
@@ -20183,30 +20183,30 @@
           "Salad Bar": [
             {
               "name": "6\" Pita Bread",
-              "serving_size": "Pita (79g)",
+              "serving_size": "Pita (71g)",
               "nutrition": {
-                "calories": 220,
-                "calories_from_fat": 36,
-                "total_fat": "4g",
-                "saturated_fat": "0.5g",
+                "calories": 200,
+                "calories_from_fat": 32,
+                "total_fat": "3.5g",
+                "saturated_fat": "0g",
                 "cholesterol": "0mg",
-                "sodium": "380mg",
+                "sodium": "340mg",
                 "potassium": "0mg",
-                "total_carbohydrate": "38g",
+                "total_carbohydrate": "34g",
                 "dietary_fiber": "2g",
                 "sugars": "2g",
-                "protein": "7g"
+                "protein": "6g"
               },
               "daily_values": {
                 "total_fat": "6%",
-                "saturated_fat": "3%",
+                "saturated_fat": "2%",
                 "cholesterol": "0%",
-                "sodium": "16%",
-                "total_carbohydrate": "13%",
-                "protein": "7%"
+                "sodium": "14%",
+                "total_carbohydrate": "11%",
+                "protein": "6%"
               },
-              "ingredients": "Wheat Flour Enriched (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboflavin And Folic Acid), Water, Soybean Oil, Yeast, Vital Wheat Gluten, Sugar, Salt, Dough Conditioner (Mono & Diglycerides, Guar Gum, L-Cysteine (Vegetable Source), Enzymes), Calcium Propionate As A Mold Inhibitor, Oat Fiber. Common Allergens Present: Wheat, Soy.",
-              "allergens": "Soy, Wheat"
+              "ingredients": "Wheat Flour Enriched (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboflavin And Folic Acid), Water, Soybean Oil, Yeast, Vital Wheat Gluten, Sugar, Salt, Dough Conditioner (Mono & Diglycerides, Guar Gum, L-Cysteine (Vegetable Source), Enzymes), Calcium Propionate As A Mold Inhibitor, Oat Fiber. Common Allergens Present: Wheat.",
+              "allergens": "Wheat"
             },
             {
               "name": "A1 Steak Sauce 0.5z Pc",
@@ -22032,12 +22032,8 @@
           ]
         }
       }
-    }
-  },
-  "summary": {
-    "total_dining_halls": 2,
-    "total_meal_periods": 5,
-    "available_meal_periods": 5,
-    "total_food_items": 804
+    },
+    "Saint Mary's Dining Hall": {},
+    "South Dining Hall": {}
   }
 }

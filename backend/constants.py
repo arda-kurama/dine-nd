@@ -17,7 +17,6 @@ PREFIX = {
 
 HALL_MAPPING = {v: k for k, v in PREFIX.items()}
 
-EXPECTED_MEALS = ["Breakfast", "Lunch", "Late Lunch", "Dinner"]
 DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
 URL = "https://netnutrition.cbord.com/nn-prod/ND"
 

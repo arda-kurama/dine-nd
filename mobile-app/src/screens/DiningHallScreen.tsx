@@ -54,7 +54,14 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         else if (hr < 17) tentative = "Late Lunch";
         else tentative = "Dinner";
 
-        const order = ["Breakfast", "Lunch", "Late Lunch", "Dinner"];
+        const order = [
+            "Breakfast",
+            "Continental",
+            "Brunch",
+            "Lunch",
+            "Late Lunch",
+            "Dinner",
+        ];
         const idx = order.indexOf(tentative);
         if (idx === -1) return order[0];
 
@@ -178,8 +185,25 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    const MEAL_ORDER = ["Breakfast", "Brunch", "Lunch", "Late Lunch", "Dinner"];
-    const mealKeys = MEAL_ORDER.filter((meal) => meal in hallObj);
+    const allMeals = Object.keys(hallObj);
+
+    // 2) Sort them in a stable order, if desired
+    const PRIORITY = [
+        "Breakfast",
+        "Continental",
+        "Brunch",
+        "Lunch",
+        "Late Lunch",
+        "Dinner",
+    ];
+    const mealKeys = allMeals.sort((a, b) => {
+        const aIdx = PRIORITY.indexOf(a);
+        const bIdx = PRIORITY.indexOf(b);
+        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+        if (aIdx !== -1) return -1;
+        if (bIdx !== -1) return 1;
+        return a.localeCompare(b);
+    });
 
     return (
         <SafeAreaView style={styles.container}>

@@ -2,8 +2,8 @@ import json
 import sys
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from .constants import DATE_STR, MealData
-from .tasks import discover_tasks_resilient, create_fallback_tasks
+from .constants import DATE_STR
+from .tasks import discover_tasks_resilient
 from .scraper import scrape_one_memory_optimized
 from .consolidate import consolidate_meal_data, create_lightweight_summary
 
@@ -18,11 +18,7 @@ def main():
         sys.exit(1)
 
     print(f"\n✓ Found {len(discovered_tasks)} available meals to scrape")
-    
-    # Create fallback tasks for missing combinations  
-    fallback_tasks = create_fallback_tasks(discovered_tasks)
-    all_tasks = discovered_tasks + [(hall, meal, False) for hall, meal in fallback_tasks]  # Mark fallbacks
-    
+
     print(f"🔄 Starting parallel scraping of {len(discovered_tasks)} meals...")
     
     # Parallelize the scrape with memory optimization
@@ -35,11 +31,6 @@ def main():
             for hall, meal in discovered_tasks
         ]
         
-        # Add fallback "no menu" entries
-        for hall, meal in fallback_tasks:
-            meal_data_results.append(MealData(hall=hall, meal=meal, available=False, categories={}))
-
-        # Wait for completion and collect results
         completed = 0
         failed = 0
         for future in as_completed(futures):

@@ -5,8 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, WebDriverException, TimeoutException
-from .constants import HALLS, EXPECTED_MEALS, DATE_STR, URL
-from itertools import product
+from .constants import HALLS, DATE_STR, URL
 
 # SELENIUM SETUP
 def make_chrome():
@@ -91,15 +90,3 @@ def discover_tasks_resilient():
         all_tasks.extend(hall_tasks)
     
     return all_tasks
-
-# Create fallback tasks for halls that failed discovery
-def create_fallback_tasks(discovered_tasks):
-    """Create fallback tasks for missing hall/meal combinations"""
-    discovered_combinations = set(discovered_tasks)
-    fallback_tasks = []
-    
-    for hall, meal in product(HALLS, EXPECTED_MEALS):
-        if (hall, meal) not in discovered_combinations:
-            fallback_tasks.append((hall, meal))
-    
-    return fallback_tasks

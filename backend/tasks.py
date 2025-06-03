@@ -5,10 +5,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, WebDriverException, TimeoutException
-from .constants import HALLS, DATE_STR, URL
+from typing import List, Tuple
+from .constants import HALLS, DATE_STR, URL, WAIT_TIMEOUT_SECS
 
-# SELENIUM SETUP
-def make_chrome():
+def make_chrome() -> webdriver.Chrome:
+    """
+    Return a headless Chrome WebDriver configured with:
+      --headless, --disable-gpu, --no-sandbox, --disable-extensions, plus
+      extra flags to disable background throttling. Uses /usr/bin/chromedriver.
+    """
+
     opts = Options()
     opts.add_argument("--headless")
     opts.add_argument("--disable-gpu")
@@ -16,26 +22,29 @@ def make_chrome():
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--disable-extensions")
     opts.add_argument("--blink-settings=imagesEnabled=false")
-    
-    # Essential for cloud environments
     opts.add_argument("--disable-background-timer-throttling")
     opts.add_argument("--disable-backgrounding-occluded-windows")
     opts.add_argument("--disable-renderer-backgrounding")
     
-    # Use system ChromeDriver (no webdriver-manager)
     service = Service("/usr/bin/chromedriver")
     return webdriver.Chrome(service=service, options=opts)
 
+def get_meal_links_for_hall(hall: str) -> List[Tuple[str, str]]:
+    """
+    For a single `hall`, launch a headless Chrome session, navigate to the main URL,
+    click on the hall name, wait for today’s date cell (DATE_STR). If no date cell
+    exists, return an empty list. Otherwise, gather all meal names inside that cell
+    and return a list of tuples [(hall, meal_name), …]. Closes the browser on exit.
+    """
 
-# Helper to find all meal links for a specific hall (with error handling)
-def get_meal_links_for_hall(hall):
-    """Get meal links for a single hall, returning empty list on failure"""
     driver = None
     try:
         driver = make_chrome()
-        wait = WebDriverWait(driver, 5)
+        wait = WebDriverWait(driver, WAIT_TIMEOUT_SECS)
         
         print(f"Checking {hall}...")
+
+        # Go to the main URL
         driver.get(URL)
         
         # Click the hall link
@@ -44,26 +53,32 @@ def get_meal_links_for_hall(hall):
         # Wait for the meal-list table to load
         wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "cbo_nn_menuCell")))
         
-        # Find the specific date cell
+        # Try to find the specific date cell for today
         try:
             cell = driver.find_element(
                 By.XPATH,
                 f"//td[@class='cbo_nn_menuCell'][contains(normalize-space(.), '{DATE_STR}')]"
             )
+        
+        # If no cell found, no menu for today
         except NoSuchElementException:
             print(f"  No menu available for {DATE_STR}")
             return []
         
-        # Grab all meal links
+        # Grab all meal links from the cell
         links = cell.find_elements(By.CSS_SELECTOR, "a.cbo_nn_menuLink")
+
+        # If no links found, no meals for today
         if not links:
             print(f"  No meals found for {DATE_STR}")
             return []
-            
+
+        # Extract meal names from links 
         meals = [a.text.strip() for a in links]
         print(f"  ✓ Found {len(meals)} meals: {', '.join(meals)}")
         return [(hall, meal) for meal in meals]
-        
+
+    # Handle specific Selenium exceptions 
     except TimeoutException:
         print(f"  Timeout loading {hall}")
         return []
@@ -73,6 +88,8 @@ def get_meal_links_for_hall(hall):
     except Exception as e:
         print(f"  Unexpected error: {type(e).__name__}")
         return []
+
+    # Ensure driver is closed properly
     finally:
         if driver:
             try:
@@ -80,11 +97,13 @@ def get_meal_links_for_hall(hall):
             except:
                 pass
 
-# Improved discovery that handles individual hall failures
-def discover_tasks_resilient():
-    """Discover tasks with per-hall error handling"""
+def discover_tasks_resilient() -> List[Tuple[str, str]]:
+    """
+    Iterate over all halls in HALLS, call get_meal_links_for_hall(hall) for each,
+    and accumulate all (hall, meal) tuples into one list. Returns [] if none found.
+    """
+
     all_tasks = []
-    
     for hall in HALLS:
         hall_tasks = get_meal_links_for_hall(hall)
         all_tasks.extend(hall_tasks)

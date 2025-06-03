@@ -1,15 +1,49 @@
 import re
+from typing import Dict, Any
 from bs4 import BeautifulSoup
 
-def extract_numeric_value(value_str):
-    """Extract numeric calories value for easier sorting/filtering"""
+def extract_numeric_value(value_str: Any) -> int:
+    """
+    From a string like "123 kcal" or "45mg", return the integer portion.
+    If no digits are found, return 0.
+    """
     if isinstance(value_str, str):
         match = re.search(r'(\d+)', value_str)
         return int(match.group(1)) if match else 0
     return 0
 
-def parse_nutrition_html(html_content):
-    """Parse nutrition label HTML and return structured data"""
+def parse_nutrition_html(html_content: str) -> Dict[str, Any]:
+    """
+    Given the HTML of a nutrition label, return a dict with:
+      {
+        "name": <food name>,
+        "serving_size": <text>,
+        "nutrition": {
+          "calories": int,
+          "calories_from_fat": int,
+          "total_fat": str,
+          "saturated_fat": str,
+          "cholesterol": str,
+          "sodium": str,
+          "potassium": str,
+          "total_carbohydrate": str,
+          "dietary_fiber": str,
+          "sugars": str,
+          "protein": str
+        },
+        "daily_values": {
+          "total_fat": str,
+          "saturated_fat": str,
+          "cholesterol": str,
+          "sodium": str,
+          "total_carbohydrate": str,
+          "protein": str
+        },
+        "ingredients": <text or "Not Specified">,
+        "allergens": <text or "Not Specified">
+      }
+    """
+
     soup = BeautifulSoup(html_content, "html.parser")
 
     # Extract the name of the food
@@ -29,6 +63,7 @@ def parse_nutrition_html(html_content):
     nutrients = [tag.get_text(strip=True) for tag in nutrient_tags]
 
     # Extract daily values from the nutrition label
+    # Can hardcode positions since the structure is consistent
     daily_value_tags = soup.find_all("td", class_="cbo_nn_LabelLeftPaddedDetail")
     daily_values = ["", ""] + [tag.get_text(strip=True) for tag in daily_value_tags]
 
@@ -55,25 +90,25 @@ def parse_nutrition_html(html_content):
         "name": name,
         "serving_size": serving_size,
         "nutrition": {
-            "calories": extract_numeric_value(nutrition_dict.get("Calories", {}).get("amount", "0")),
-            "calories_from_fat": extract_numeric_value(nutrition_dict.get("Calories from Fat", {}).get("amount", "0")),
-            "total_fat": nutrition_dict.get("Total Fat", {}).get("amount", "N/A"),
-            "saturated_fat": nutrition_dict.get("Saturated Fat", {}).get("amount", "N/A"),
-            "cholesterol": nutrition_dict.get("Cholesterol", {}).get("amount", "N/A"),
-            "sodium": nutrition_dict.get("Sodium", {}).get("amount", "N/A"),
-            "potassium": nutrition_dict.get("Potassium", {}).get("amount", "N/A"),
-            "total_carbohydrate": nutrition_dict.get("Total Carbohydrate", {}).get("amount", "N/A"),
-            "dietary_fiber": nutrition_dict.get("Dietary Fiber", {}).get("amount", "N/A"),
-            "sugars": nutrition_dict.get("Sugars", {}).get("amount", "N/A"),
-            "protein": nutrition_dict.get("Protein", {}).get("amount", "N/A")
+            "calories": extract_numeric_value(nutrition_dict["Calories"]["amount"]),
+            "calories_from_fat": extract_numeric_value(nutrition_dict["Calories from Fat"]["amount"]),
+            "total_fat": nutrition_dict["Total Fat"]["amount"],
+            "saturated_fat": nutrition_dict["Saturated Fat"]["amount"],
+            "cholesterol": nutrition_dict["Cholesterol"]["amount"],
+            "sodium": nutrition_dict["Sodium"]["amount"],
+            "potassium": nutrition_dict["Potassium"]["amount"],
+            "total_carbohydrate": nutrition_dict["Total Carbohydrate"]["amount"],
+            "dietary_fiber": nutrition_dict["Dietary Fiber"]["amount"],
+            "sugars": nutrition_dict["Sugars"]["amount"],
+            "protein": nutrition_dict["Protein"]["amount"]
         },
         "daily_values": {
-            "total_fat": nutrition_dict.get("Total Fat", {}).get("daily_value", "N/A"),
-            "saturated_fat": nutrition_dict.get("Saturated Fat", {}).get("daily_value", "N/A"),
-            "cholesterol": nutrition_dict.get("Cholesterol", {}).get("daily_value", "N/A"),
-            "sodium": nutrition_dict.get("Sodium", {}).get("daily_value", "N/A"),
-            "total_carbohydrate": nutrition_dict.get("Total Carbohydrate", {}).get("daily_value", "N/A"),
-            "protein": nutrition_dict.get("Protein", {}).get("daily_value", "N/A")
+            "total_fat": nutrition_dict["Total Fat"]["daily_value"],
+            "saturated_fat": nutrition_dict["Saturated Fat"]["daily_value"],
+            "cholesterol": nutrition_dict["Cholesterol"]["daily_value"],
+            "sodium": nutrition_dict["Sodium"]["daily_value"],
+            "total_carbohydrate": nutrition_dict["Total Carbohydrate"]["daily_value"],
+            "protein": nutrition_dict["Protein"]["daily_value"]
         },
         "ingredients": ingredients,
         "allergens": allergens

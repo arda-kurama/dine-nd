@@ -1,42 +1,67 @@
 from datetime import datetime
-from .constants import PREFIX, HALL_MAPPING, DATE_STR, HALLS
+from typing import List, Dict, Any
+from .constants import DATE_STR, HALLS, MealData
 
-def consolidate_meal_data(meal_data_list):
-    """Consolidate scraped meal data into final JSON structure"""
-    
+def consolidate_meal_data(meal_data_list: List[MealData]) -> Dict[str, Any]:
+    """
+    Combine a list of MealData objects into one dictionary:
+      {
+        "last_updated": <ISO-timestamp>,
+        "date": <DATE_STR>,
+        "dining_halls": {
+           <hall_name>: {
+             <meal_name>: {
+               "available": bool,
+               "categories": {...}
+             },
+             …
+           },
+           …
+        }
+      }
+    Any hall in HALLS that has no MealData entries is still included with an empty dict.
+    """
+
     consolidated_data = {
         "last_updated": datetime.now().isoformat(),
         "date": DATE_STR,
         "dining_halls": {}
     }
     
-    # 1) Populate halls that have at least one meal scraped 
+    # Populate halls that have at least one meal scraped 
     for meal_data in meal_data_list:
-        if not meal_data:  # Skip None results
+        if not meal_data:
             continue
-            
-        hall_name = HALL_MAPPING.get(PREFIX.get(meal_data.hall, ""), meal_data.hall)
-        
-        # Initialize hall structure if needed
-        if hall_name not in consolidated_data["dining_halls"]:
-            consolidated_data["dining_halls"][hall_name] = {}
-        
-        # Store the meal data
-        consolidated_data["dining_halls"][hall_name][meal_data.meal] = {
+
+        hall_name = meal_data.hall
+
+        # Ensure a dict exists for hall_name, and assign meal data under that hall
+        hall_dict = consolidated_data["dining_halls"].setdefault(hall_name, {})
+        hall_dict[meal_data.meal] = {
             "available": meal_data.available,
             "categories": meal_data.categories if meal_data.available else {},
         }
 
     # Ensure all halls are represented even if no meals were scraped
     for hall_name in HALLS:
-        if hall_name not in consolidated_data["dining_halls"]:
-            consolidated_data["dining_halls"][hall_name] = {}
-    
+        consolidated_data["dining_halls"].setdefault(hall_name, {})
+
     return consolidated_data
 
-def create_lightweight_summary(consolidated_data):
-    """Create lightweight summary for React Native initial load"""
-    
+def create_lightweight_summary(consolidated_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Build a summary mapping each dining hall to the number of meals available:
+      {
+        "last_updated": <same as consolidated_data>,
+        "date": <same as consolidated_data>,
+        "dining_halls": {
+          <hall_name>: <meal_count>,
+          …
+        }
+      }
+    """
+
+    # Initialize the lightweight summary structure 
     lightweight = {
         "last_updated": consolidated_data["last_updated"],
         "date": consolidated_data["date"],

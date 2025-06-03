@@ -7,55 +7,54 @@ import {
     ScrollView,
     ActivityIndicator,
     StyleSheet,
-    Alert,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import type { RootStackParamList } from "../navigation/index"; // Adjust path if needed
+import type { RootStackParamList } from "../navigation/index";
 import type { MenuItem, ConsolidatedMenu } from "../types";
 import { CONSOLIDATED_URL } from "../config";
 
-// Keeps the fetched JSON in memory for the entire app‐lifecycle.
+// A simple in-module cache so menu is only fetched once per app launch
 let cachedMenu: ConsolidatedMenu | null = null;
 
-// Screen props type
 type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
 
 export default function DiningHallScreen({ route, navigation }: Props) {
     const { hallId, hallName } = route.params;
 
-    // 1) Initialize `consolidatedMenu` from cachedMenu (if it exists)
+    // ─── STATE ──────────────────────────────────────────────────────────────────
+
+    // Holds the fetched menu (either from cache or network)
     const [consolidatedMenu, setConsolidatedMenu] =
         useState<ConsolidatedMenu | null>(cachedMenu);
 
-    // 2) Loading is true only if cachedMenu is null (i.e. first time)
+    // Tracks whether this is the first fetch
     const [loading, setLoading] = useState<boolean>(cachedMenu === null);
 
-    // 3) If there was an error fetching, show it
+    // Show any error message if the fetch fails
     const [loadError, setLoadError] = useState<string | null>(null);
 
-    // 4) Which meal period is active ("Breakfast", "Lunch", "Late Lunch", "Dinner")
+    // Keep track of which meal period is currently selected/viewed
     const [currentMeal, setCurrentMeal] = useState<string>("");
 
-    // 5) Category names for the chosen meal
-    const [categories, setCategories] = useState<string[]>([]);
-
-    // 6) Track which category headers are expanded
+    // Keep track of which categories are "expanded" (true) vs "collapsed" (false)
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-    // HELPER: pick the “current” meal by clock & availability
+    // ─── HELPER TO PICK “CURRENT” MEAL BASED ON TIME & AVAILABILITY ──────────────
     function pickCurrentMeal(
         hallObj: ConsolidatedMenu["dining_halls"][string]
     ): string {
         const now = new Date();
         const hr = now.getHours();
 
+        // Rough "default" meal based on clock
         let tentative: string;
         if (hr < 11) tentative = "Breakfast";
         else if (hr < 14) tentative = "Lunch";
         else if (hr < 16.5) tentative = "Late Lunch";
         else tentative = "Dinner";
 
+        // Define priority order of meals
         const order = [
             "Breakfast",
             "Continental",
@@ -65,8 +64,11 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             "Dinner",
         ];
         const idx = order.indexOf(tentative);
+
+        // Fallback if 'tentative' meal is not found in the order
         if (idx === -1) return order[0];
 
+        // Starting at the indexOf(tentative), check each meal in order
         for (let offset = 0; offset < order.length; offset++) {
             const meal = order[(idx + offset) % order.length];
             if (hallObj[meal] && hallObj[meal].available) {
@@ -74,20 +76,20 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             }
         }
 
+        // If no meals are available, return the tentative one
         return tentative;
     }
 
-    // 1) On initial mount, either fetch consolidated menu from network or use cachedMenu if it exists.
+    // ─── FETCH OR LOAD FROM CACHE ONCE ────────────────────────────────────────────
     useEffect(() => {
-        // If we've already fetched once, `cachedMenu` is non-null.
-        // In that case, we just set it into state and skip the fetch.
+        // If we already have a cached menu, use it immediately (skip network fetch)
         if (cachedMenu) {
             setConsolidatedMenu(cachedMenu);
             setLoading(false);
             return;
         }
 
-        // Otherwise, this is the very first time we mount → fetch from network.
+        // Otherwise, do a first-time fetch
         setLoading(true);
         setLoadError(null);
 
@@ -97,7 +99,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 return res.json() as Promise<ConsolidatedMenu>;
             })
             .then((json) => {
-                cachedMenu = json; // store it in the module‐level cache
+                cachedMenu = json; // store in module cache
                 setConsolidatedMenu(json);
             })
             .catch((err) => {
@@ -107,12 +109,13 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             .finally(() => {
                 setLoading(false);
             });
-    }, []); // <-- empty array → run only on initial mount
+    }, []);
 
-    // 2) WHEN consolidatedMenu IS READY → PICK MEAL & SET CATEGORIES
+    // ─── ONCE MENU IS LOADED → PICK FIRST MEAL & RESET EXPANSIONS ──────────────────
     useEffect(() => {
         if (!consolidatedMenu) return;
 
+        // Ensure the hallId exists in the consolidated menu
         const allHalls = consolidatedMenu.dining_halls;
         const hallObj = allHalls[hallId];
         if (!hallObj) {
@@ -120,37 +123,41 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             return;
         }
 
-        const chosen = pickCurrentMeal(hallObj);
-        setCurrentMeal(chosen);
+        // Choose the “default” meal based on clock & availability
+        const chosenMeal = pickCurrentMeal(hallObj);
+        setCurrentMeal(chosenMeal);
 
-        const catsObj = hallObj[chosen]?.categories || {};
-        const catNames = Object.keys(catsObj);
-        setCategories(catNames);
-
-        // Reset expansions
-        const collapsed: Record<string, boolean> = {};
-        catNames.forEach((cat) => (collapsed[cat] = false));
-        setExpanded(collapsed);
+        // Build a fresh “collapsed” map for all categories of that meal
+        const categoryNames = Object.keys(
+            hallObj[chosenMeal]?.categories || {}
+        );
+        const initialExpanded: Record<string, boolean> = {};
+        categoryNames.forEach((cat) => {
+            initialExpanded[cat] = false;
+        });
+        setExpanded(initialExpanded);
     }, [consolidatedMenu, hallId]);
 
-    // 3) WHEN currentMeal CHANGES → UPDATE categories & RESET expansions
+    // ─── WHEN USER CHOOSES A DIFFERENT MEAL → RESET EXPANSIONS AGAIN ──────────────
     useEffect(() => {
         if (!consolidatedMenu) return;
+
         const hallObj = consolidatedMenu.dining_halls[hallId];
         if (!hallObj) return;
 
-        const catsObj = hallObj[currentMeal]?.categories || {};
-        const catNames = Object.keys(catsObj);
-        setCategories(catNames);
-
-        const collapsed: Record<string, boolean> = {};
-        catNames.forEach((cat) => (collapsed[cat] = false));
-        setExpanded(collapsed);
+        // Get categories for the newly selected `currentMeal`
+        const categoryNames = Object.keys(
+            hallObj[currentMeal]?.categories || {}
+        );
+        const resetExpanded: Record<string, boolean> = {};
+        categoryNames.forEach((cat) => {
+            resetExpanded[cat] = false;
+        });
+        setExpanded(resetExpanded);
     }, [currentMeal, consolidatedMenu, hallId]);
 
-    // RENDER
+    // ─── EARLY RETURNS FOR LOADING / ERROR STATES ──────────────────────────────────
     if (loading) {
-        // Only shown if this is the very first time and `cachedMenu === null`.
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.loadingContainer}>
@@ -173,13 +180,17 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    // At this point, `consolidatedMenu` is guaranteed non-null and loaded (either from cache or fresh fetch).
+    // ─── AT THIS POINT, MENU IS LOADED & VALID ─────────────────────────────────────
+
+    // Convenient reference to this hall’s data
     const hallObj = consolidatedMenu.dining_halls[hallId];
-    // ─── If no meal period is available today, show a “No menus” message ─────────────
-    if (Object.keys(hallObj).length === 0) {
+
+    // If, for some reason, there are no meal‐period keys at all,
+    // show a “No menus available” placeholder.
+    if (!hallObj || Object.keys(hallObj).length === 0) {
         return (
             <SafeAreaView style={styles.container}>
-                {/** Header stays unchanged **/}
+                {/** Header (hall name + plate planner) remains the same */}
                 <View style={styles.header}>
                     <Text style={styles.hallName}>{hallName}</Text>
                     <TouchableOpacity
@@ -197,7 +208,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     </TouchableOpacity>
                 </View>
 
-                {/* “No menus available today” placeholder */}
+                {/* Placeholder when no meals are defined for this hall */}
                 <View style={styles.noMenusContainer}>
                     <Text style={styles.noMenusText}>
                         No menus available today.
@@ -207,9 +218,9 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    // 2) Sort them in a stable order, if desired
-    const allMeals = Object.keys(hallObj);
-    const PRIORITY = [
+    // ─── BUILD & SORT LIST OF MEAL KEYS ────────────────────────────────────────────
+    const allMealKeys = Object.keys(hallObj);
+    const PRIORITY_ORDER = [
         "Breakfast",
         "Continental",
         "Brunch",
@@ -217,18 +228,30 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         "Late Lunch",
         "Dinner",
     ];
-    const mealKeys = allMeals.sort((a, b) => {
-        const aIdx = PRIORITY.indexOf(a);
-        const bIdx = PRIORITY.indexOf(b);
-        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-        if (aIdx !== -1) return -1;
-        if (bIdx !== -1) return 1;
+    const mealKeys = allMealKeys.sort((a, b) => {
+        const idxA = PRIORITY_ORDER.indexOf(a);
+        const idxB = PRIORITY_ORDER.indexOf(b);
+
+        // If both are in our priority array, sort by that index
+        if (idxA !== -1 && idxB !== -1) {
+            return idxA - idxB;
+        }
+        // If only A is prioritized, A comes first
+        if (idxA !== -1) return -1;
+        // If only B is prioritized, B comes first
+        if (idxB !== -1) return 1;
+        // Otherwise, fallback to alphabetical
         return a.localeCompare(b);
     });
 
+    // ─── RENDER MAIN SCREEN ────────────────────────────────────────────────────────
+
+    // Categories for the currentMeal (computed on the fly)
+    const categories = Object.keys(hallObj[currentMeal]?.categories || {});
+
     return (
         <SafeAreaView style={styles.container}>
-            {/** ─── HEADER: Hall Name + Plate Planner Button ───────────────────────── **/}
+            {/** ─── HEADER: Hall Name + Plate Planner Button ─────────────────────────── **/}
             <View style={styles.header}>
                 <Text style={styles.hallName}>{hallName}</Text>
                 <TouchableOpacity
@@ -246,11 +269,12 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 </TouchableOpacity>
             </View>
 
-            {/** ─── MEAL BAR: Tabs for each meal period ───────────────────────────── **/}
+            {/** ─── MEAL BAR: Tabs for Each Meal Period ─────────────────────────────── **/}
             <View style={styles.mealBar}>
                 {mealKeys.map((meal) => {
                     const isAvailable = hallObj[meal]?.available;
                     const isSelected = meal === currentMeal;
+
                     return (
                         <TouchableOpacity
                             key={meal}
@@ -260,14 +284,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                 !isAvailable && styles.disabledMealTab,
                             ]}
                             onPress={() => {
-                                if (isAvailable) setCurrentMeal(meal);
-                                else
-                                    Alert.alert(
-                                        "Not available",
-                                        `${meal} is not available right now.`
-                                    );
+                                setCurrentMeal(meal);
                             }}
-                            activeOpacity={isAvailable ? 0.7 : 1}
                         >
                             <Text
                                 style={[
@@ -283,7 +301,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 })}
             </View>
 
-            {/** ─── BODY: Collapsible Categories + Items ─────────────────────────────── **/}
+            {/** ─── BODY: Collapsible Categories + Item List ───────────────────────── **/}
             <ScrollView
                 style={styles.body}
                 contentContainerStyle={{ paddingBottom: 32 }}
@@ -299,14 +317,14 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     </View>
                 ) : (
                     categories.map((categoryName) => {
-                        const isExpanded = expanded[categoryName] || false;
+                        const isExpanded = !!expanded[categoryName];
                         const itemsArray: MenuItem[] =
                             hallObj[currentMeal]?.categories[categoryName] ||
                             [];
 
                         return (
                             <View key={categoryName}>
-                                {/** CATEGORY HEADER **/}
+                                {/** CATEGORY HEADER ───────────────────────────────────────── **/}
                                 <TouchableOpacity
                                     style={styles.categoryHeader}
                                     onPress={() =>
@@ -325,7 +343,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                     </Text>
                                 </TouchableOpacity>
 
-                                {/** ITEMS (only if expanded) **/}
+                                {/** ITEMS LIST (only if expanded) ────────────────────────── **/}
                                 {isExpanded && (
                                     <View style={styles.itemsContainer}>
                                         {itemsArray.length === 0 ? (
@@ -334,10 +352,12 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                             </Text>
                                         ) : (
                                             itemsArray.map((item, idx) => {
-                                                const uniqueKey = `${categoryName}-${item.name}-${idx}`;
+                                                // Construct a stable key using category + item‐name + index
+                                                const key = `${categoryName}-${item.name}-${idx}`;
+
                                                 return (
                                                     <TouchableOpacity
-                                                        key={uniqueKey}
+                                                        key={key}
                                                         style={styles.itemRow}
                                                         onPress={() =>
                                                             navigation.navigate(
@@ -349,7 +369,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                                     categoryId:
                                                                         categoryName,
                                                                     itemDetail:
-                                                                        item, // ← pass the entire object
+                                                                        item, // pass entire object to detail screen
                                                                 }
                                                             )
                                                         }
@@ -376,28 +396,20 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     );
 }
 
-// ─── STYLES (Notre Dame Colors) ─────────────────────────────────────────────────
+// ─── STYLES ──────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-    noMenusContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    noMenusText: {
-        color: "#FFFFFF",
-        fontSize: 18,
-        fontWeight: "500",
-    },
+    // Background color set to black to match ND dark theme
     container: {
         flex: 1,
         backgroundColor: "#000000",
     },
+
+    // ─── HEADER ───────────────────────────────────────────────────────────────────
     header: {
-        backgroundColor: "#0C234B", // ND blue
+        backgroundColor: "#0C234B",
         paddingHorizontal: 16,
         paddingVertical: 12,
         flexDirection: "column",
-        justifyContent: "space-between",
         alignItems: "center",
     },
     hallName: {
@@ -406,7 +418,7 @@ const styles = StyleSheet.create({
         fontWeight: "700",
     },
     platePlannerButton: {
-        backgroundColor: "#C99700", // ND gold
+        backgroundColor: "#C99700",
         paddingHorizontal: 14,
         paddingVertical: 8,
         borderRadius: 4,
@@ -418,6 +430,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
 
+    // ─── MEAL BAR ────────────────────────────────────────────────────────────────
     mealBar: {
         flexDirection: "row",
         backgroundColor: "#0C234B",
@@ -447,26 +460,21 @@ const styles = StyleSheet.create({
         color: "#555555",
     },
 
+    // ─── BODY: CATEGORY & ITEMS ────────────────────────────────────────────────
     body: {
         flex: 1,
         backgroundColor: "#000000",
     },
-    loadingContainer: {
+    noMenusContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
     },
-    loadingText: {
+    noMenusText: {
         color: "#FFFFFF",
-        marginTop: 8,
+        fontSize: 18,
+        fontWeight: "500",
     },
-    errorText: {
-        color: "red",
-        fontSize: 16,
-        textAlign: "center",
-        padding: 16,
-    },
-
     noCategories: {
         marginTop: 60,
         alignItems: "center",
@@ -515,5 +523,22 @@ const styles = StyleSheet.create({
     itemText: {
         color: "#FFFFFF",
         fontSize: 15,
+    },
+
+    // ─── LOADING & ERROR STATES ─────────────────────────────────────────────────
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    loadingText: {
+        color: "#FFFFFF",
+        marginTop: 8,
+    },
+    errorText: {
+        color: "red",
+        fontSize: 16,
+        textAlign: "center",
+        padding: 16,
     },
 });

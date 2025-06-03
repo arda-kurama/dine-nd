@@ -9,7 +9,9 @@ import ItemDetail from "../screens/ItemDetail";
 
 import type { MenuItem } from "../types";
 
-// Define the navigation parameters for each screen
+/**
+ * Type definitions for each screen's navigation parameters.
+ */
 export type RootStackParamList = {
     Halls: undefined;
     DiningHall: {
@@ -35,6 +37,8 @@ export default function AppNavigator() {
     return (
         <NavigationContainer>
             <Stack.Navigator
+                initialRouteName="Halls"
+                // Default header styling for all screens
                 screenOptions={{
                     headerStyle: {
                         backgroundColor: "#0C234B",
@@ -46,7 +50,6 @@ export default function AppNavigator() {
                     headerTitle: "DineND",
                     headerBackTitle: "Back",
                 }}
-                initialRouteName="Halls"
             >
                 <Stack.Screen name="Halls" component={HallList} />
                 <Stack.Screen name="DiningHall" component={DiningHallScreen} />

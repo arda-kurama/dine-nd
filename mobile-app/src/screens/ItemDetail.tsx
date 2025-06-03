@@ -1,8 +1,7 @@
-// src/screens/ItemDetail.tsx
-
 import React from "react";
 import { SafeAreaView, View, Text, ScrollView, StyleSheet } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import type { RootStackParamList } from "../navigation/index";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ItemDetail">;
@@ -18,15 +17,80 @@ export default function ItemDetail({ route }: Props) {
         allergens,
     } = itemDetail;
 
-    // Helper to render a single nutrient row, omitting empty daily values
+    /**
+     * Build an array of nutrient definitions (label, value key, daily key).
+     * Mapping over this avoids repeating renderNutrientRow calls.
+     */
+    const nutrientDefs = [
+        {
+            label: "Calories",
+            value: nutrition?.calories ?? 0,
+            daily: "",
+        },
+        {
+            label: "Calories from Fat",
+            value: nutrition?.calories_from_fat ?? 0,
+            daily: "",
+        },
+        {
+            label: "Total Fat",
+            value: nutrition?.total_fat ?? 0,
+            daily: daily_values?.total_fat ?? "",
+        },
+        {
+            label: "Saturated Fat",
+            value: nutrition?.saturated_fat ?? 0,
+            daily: daily_values?.saturated_fat ?? "",
+        },
+        {
+            label: "Cholesterol",
+            value: nutrition?.cholesterol ?? 0,
+            daily: daily_values?.cholesterol ?? "",
+        },
+        {
+            label: "Sodium",
+            value: nutrition?.sodium ?? 0,
+            daily: daily_values?.sodium ?? "",
+        },
+        {
+            label: "Potassium",
+            value: nutrition?.potassium ?? 0,
+            daily: "",
+        },
+        {
+            label: "Total Carbohydrate",
+            value: nutrition?.total_carbohydrate ?? 0,
+            daily: daily_values?.total_carbohydrate ?? "",
+        },
+        {
+            label: "Dietary Fiber",
+            value: nutrition?.dietary_fiber ?? 0,
+            daily: "",
+        },
+        {
+            label: "Sugars",
+            value: nutrition?.sugars ?? 0,
+            daily: "",
+        },
+        {
+            label: "Protein",
+            value: nutrition?.protein ?? 0,
+            daily: daily_values?.protein ?? "",
+        },
+    ];
+
+    /**
+     * Renders a single nutrient row. If `daily` is empty or whitespace, omit the "(% DV)" text.
+     */
     const renderNutrientRow = (
         label: string,
         value: string | number,
-        daily: string
+        daily: string,
+        idx: number
     ) => {
-        const dailyText = daily && daily.trim() !== "" ? ` (${daily})` : "";
+        const dailyText = daily.trim() ? ` (${daily})` : "";
         return (
-            <View style={styles.tableRow} key={label}>
+            <View style={styles.tableRow} key={`${label}-${idx}`}>
                 <Text style={styles.tableCellLabel}>{label}</Text>
                 <Text style={styles.tableCellValue}>
                     {value}
@@ -36,10 +100,28 @@ export default function ItemDetail({ route }: Props) {
         );
     };
 
+    /**
+     * Small helper to render a generic text section (e.g., Ingredients or Allergens).
+     * Avoids repeating the same JSX structure twice.
+     */
+    const renderTextSection = (title: string, body: string) => (
+        <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+                <Text style={styles.sectionHeaderText}>{title}</Text>
+            </View>
+            <View style={styles.sectionBody}>
+                <Text style={styles.paragraph}>{body}</Text>
+            </View>
+        </View>
+    );
+
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content}>
-                {/** ITEM HEADER **/}
+            <ScrollView
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}
+            >
+                {/** ─── ITEM HEADER: Name + Serving Size ──────────────────────────── */}
                 <View style={styles.headerCard}>
                     <Text style={styles.itemName}>{name}</Text>
                     <Text
@@ -47,7 +129,7 @@ export default function ItemDetail({ route }: Props) {
                     >{`Serving Size: ${serving_size}`}</Text>
                 </View>
 
-                {/** NUTRITION FACTS SECTION **/}
+                {/** ─── NUTRITION FACTS SECTION ───────────────────────────────────── */}
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionHeaderText}>
@@ -55,77 +137,20 @@ export default function ItemDetail({ route }: Props) {
                         </Text>
                     </View>
                     <View style={styles.tableContainer}>
-                        {renderNutrientRow("Calories", nutrition.calories, "")}
-                        {renderNutrientRow(
-                            "Calories from Fat",
-                            nutrition.calories_from_fat,
-                            ""
-                        )}
-                        {renderNutrientRow(
-                            "Total Fat",
-                            nutrition.total_fat,
-                            daily_values.total_fat
-                        )}
-                        {renderNutrientRow(
-                            "Saturated Fat",
-                            nutrition.saturated_fat,
-                            daily_values.saturated_fat
-                        )}
-                        {renderNutrientRow(
-                            "Cholesterol",
-                            nutrition.cholesterol,
-                            daily_values.cholesterol
-                        )}
-                        {renderNutrientRow(
-                            "Sodium",
-                            nutrition.sodium,
-                            daily_values.sodium
-                        )}
-                        {renderNutrientRow(
-                            "Potassium",
-                            nutrition.potassium,
-                            ""
-                        )}
-                        {renderNutrientRow(
-                            "Total Carbohydrate",
-                            nutrition.total_carbohydrate,
-                            daily_values.total_carbohydrate
-                        )}
-                        {renderNutrientRow(
-                            "Dietary Fiber",
-                            nutrition.dietary_fiber,
-                            ""
-                        )}
-                        {renderNutrientRow("Sugars", nutrition.sugars, "")}
-                        {renderNutrientRow(
-                            "Protein",
-                            nutrition.protein,
-                            daily_values.protein
+                        {nutrientDefs.map((nutrient, idx) =>
+                            renderNutrientRow(
+                                nutrient.label,
+                                nutrient.value,
+                                nutrient.daily,
+                                idx
+                            )
                         )}
                     </View>
                 </View>
 
-                {/** INGREDIENTS SECTION **/}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionHeaderText}>
-                            Ingredients
-                        </Text>
-                    </View>
-                    <View style={styles.sectionBody}>
-                        <Text style={styles.paragraph}>{ingredients}</Text>
-                    </View>
-                </View>
-
-                {/** ALLERGENS SECTION **/}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionHeaderText}>Allergens</Text>
-                    </View>
-                    <View style={styles.sectionBody}>
-                        <Text style={styles.paragraph}>{allergens}</Text>
-                    </View>
-                </View>
+                {/** ─── INGREDIENTS & ALLERGENS SECTIONS ─────────────────────────── */}
+                {renderTextSection("Ingredients", ingredients)}
+                {renderTextSection("Allergens", allergens)}
             </ScrollView>
         </SafeAreaView>
     );
@@ -135,7 +160,7 @@ const styles = StyleSheet.create({
     // ─── CONTAINER & CONTENT ─────────────────────────────────────────────────────
     container: {
         flex: 1,
-        backgroundColor: "#1C1E2A", // ND-themed dark charcoal
+        backgroundColor: "#1C1E2A",
     },
     content: {
         padding: 16,
@@ -144,7 +169,7 @@ const styles = StyleSheet.create({
 
     // ─── ITEM HEADER CARD ────────────────────────────────────────────────────────
     headerCard: {
-        backgroundColor: "#0C234B", // ND blue
+        backgroundColor: "#0C234B",
         borderRadius: 8,
         paddingVertical: 16,
         paddingHorizontal: 12,
@@ -163,12 +188,12 @@ const styles = StyleSheet.create({
     },
     itemServing: {
         fontSize: 14,
-        color: "#C99700", // ND gold
+        color: "#C99700",
     },
 
     // ─── SECTION CARD ────────────────────────────────────────────────────────────
     sectionCard: {
-        backgroundColor: "#1C1C1E", // slightly lighter dark for contrast
+        backgroundColor: "#1C1C1E",
         borderRadius: 8,
         marginBottom: 16,
         overflow: "hidden",
@@ -179,14 +204,14 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     sectionHeader: {
-        backgroundColor: "#0C234B", // ND blue
+        backgroundColor: "#0C234B",
         paddingVertical: 8,
         paddingHorizontal: 12,
     },
     sectionHeaderText: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#C99700", // ND gold
+        color: "#C99700",
     },
 
     // ─── NUTRITION TABLE ─────────────────────────────────────────────────────────

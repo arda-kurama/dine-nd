@@ -20,7 +20,16 @@ type Props = {
     navigation: HallListNavProp;
 };
 
-// 1) Map each exact hall name to an image.
+// Constants for card dimensions
+const { width } = Dimensions.get("window");
+const CARD_HEIGHT = 120;
+const CARD_WIDTH = width - 32;
+
+const PLACEHOLDER_IMAGE = {
+    uri: "https://your-cdn.com/images/placeholder.jpg",
+};
+
+// Predefined images for dining halls
 const hallImages: Record<string, { uri: string }> = {
     "Holy Cross College Dining Hall": {
         uri: "https://dining.nd.edu/stylesheets/images/hcc_dining_room.jpg",
@@ -39,22 +48,28 @@ const hallImages: Record<string, { uri: string }> = {
 export default function HallList({ navigation }: Props) {
     const [summary, setSummary] = useState<MenuSummary | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    // Fetch the menu summary from the server
     useEffect(() => {
         fetch(SUMMARY_URL)
             .then((res) => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 return res.json() as Promise<MenuSummary>;
             })
-            .then((json) => setSummary(json))
+            .then((json) => {
+                setSummary(json);
+                setIsLoading(false);
+            })
             .catch((e) => {
-                console.warn("Failed to fetch summary:", e);
+                console.warn("Failed to fetch menu summary:", e);
                 setError("Could not load menu. Please try again.");
+                setIsLoading(false);
             });
     }, []);
 
-    // 1) Loading state
-    if (!summary && !error) {
+    // Show spinner while loading
+    if (isLoading) {
         return (
             <View style={styles.center}>
                 <ActivityIndicator size="large" color="#C99700" />
@@ -62,27 +77,18 @@ export default function HallList({ navigation }: Props) {
         );
     }
 
-    // 2) Error state
-    if (error) {
-        return (
-            <View style={styles.center}>
-                <Text style={styles.errorText}>{error}</Text>
-            </View>
-        );
-    }
-
-    // 3) Guard
-    if (!summary) {
+    // Show error if fetch failed or summary is still null
+    if (error || !summary) {
         return (
             <View style={styles.center}>
                 <Text style={styles.errorText}>
-                    Unexpected error: missing menu data.
+                    {error || "Unexpected error: no menu data available."}
                 </Text>
             </View>
         );
     }
 
-    // 4) Extract hall names
+    // Extract hall names
     const halls = Object.keys(summary.dining_halls);
 
     return (
@@ -93,11 +99,8 @@ export default function HallList({ navigation }: Props) {
                 renderItem={({ item: hallName }) => {
                     const mealCount = summary.dining_halls[hallName] ?? 0;
                     const hasMeals = mealCount > 0;
-
-                    // Choose the correct image or fallback placeholder
-                    const imageSource = hallImages[hallName] || {
-                        uri: "https://your‐cdn.com/images/placeholder.jpg",
-                    };
+                    const imageSource =
+                        hallImages[hallName] || PLACEHOLDER_IMAGE;
 
                     return (
                         <TouchableOpacity
@@ -110,17 +113,12 @@ export default function HallList({ navigation }: Props) {
                             }
                             style={styles.cardContainer}
                         >
-                            {/* ─── IMAGE ─────────────────────────────────────────────────────────── */}
                             <Image
                                 source={imageSource}
                                 style={styles.hallImage}
                             />
-
-                            {/* ─── CAPTION (gold bar) GOES HERE ──────────────────────────────────── */}
                             <View style={styles.captionContainer}>
                                 <Text style={styles.hallTitle}>{hallName}</Text>
-
-                                {/* Row with colored indicator + mealCount text */}
                                 <View style={styles.statusRow}>
                                     <View
                                         style={[
@@ -148,15 +146,11 @@ export default function HallList({ navigation }: Props) {
     );
 }
 
-// ─── STYLES ────────────────────────────────────────────────────────────────────
-const { width } = Dimensions.get("window");
-const CARD_HEIGHT = 120;
-const CARD_WIDTH = width - 32; // 16px padding on each side
-
 const styles = StyleSheet.create({
+    // ─── MAIN CONTAINERS ───────────────────────────────────────────────────────
     container: {
         flex: 1,
-        backgroundColor: "#FFFFFF", // White page background
+        backgroundColor: "#FFFFFF",
         paddingHorizontal: 16,
         paddingTop: 16,
     },
@@ -166,6 +160,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#FFFFFF",
     },
+
+    // ─── TEXT STYLES ──────────────────────────────────────────────────────────
     errorText: {
         color: "red",
         fontSize: 16,
@@ -173,13 +169,12 @@ const styles = StyleSheet.create({
         padding: 16,
     },
 
+    // ─── CARD & IMAGE ─────────────────────────────────────────────────────────
     cardContainer: {
-        // iOS shadow
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
-        // Android elevation
         elevation: 5,
         borderRadius: 12,
         overflow: "hidden",
@@ -187,15 +182,12 @@ const styles = StyleSheet.create({
     hallImage: {
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
-        justifyContent: "flex-end", // caption sits at bottom
-    },
-    imageStyle: {
-        borderRadius: 12,
+        justifyContent: "flex-end",
     },
 
-    /* Caption (gold bar + white text) */
+    // ─── CAPTION (GOLD BAR) ───────────────────────────────────────────────────
     captionContainer: {
-        backgroundColor: "#C99700", // ND gold
+        backgroundColor: "#C99700",
         paddingVertical: 8,
         paddingHorizontal: 12,
     },
@@ -205,7 +197,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
 
-    /* ─── STATUS ROW ────────────────────────────────────────────────────────────── */
+    // ─── STATUS ROW ───────────────────────────────────────────────────────────
     statusRow: {
         flexDirection: "row",
         alignItems: "center",

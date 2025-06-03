@@ -30,11 +30,9 @@ export type MenuItem = {
     };
     ingredients: string;
     allergens: string;
-    // In case your JSON ever has extra fields, we allow them here:
     [key: string]: any;
 };
 
-// This describes the entire `consolidated_menu.json` shape.
 export type ConsolidatedMenu = {
     last_updated: string;
     date: string;

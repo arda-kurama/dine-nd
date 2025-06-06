@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-06-06T03:29:30.741376",
+  "last_updated": "2025-06-06T05:14:22.436877",
   "date": "Friday, June 6, 2025",
   "dining_halls": {
     "Holy Cross College Dining Hall": {
@@ -7822,6 +7822,35 @@
               },
               "ingredients": "Bean Blk Low Sodilum #10 Bushs (Prepared Black Beans, Water, Salt, Calcium Chloride (Firming Agent).)",
               "allergens": "Not Specified"
+            }
+          ],
+          "Dessert": [
+            {
+              "name": "Peanut Butter Cup Blondie",
+              "serving_size": "Bars (89g)",
+              "nutrition": {
+                "calories": 390,
+                "calories_from_fat": 153,
+                "total_fat": "17g",
+                "saturated_fat": "8g",
+                "cholesterol": "45mg",
+                "sodium": "300mg",
+                "potassium": "85mg",
+                "total_carbohydrate": "55g",
+                "dietary_fiber": "2g",
+                "sugars": "38g",
+                "protein": "6g"
+              },
+              "daily_values": {
+                "total_fat": "26%",
+                "saturated_fat": "43%",
+                "cholesterol": "15%",
+                "sodium": "12%",
+                "total_carbohydrate": "18%",
+                "protein": "6%"
+              },
+              "ingredients": "Sugar Brown Lt (Sugar, Molasses), Flour All Purpose Bleached Gold Medal (Bleached Wheat Flour, Malted Barley Flour, Niacin, Iron, Thiamin Mononitrate, Riboflavin, Folic Acid. Common Allergens Present: Wheat.), Stir-Ins PB Cup Ground Reeses (Milk Chocolate (Sugar, Cocoa Butter, Chocolate, Skim Milk, Milk Fat, Lactose, Soy Lecithin, Pgpr), Peanuts, Sugar, Dextrose, Salt, Tbhq And Citric Acid, To Maintain Freshness. Common Allergens Present: Soy, Milk, Peanuts.), Butter Prints Unsalted AA GC (Pasteurized Cream, Natural Flavorings. Contains Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Salt Kosher Crystal Diamond (Salt), Baking Soda (Sodium Bicarbonate.), Flavor Vanilla Imitation KE (Water, Artificial Flavor, Caramel Color, Citric Acid, Sodium Benzoate.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
+              "allergens": "Eggs, Milk, Peanuts, Soy, Wheat"
             }
           ],
           "Asian Stir Fry Protein": [

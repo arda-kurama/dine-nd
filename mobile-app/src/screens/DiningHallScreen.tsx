@@ -15,7 +15,7 @@ import type { MenuItem, ConsolidatedMenu } from "../types";
 import { CONSOLIDATED_URL } from "../config";
 
 // A simple in-module cache so menu is only fetched once per app launch
-let cachedMenu: ConsolidatedMenu | null = null;
+export let cachedMenu: ConsolidatedMenu | null = null;
 
 type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
 
@@ -197,9 +197,9 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                         style={styles.platePlannerButton}
                         onPress={() =>
                             navigation.navigate("PlatePlanner", {
-                                hallId,
-                                hallName,
-                                mealPeriod: "",
+                                hallId: hallId,
+                                hallName: hallName,
+                                mealPeriod: currentMeal,
                             })
                         }
                         activeOpacity={0.7}
@@ -311,8 +311,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     <View style={styles.noCategories}>
                         <Text style={styles.noCategoriesText}>
                             {hallObj[currentMeal]?.available === false
-                                ? `${currentMeal} is not available.`
-                                : "(No categories to show.)"}
+                                ? `There are no items available for ${currentMeal} at this time.`
+                                : "Loading menu items..."}
                         </Text>
                     </View>
                 ) : (
@@ -478,10 +478,12 @@ const styles = StyleSheet.create({
     noCategories: {
         marginTop: 60,
         alignItems: "center",
+        paddingHorizontal: 32,
     },
     noCategoriesText: {
         color: "#FFFFFF",
         fontSize: 16,
+        textAlign: "center",
     },
 
     categoryHeader: {

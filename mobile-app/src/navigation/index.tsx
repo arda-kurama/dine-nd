@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HallList from "../screens/HallList";
 import DiningHallScreen from "../screens/DiningHallScreen";
-// import PlatePlanner from "../screens/PlatePlanner";
+import PlatePlanner from "../screens/PlatePlanner";
 import ItemDetail from "../screens/ItemDetail";
 
 import type { MenuItem } from "../types";
@@ -53,8 +53,8 @@ export default function AppNavigator() {
             >
                 <Stack.Screen name="Halls" component={HallList} />
                 <Stack.Screen name="DiningHall" component={DiningHallScreen} />
-                {/* <Stack.Screen name="PlatePlanner" component={PlatePlanner} /> */}
                 <Stack.Screen name="ItemDetail" component={ItemDetail} />
+                <Stack.Screen name="PlatePlanner" component={PlatePlanner} />
             </Stack.Navigator>
         </NavigationContainer>
     );

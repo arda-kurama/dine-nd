@@ -20,10 +20,23 @@ def main() -> None:
     # Discover available meals
     discovered_tasks = discover_tasks_resilient()
 
-    # If no meals were discovered, exit gracefully 
+    # If no meals were discovered, write empty outputs and exit zero
     if not discovered_tasks:
-        print("No meals to scrape - exiting")
-        sys.exit(1)
+        print("⚠️  No meals to scrape for today — generating empty JSON outputs.")
+
+        # Produce an “empty frame”: all halls, no meals
+        empty_consolidated = consolidate_meal_data([])
+        with open("consolidated_menu.json", "w", encoding="utf-8") as f:
+            json.dump(empty_consolidated, f, indent=2, ensure_ascii=False)
+
+        empty_summary = create_lightweight_summary(empty_consolidated)
+        with open("menu_summary.json", "w", encoding="utf-8") as f:
+            json.dump(empty_summary, f, indent=2)
+
+        print("✅ Wrote empty consolidated_menu.json and menu_summary.json")
+        sys.exit(0)
+
+    # Print the number of discovered tasks
     print(f"\n✓ Found {len(discovered_tasks)} available meals to scrape")
 
     # Parallelize the scrape with memory optimization

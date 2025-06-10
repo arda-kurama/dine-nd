@@ -1,3 +1,5 @@
+import { PlannerMenuItem } from "./utils/PlatePlannerUtils";
+
 export interface MenuSummary {
     last_updated: string;
     date: string;

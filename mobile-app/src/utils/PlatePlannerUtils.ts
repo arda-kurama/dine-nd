@@ -1,17 +1,11 @@
-// File: src/utils/platePlannerUtils.ts
-
 /**
- * platePlannerUtils.ts
- *
  * Utility functions to support “Plate Planner,” now with ±10% tolerance.
  *   • parseNutrition: converts raw nutrition fields → numbers
  *   • generateVirtualItems: builds "1×, 2×, …" virtual servings of each item
  *   • findPlateCombinations: brute‐force search, accepting combos within ±10% of each target
  */
 
-///////////////////////////////////
-// 1) TYPE DEFINITIONS          //
-///////////////////////////////////
+// 1) TYPE DEFINITIONS
 
 /** The four macros we care about. */
 export interface Nutrition {
@@ -25,16 +19,11 @@ export interface Nutrition {
  * A menu item as it comes from your consolidated JSON.
  * Renamed from “MenuItem” → “PlannerMenuItem” to avoid conflicts.
  */
-export interface PlannerMenuItem {
+
+import type { MenuItem } from "../types";
+export type PlannerMenuItem = MenuItem & {
     id: string;
-    name: string;
-    nutrition: {
-        [nutrientName: string]: {
-            amount: string | number;
-            daily_value: string | number;
-        };
-    };
-}
+};
 
 /**
  * A "virtual" item representing N servings of the same base item.
@@ -46,25 +35,26 @@ export interface VirtualMenuItem {
     key: string; // e.g. `${original.id}__x${servings}`
 }
 
-//////////////////////////////////////
-// 2) SIMPLE NUTRITION HELPERS     //
-//////////////////////////////////////
-
+// 2) SIMPLE NUTRITION HELPERS
 /**
- * Parse a raw "amount" (which might be string|number|null|undefined)
- * into a numeric value. If value is null/undefined, return 0.
+ * Peel off either raw values or `{ amount, daily_value }` objects → number.
  */
-function parseAmount(value: string | number | null | undefined): number {
+function parseAmount(value: any): number {
     if (value == null) return 0;
+    // If it’s an object, unwrap `.amount`
+    if (typeof value === "object") {
+        return parseAmount((value as any).amount);
+    }
     if (typeof value === "number") return value;
 
     // String case: maybe "7g", "< 1g", "0", etc.
-    const match = value.toString().match(/[\d.]+/);
+    const str = value.toString();
+    const match = str.match(/[\d.]+/);
     if (!match) return 0;
     const asNum = parseFloat(match[0]);
 
     // If the string contained "<", round it (e.g. "<1" → 1).
-    if (value.toString().includes("<")) return Math.round(asNum);
+    if (str.includes("<")) return Math.round(asNum);
 
     return Math.round(asNum);
 }
@@ -77,8 +67,19 @@ export function parseNutrition(plannerItem: PlannerMenuItem): Nutrition {
 
     const lookup = (names: string[]): number => {
         for (const key of nutrientKeys) {
-            if (names.includes(key.toLowerCase())) {
-                return parseAmount(plannerItem.nutrition[key].amount);
+            const lower = key.toLowerCase();
+            if (names.includes(lower)) {
+                const entry = (plannerItem.nutrition as any)[key];
+                // If it’s an object with `.amount`, unwrap it…
+                if (
+                    entry != null &&
+                    typeof entry === "object" &&
+                    "amount" in entry
+                ) {
+                    return parseAmount((entry as any).amount);
+                }
+                // …otherwise treat it as a raw number or string
+                return parseAmount(entry);
             }
         }
         return 0;
@@ -86,8 +87,14 @@ export function parseNutrition(plannerItem: PlannerMenuItem): Nutrition {
 
     const calories = lookup(["calories", "kcal", "energy"]);
     const protein = lookup(["protein", "prot", "proteins"]);
-    const carbs = lookup(["carb", "carbs", "carbohydrate", "carbohydrates"]);
-    const fat = lookup(["fat", "fats"]);
+    const carbs = lookup([
+        "carb",
+        "carbs",
+        "carbohydrate",
+        "carbohydrates",
+        "total_carbohydrate",
+    ]);
+    const fat = lookup(["fat", "fats", "total_fat"]);
 
     return { calories, protein, carbs, fat };
 }
@@ -157,9 +164,7 @@ function overshootsUpperBound(
     return false;
 }
 
-//////////////////////////////////////////////////////////////
-// 3) GENERATE “VIRTUAL” ITEMS FOR MULTIPLE SERVINGS        //
-//////////////////////////////////////////////////////////////
+// 3) GENERATE “VIRTUAL” ITEMS FOR MULTIPLE SERVINGS
 
 /**
  * Given a list of base items and a max number of servings,
@@ -184,6 +189,13 @@ export function generateVirtualItems(
             continue;
         }
 
+        const rawId = item.id ?? item.name;
+        const safeId = rawId
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9]/g, "_")
+            .toLowerCase();
+
         for (let s = 1; s <= maxServings; s++) {
             virtualList.push({
                 original: item,
@@ -194,7 +206,7 @@ export function generateVirtualItems(
                     carbs: baseNut.carbs * s,
                     fat: baseNut.fat * s,
                 },
-                key: `${item.id}__x${s}`,
+                key: `${safeId}__x${s}`,
             });
         }
     }
@@ -202,9 +214,7 @@ export function generateVirtualItems(
     return virtualList;
 }
 
-////////////////////////////////////////////////////////////
-// 4) FIND ALL COMBINATIONS THAT MATCH WITH ±10% TOLERANCE //
-////////////////////////////////////////////////////////////
+// 4) FIND ALL COMBINATIONS THAT MATCH WITH ±10% TOLERANCE
 
 /**
  * Brute‐force search for all combinations (size ≤ maxItems) of virtual items

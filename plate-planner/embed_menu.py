@@ -1,12 +1,12 @@
 import os, json
-import pinecone
+from pinecone import Pinecone
 from openai import OpenAI
 
 # 1. Init clients
 openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-pinecone.init(api_key=os.getenv("PINECONE_API_KEY"),
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"),
               environment=os.getenv("PINECONE_ENV"))
-index = pinecone.Index("dine_nd_menu")
+index = pc.Index("dine_nd_menu")
 
 # 2. Load menu
 with open("consolidated_menu.json") as f:

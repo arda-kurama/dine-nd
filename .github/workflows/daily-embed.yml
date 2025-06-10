@@ -41,4 +41,4 @@ jobs:
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
                   PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
                   PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
-              run: python plate-planner/embed_menu.py ../consolidated_menu.json
+              run: python plate-planner/embed_menu.py backend/consolidated_menu.json

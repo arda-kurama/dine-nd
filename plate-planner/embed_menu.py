@@ -6,7 +6,7 @@ from openai import OpenAI
 openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"),
               environment=os.getenv("PINECONE_ENV"))
-index = pc.Index("dine_nd_menu")
+index = pc.Index("dine-nd-menu")
 
 # 2. Load menu
 with open("consolidated_menu.json") as f:

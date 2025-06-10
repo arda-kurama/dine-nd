@@ -17,18 +17,25 @@ with open(path) as f:
 # 3. Build embeddings batch
 batch = []
 for hall, meals in menu["dining_halls"].items():
-    for meal, items in meals.items():
-        for dish in items:
-            text = f"{dish['name']}: {dish['nutrition']}"
-            emb = openai.embeddings.create(
-                    model="text-embedding-3-small",
-                    input=text
-                  )["data"][0]["embedding"]
-            batch.append({
-              "id": f"{hall}|{meal}|{dish['id']}",
-              "values": emb,
-              "metadata": {"hall": hall, "meal": meal, **dish["nutrition"]}
-            })
+    for meal_name, categories in meals.items():
+        for category, dishes in categories.items():
+            for dish in dishes:
+                # now `dish` is a dict with 'name', 'nutrition', 'id', etc.
+                text = f"{dish['name']}: {dish['nutrition']}"
+                emb = openai.embeddings.create(
+                         model="text-embedding-3-small",
+                         input=text
+                      )["data"][0]["embedding"]
+                batch.append({
+                  "id": f"{hall}|{meal_name}|{dish['id']}",
+                  "values": emb,
+                  "metadata": {
+                    "hall": hall,
+                    "meal": meal_name,
+                    "category": category,
+                    **dish["nutrition"]
+                  }
+                })
 
 # 4. Upsert
 index.upsert(vectors=batch)

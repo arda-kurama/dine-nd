@@ -16,27 +16,38 @@ with open(path) as f:
 
 # 3. Build embeddings batch
 batch = []
-for hall, meals in menu["dining_halls"].items():
-    for meal_name, categories in meals.items():
+for hall, hall_data in menu.get("dining_halls", {}).items():
+    for meal_name, meal_data in hall_data.items():
+        # Skip if the meal is not available
+        if not meal_data.get("available", False):
+            continue
+        # Extract nested categories dict
+        categories = meal_data.get("categories", {})
         for category, dishes in categories.items():
+            if not isinstance(dishes, list):
+                continue
             for dish in dishes:
-                # now `dish` is a dict with 'name', 'nutrition', 'id', etc.
-                text = f"{dish['name']}: {dish['nutrition']}"
-                emb = openai.embeddings.create(
-                         model="text-embedding-3-small",
-                         input=text
-                      )["data"][0]["embedding"]
+                if not isinstance(dish, dict):
+                    continue
+                # Prepare embedding text
+                name = dish.get("name", "Unnamed Dish")
+                nutrition = dish.get("nutrition", {})
+                text = f"{name}: {nutrition}"
+                # Generate embedding
+                resp = openai.embeddings.create(
+                    model="text-embedding-3-small",
+                    input=text
+                )
+                embedding = resp["data"][0]["embedding"]
+                # Create a unique ID for the dish
+                doc_id = f"{hall}|{meal_name}|{category}|{name}"
+                # Append to batch
                 batch.append({
-                  "id": f"{hall}|{meal_name}|{dish['id']}",
-                  "values": emb,
-                  "metadata": {
-                    "hall": hall,
-                    "meal": meal_name,
-                    "category": category,
-                    **dish["nutrition"]
-                  }
+                    "id": doc_id,
+                    "values": embedding,
+                    "metadata": {"hall": hall, "meal": meal_name, "category": category, **nutrition}
                 })
 
-# 4. Upsert
+# 4. Upsert the batch into Pinecone
 index.upsert(vectors=batch)
 print(f"Upserted {len(batch)} items.")

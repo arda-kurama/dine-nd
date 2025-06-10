@@ -8,14 +8,7 @@ jobs:
     embed:
         runs-on: ubuntu-latest
         steps:
-            # 1) Get code+requirements from main
-            - name: Checkout code (main)
-              uses: actions/checkout@v3
-              with:
-                  ref: main
-                  fetch-depth: 0
-
-            # 2) Get JSON from backend-deployment into ./backend
+            # 1) Get JSON from backend-deployment into ./backend
             - name: Checkout JSON (backend-deployment)
               uses: actions/checkout@v3
               with:
@@ -23,11 +16,18 @@ jobs:
                   path: backend
                   fetch-depth: 0
 
-            # 3) Copy the JSON files into the root workspace
+            # 2) Copy the JSON files into the root workspace
             - name: Copy menu JSON into place
               run: |
                   cp backend/consolidated_menu.json .
                   cp backend/menu_summary.json     .
+
+            # 3) Get code+requirements from main
+            - name: Checkout code (main)
+              uses: actions/checkout@v3
+              with:
+                  ref: main
+                  fetch-depth: 0
 
             # 4) Set up Python + pip cache (now requirements.txt exists)
             - name: Set up Python (with pip cache)

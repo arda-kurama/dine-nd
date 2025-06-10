@@ -1,4 +1,5 @@
 name: Daily Menu Embedding
+
 on:
     schedule:
         - cron: "0 6 * * *"
@@ -7,41 +8,34 @@ on:
 jobs:
     embed:
         runs-on: ubuntu-latest
+
         steps:
+            # 0) Checkout your main repo so requirements.txt is present
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
             # 1) Get JSON from backend-deployment into ./backend
             - name: Checkout JSON (backend-deployment)
               uses: actions/checkout@v3
               with:
                   ref: backend-deployment
                   path: backend
-                  fetch-depth: 0
 
-            # 2) Copy the JSON files into the root workspace
-            - name: Copy menu JSON into place
-              run: |
-                  cp backend/consolidated_menu.json .
-                  cp backend/menu_summary.json     .
-
-            # 3) Get code+requirements from main
-            - name: Checkout code (main)
-              uses: actions/checkout@v3
-              with:
-                  ref: main
-                  fetch-depth: 0
-
-            # 4) Set up Python + pip cache (now requirements.txt exists)
-            - name: Set up Python (with pip cache)
+            # 2) Setup Python 3.12 with pip caching
+            - name: Set up Python 3.12
               uses: actions/setup-python@v4
               with:
-                  python-version: "3.10"
+                  python-version: "3.12"
                   cache: "pip"
                   cache-dependency-path: requirements.txt
 
-            # 5) Install Python dependencies
+            # 3) Install Python dependencies
             - name: Install dependencies
-              run: pip install -r requirements.txt
+              run: |
+                  pip install --upgrade pip
+                  pip install -r requirements.txt
 
-            # 6) Run embed & upsert script
+            # 4) Run embed & upsert script
             - name: Run embed & upsert to Pinecone
               env:
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

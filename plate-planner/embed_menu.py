@@ -38,7 +38,8 @@ for hall, hall_data in menu.get("dining_halls", {}).items():
                     model="text-embedding-3-small",
                     input=text
                 )
-                embedding = resp["data"][0]["embedding"]
+                # Access the embedding from the response object
+                embedding = resp.data[0].embedding
                 # Create a unique ID for the dish
                 doc_id = f"{hall}|{meal_name}|{category}|{name}"
                 # Append to batch

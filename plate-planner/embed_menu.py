@@ -1,6 +1,7 @@
 import os, json
 from pinecone import Pinecone
 from openai import OpenAI
+import sys
 
 # 1. Init clients
 openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -9,7 +10,8 @@ pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"),
 index = pc.Index("dine-nd-menu")
 
 # 2. Load menu
-with open("consolidated_menu.json") as f:
+path = sys.argv[1]
+with open(path) as f:
     menu = json.load(f)
 
 # 3. Build embeddings batch

@@ -54,5 +54,5 @@ jobs:
                   PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
                   PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
               run: |
-                  # first time: zappa deploy dev
-                  zappa update dev
+                  # first time: zappa deploy dev --settings_file plate-planner/zappa_settings.json
+                  zappa update dev --settings_file plate-planner/zappa_settings.json

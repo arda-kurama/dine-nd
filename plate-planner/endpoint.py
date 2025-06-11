@@ -15,12 +15,19 @@ openai = OpenAI(api_key=env_openai)
 pc = Pinecone(api_key=env_pinecone_key, environment=env_pinecone_env)
 index = pc.Index("dine-nd-menu")
 
+# Health endpoint for Zappa deploy validation
+@app.route("/", methods=["GET"])
+def health():
+    return {"status": "ok", "message": "Plate Planner API is running!"}, 200
+
+# Main endpoint / plan-plate
 @app.route("/plan-plate", methods=["POST"])
 def plan_plate():
     data = request.get_json(force=True)
     hall = data.get("hall")
     meal = data.get("meal")
-    # Allow user to specify targets
+
+    # User specified nutrition targets
     calorie_target = data.get("calorieTarget")
     protein_target = data.get("proteinTarget")
     carb_target = data.get("carbTarget")
@@ -43,7 +50,7 @@ def plan_plate():
     )
     user_emb = emb_resp.data[0].embedding
 
-    # 2. Retrieve top-K candidate dishes
+    # 2. Retrieve top-K candidate dishes from Pinecone
     query_resp = index.query(
         vector=user_emb,
         top_k=15,
@@ -68,19 +75,18 @@ def plan_plate():
             entry = match
         serializable.append(entry)
 
-    # 4. Build strict JSON prompt
-    # Define JSON schema for output
+    # 4. Build LLM prompt with strict schema instructions
     schema = {
         "items": [{"name": "...", "servings": 1}],
         "totals": {key: 0 for key in ["calories", "protein", "carbs", "fat"]}
     }
 
     prompt = f"""
-You are a meal-planning assistant. Given these items:
-{json.dumps(serializable, indent=2)}
+    You are a meal-planning assistant. Given these items:
+    {json.dumps(serializable, indent=2)}
 
-Targets:
-"""
+    Targets:
+    """
     if calorie_target:
         prompt += f"- Calories: {calorie_target}\n"
     if protein_target:

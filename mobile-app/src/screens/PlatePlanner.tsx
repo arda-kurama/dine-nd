@@ -11,7 +11,6 @@ import {
     StyleSheet,
     Platform,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/index";
 

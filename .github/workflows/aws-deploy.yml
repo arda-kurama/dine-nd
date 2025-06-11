@@ -58,4 +58,4 @@ jobs:
                   pip install zappa
 
                   # Deploy Zappa to AWS Lambda
-                  zappa update dev --settings_file plate-planner/zappa_settings.json
+                  zappa update dev --settings_file plate_planner/zappa_settings.json

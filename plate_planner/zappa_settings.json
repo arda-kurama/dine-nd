@@ -1,6 +1,6 @@
 {
     "dev": {
-        "app_function": "endpoint.app",
+        "app_function": "plate_planner.endpoint.app",
         "exclude": [
             "boto3",
             "dateutil",

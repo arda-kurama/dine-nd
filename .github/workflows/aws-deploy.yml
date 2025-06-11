@@ -53,12 +53,18 @@ jobs:
                   pip install -r requirements.txt
                   pip install zappa
 
-                  # Overwrite Lambda env vars on every update
-                  zappa update dev \
-                    --settings_file plate_planner/zappa_settings.json \
-                    --env OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" \
-                    --env PINECONE_API_KEY="${{ secrets.PINECONE_API_KEY }}" \
-                    --env PINECONE_ENV="${{ secrets.PINECONE_ENV }}"
+                  # Create a temp settings file with real secrets
+                  cp plate_planner/zappa_settings.json zappa_settings.tmp.json
+
+                  jq \
+                  --arg OPENAI   "${{ secrets.OPENAI_API_KEY }}" \
+                  --arg PINEKEY  "${{ secrets.PINECONE_API_KEY }}" \
+                  --arg PINEENV  "${{ secrets.PINECONE_ENV }}" \
+                  '.dev.environment_variables.OPENAI_API_KEY  = $OPENAI  |
+                  .dev.environment_variables.PINECONE_API_KEY= $PINEKEY |
+                  .dev.environment_variables.PINECONE_ENV    = $PINEENV' \
+                  plate_planner/zappa_settings.json \
+                  > zappa_settings.tmp.json
 
                   # Deploy Zappa to AWS Lambda
-                  zappa update dev --settings_file plate_planner/zappa_settings.json
+                  zappa update dev --settings_file zappa_settings.tmp.json

@@ -43,24 +43,22 @@ jobs:
             # 4) Create venv, install dependencies, and deploy Zappa
             - name: Build venv and deploy / update
               shell: bash
-              env:
-                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-                  PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-                  PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
               run: |
                   # Create a virtual environment
                   python -m venv .venv
                   source .venv/bin/activate
 
-                  # 👇 re-export secrets into the venv shell
-                  export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
-                  export PINECONE_API_KEY="${{ secrets.PINECONE_API_KEY }}"
-                  export PINECONE_ENV="${{ secrets.PINECONE_ENV }}"
-
                   # Install project dependencies into venv
                   pip install --upgrade pip
                   pip install -r requirements.txt
                   pip install zappa
+
+                  # Overwrite Lambda env vars on every update
+                  zappa update dev \
+                    --settings_file plate_planner/zappa_settings.json \
+                    --env OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" \
+                    --env PINECONE_API_KEY="${{ secrets.PINECONE_API_KEY }}" \
+                    --env PINECONE_ENV="${{ secrets.PINECONE_ENV }}"
 
                   # Deploy Zappa to AWS Lambda
                   zappa update dev --settings_file plate_planner/zappa_settings.json

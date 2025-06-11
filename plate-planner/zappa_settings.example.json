@@ -1,0 +1,25 @@
+{
+    "dev": {
+        "app_function": "endpoint.app",
+        "exclude": [
+            "boto3",
+            "dateutil",
+            "botocore",
+            "s3transfer",
+            "concurrent"
+        ],
+        "profile_name": "default",
+        "aws_region": "us-east-2",
+        "project_name": "plate-planner",
+        "runtime": "python3.12",
+        "s3_bucket": "zappa-a61bsx3hk",
+        "events": [],
+        "binary_support": false,
+        "cors": false,
+        "environment_variables": {
+            "OPENAI_API_KEY": "<Your OpenAI API Key>",
+            "PINECONE_API_KEY": "<Your Pinecone API Key>",
+            "PINECONE_ENV": "us-east-1"
+        }
+    }
+}

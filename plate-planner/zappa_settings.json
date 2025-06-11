@@ -17,9 +17,9 @@
         "binary_support": false,
         "cors": false,
         "environment_variables": {
-            "OPENAI_API_KEY": "<Your OpenAI API Key>",
-            "PINECONE_API_KEY": "<Your Pinecone API Key>",
-            "PINECONE_ENV": "us-east-1"
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "PINECONE_API_KEY": "{{ env.PINECONE_API_KEY }}",
+            "PINECONE_ENV": "{{ env.PINECONE_ENV }}"
         }
     }
 }

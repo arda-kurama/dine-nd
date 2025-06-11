@@ -2,5 +2,3 @@
 consolidated_menu.json
 menu_summary.json
 __pycache__/
-plate-planner-*-template-*.json
-zappa_settings.json

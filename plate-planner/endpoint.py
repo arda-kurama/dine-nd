@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from pinecone import Pinecone
 from openai import OpenAI
 

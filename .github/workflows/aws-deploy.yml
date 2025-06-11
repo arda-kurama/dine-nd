@@ -55,4 +55,4 @@ jobs:
                   PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
               run: |
                   # first time: zappa deploy dev
-                  zappa update dev --log-level INFO
+                  zappa update dev

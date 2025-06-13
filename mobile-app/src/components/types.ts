@@ -1,5 +1,3 @@
-import { PlannerMenuItem } from "./utils/PlatePlannerUtils";
-
 export interface MenuSummary {
     last_updated: string;
     date: string;
@@ -47,5 +45,24 @@ export type ConsolidatedMenu = {
                 };
             };
         };
+    };
+};
+
+export type RootStackParamList = {
+    Halls: undefined;
+    DiningHall: {
+        hallId: string;
+        hallName: string;
+    };
+    PlatePlanner: {
+        hallId: string;
+        hallName: string;
+        mealPeriod: string;
+    };
+    ItemDetail: {
+        hallId: string;
+        mealPeriod: string;
+        categoryId: string;
+        itemDetail: MenuItem;
     };
 };

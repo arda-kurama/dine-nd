@@ -7,6 +7,9 @@ import {
     ScrollView,
     ActivityIndicator,
     StyleSheet,
+    StyleProp,
+    ViewStyle,
+    TextStyle,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -15,7 +18,11 @@ import type {
     ConsolidatedMenu,
     RootStackParamList,
 } from "../components/types";
-import { CONSOLIDATED_URL } from "../components/constants";
+import { CONSOLIDATED_URL, SECTION_DEFINITIONS } from "../components/constants";
+import { colors, spacing, typography } from "../components/themes";
+
+// Define navigation prop type specific to this screen
+type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
 
 // Choose default meal that opens based on current time
 function pickCurrentMeal(
@@ -50,54 +57,11 @@ function pickCurrentMeal(
     return tentative;
 }
 
-// Section definitions: group categories by matching names using regexes
-const SECTION_DEFINITIONS: { title: string; match: (n: string) => boolean }[] =
-    [
-        {
-            title: "Homestyle",
-            match: (n) => /Homestyle|Breakfast|Bistro/.test(n),
-        },
-        { title: "Mexican", match: (n) => /^Mexican/.test(n) },
-        { title: "Asian", match: (n) => /^Asian/.test(n) },
-        { title: "Grill", match: (n) => /^Grill/.test(n) },
-        {
-            title: "Quesadilla",
-            match: (n) => /^Quesadilla|Southwest Rice Bowl/.test(n),
-        },
-        {
-            title: "Toasting Station",
-            match: (n) => /^Toasting Station|^Bread/.test(n),
-        },
-        {
-            title: "Waffle Bar",
-            match: (n) => /^Waffle And Pancake/.test(n),
-        },
-        { title: "Oatmeal", match: (n) => /Oatmeal/.test(n) },
-        { title: "Myo Omlette", match: (n) => /^Myo Omelette/.test(n) },
-        { title: "Protein Bar", match: (n) => /Protein Bar/.test(n) },
-        { title: "Pizza", match: (n) => /Pizzaria|^Myo Pizza/.test(n) },
-        { title: "Pasta", match: (n) => /^Pasta/.test(n) },
-        { title: "Deli", match: (n) => /^Deli/.test(n) },
-        { title: "Salad Bar", match: (n) => /^Salad Bar/.test(n) },
-        { title: "Vegan", match: (n) => /^Vegan/.test(n) },
-        { title: "Soup", match: (n) => /Soup/.test(n) },
-        { title: "Fresh Fruit", match: (n) => /Fresh Fruit|Fruit/.test(n) },
-        { title: "Yogurt & Cereal", match: (n) => /Yogurt|Cereal/.test(n) },
-        {
-            title: "Dessert",
-            match: (n) => /^Dessert|Soft Serve|Toppings|Pastries/.test(n),
-        },
-        {
-            title: "Drinks",
-            match: (n) =>
-                /Fountain Drinks|Juice|Milk|Coffee & Tea|Beverage/.test(n),
-        },
-    ];
-
-type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
-
+// Screen component for showing the full dining hall menu
 export default function DiningHallScreen({ route, navigation }: Props) {
     const { hallId, hallName } = route.params;
+
+    // State variables for managing menu data, loading state, and errors
     const [diningHalls, setDiningHalls] = useState<
         ConsolidatedMenu["dining_halls"] | null
     >(null);
@@ -106,7 +70,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const [currentMeal, setCurrentMeal] = useState("");
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-    // Fetch data
+    // Fetch consolidated menu data
     useEffect(() => {
         setLoading(true);
         fetch(`${CONSOLIDATED_URL}?hall=${hallId}`)
@@ -122,7 +86,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             .finally(() => setLoading(false));
     }, [hallId]);
 
-    // Initialize meal and expansion
+    // Select the default meal and initialize expanded categories
     useEffect(() => {
         if (!diningHalls) return;
         const hallObj = diningHalls[hallId];
@@ -140,7 +104,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }, [diningHalls, currentMeal, hallId]);
 
-    // Loading & error
+    // Handle loading & error states
     if (loading)
         return (
             <SafeAreaView style={styles.container}>
@@ -157,11 +121,12 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             </SafeAreaView>
         );
 
+    // Define useful variables for rendering
     const hallObj = diningHalls![hallId]!;
     const mealKeys = Object.keys(hallObj);
     const allCategories = Object.keys(hallObj[currentMeal]?.categories || {});
 
-    // Group categories
+    // Organize categories into sections based on definitions or mark it as "Other"
     const sectionMap: Record<string, string[]> = {};
     SECTION_DEFINITIONS.forEach((d) => (sectionMap[d.title] = []));
     const other: string[] = [];
@@ -170,13 +135,16 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         def ? sectionMap[def.title].push(cat) : other.push(cat);
     });
 
+    // Render the dining hall menu screen
     return (
         <SafeAreaView style={styles.container}>
             {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.hallName}>{hallName}</Text>
+            <View style={styles.header as StyleProp<ViewStyle>}>
+                <Text style={styles.hallName as StyleProp<TextStyle>}>
+                    {hallName}
+                </Text>
                 <TouchableOpacity
-                    style={styles.platePlannerButton}
+                    style={styles.platePlannerButton as StyleProp<ViewStyle>}
                     onPress={() =>
                         navigation.navigate("PlatePlanner", {
                             hallId,
@@ -186,31 +154,41 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     }
                     activeOpacity={0.7}
                 >
-                    <Text style={styles.platePlannerButtonText}>
+                    <Text
+                        style={
+                            styles.platePlannerButtonText as StyleProp<TextStyle>
+                        }
+                    >
                         Plan My Plate
                     </Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Meal switcher - navy text */}
-            <View style={styles.mealSwitcher}>
+            {/* Meal switcher */}
+            <View style={styles.mealSwitcher as StyleProp<ViewStyle>}>
                 {mealKeys.map((meal) => (
                     <TouchableOpacity
                         key={meal}
-                        style={[
-                            styles.mealButton,
-                            meal === currentMeal && styles.selectedMealButton,
-                        ]}
+                        style={
+                            [
+                                styles.mealButton,
+                                meal === currentMeal &&
+                                    styles.selectedMealButton,
+                            ] as StyleProp<ViewStyle>
+                        }
                         onPress={() => setCurrentMeal(meal)}
                         disabled={!hallObj[meal]?.available}
                     >
                         <Text
-                            style={[
-                                styles.mealText,
-                                meal === currentMeal && styles.selectedMealText,
-                                !hallObj[meal]?.available &&
-                                    styles.disabledMealText,
-                            ]}
+                            style={
+                                [
+                                    styles.mealText,
+                                    meal === currentMeal &&
+                                        styles.selectedMealText,
+                                    !hallObj[meal]?.available &&
+                                        styles.disabledMealText,
+                                ] as StyleProp<TextStyle>
+                            }
                         >
                             {meal}
                         </Text>
@@ -220,12 +198,16 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
             {/* Sections */}
             <ScrollView
-                style={styles.body}
-                contentContainerStyle={{ paddingBottom: 32 }}
+                style={styles.body as StyleProp<ViewStyle>}
+                contentContainerStyle={{ paddingBottom: spacing.lg }}
             >
                 {allCategories.length === 0 ? (
-                    <View style={styles.noCategories}>
-                        <Text style={styles.noCategoriesText}>
+                    <View style={styles.noCategories as StyleProp<ViewStyle>}>
+                        <Text
+                            style={
+                                styles.noCategoriesText as StyleProp<TextStyle>
+                            }
+                        >
                             {hallObj[currentMeal]?.available === false
                                 ? `No items for ${currentMeal}.`
                                 : "Loading items..."}
@@ -300,6 +282,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     );
 }
 
+// Component for rendering a category block with items
 function CategoryBlock({
     category,
     items,
@@ -320,22 +303,30 @@ function CategoryBlock({
     return (
         <View>
             <TouchableOpacity
-                style={styles.categoryHeader}
+                style={styles.categoryHeader as StyleProp<ViewStyle>}
                 onPress={onToggle}
                 activeOpacity={0.7}
             >
-                <Text style={styles.categoryTitle}>{category}</Text>
-                <Text style={styles.arrow}>{expanded ? "▲" : "▼"}</Text>
+                <Text style={styles.categoryTitle as StyleProp<TextStyle>}>
+                    {category}
+                </Text>
+                <Text style={styles.arrow as StyleProp<TextStyle>}>
+                    {expanded ? "▲" : "▼"}
+                </Text>
             </TouchableOpacity>
             {expanded && (
-                <View style={styles.itemsContainer}>
+                <View style={styles.itemsContainer as StyleProp<ViewStyle>}>
                     {items.length === 0 ? (
-                        <Text style={styles.noItemsText}>(No items)</Text>
+                        <Text
+                            style={styles.noItemsText as StyleProp<TextStyle>}
+                        >
+                            (No items)
+                        </Text>
                     ) : (
                         items.map((item, i) => (
                             <TouchableOpacity
                                 key={`${category}-${i}`}
-                                style={styles.itemRow}
+                                style={styles.itemRow as StyleProp<ViewStyle>}
                                 onPress={() =>
                                     navigation.navigate("ItemDetail", {
                                         hallId,
@@ -345,7 +336,13 @@ function CategoryBlock({
                                     })
                                 }
                             >
-                                <Text style={styles.itemText}>{item.name}</Text>
+                                <Text
+                                    style={
+                                        styles.itemText as StyleProp<TextStyle>
+                                    }
+                                >
+                                    {item.name}
+                                </Text>
                             </TouchableOpacity>
                         ))
                     )}
@@ -356,68 +353,138 @@ function CategoryBlock({
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F8F8F8" },
+    container: {
+        flex: 1,
+        backgroundColor: colors.surface,
+    },
     header: {
         flexDirection: "row",
+        flexWrap: "wrap",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 16,
-        backgroundColor: "#0C234B",
+        padding: spacing.md,
+        backgroundColor: colors.primary,
     },
-    hallName: { fontSize: 24, fontWeight: "700", color: "#FFFFFF" },
+    hallName: {
+        ...typography.h1,
+        color: colors.background,
+        flex: 1,
+        flexWrap: "wrap",
+        marginRight: spacing.md,
+    },
     platePlannerButton: {
-        backgroundColor: "#C99700",
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 4,
+        flexShrink: 0,
+        backgroundColor: colors.accent,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        borderRadius: spacing.xs,
     },
-    platePlannerButtonText: { color: "#FFFFFF", fontWeight: "600" },
+    platePlannerButtonText: {
+        ...typography.button,
+        color: colors.background,
+    },
+
     mealSwitcher: {
         flexDirection: "row",
         justifyContent: "space-around",
-        backgroundColor: "#FFFFFF",
-        paddingVertical: 8,
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.sm,
     },
-    mealButton: { paddingVertical: 6, paddingHorizontal: 12 },
-    selectedMealButton: { borderBottomWidth: 2, borderColor: "#C99700" },
-    mealText: { fontSize: 16, color: "#0C234B" },
-    selectedMealText: { fontWeight: "700", color: "#0C234B" },
-    disabledMealText: { color: "#CCCCCC" },
-    body: { flex: 1 },
-    noCategories: { padding: 16, alignItems: "center" },
-    noCategoriesText: { fontSize: 16, color: "#666666" },
+    mealButton: {
+        paddingVertical: spacing.xs,
+        paddingHorizontal: spacing.md,
+    },
+    selectedMealButton: {
+        borderBottomWidth: 2,
+        borderColor: colors.accent,
+    },
+    mealText: {
+        ...typography.body,
+        color: colors.background,
+    },
+    selectedMealText: {
+        ...typography.body,
+        fontWeight: "700",
+    },
+    disabledMealText: {
+        ...typography.body,
+        color: colors.textSecondary,
+    },
+
+    body: {
+        flex: 1,
+    },
+    noCategories: {
+        padding: spacing.md,
+        alignItems: "center",
+    },
+    noCategoriesText: {
+        ...typography.body,
+        color: colors.textSecondary,
+    },
+
+    sectionContainer: {
+        padding: spacing.sm,
+    },
+    sectionHeader: {
+        ...typography.h2,
+        marginBottom: spacing.sm,
+        paddingHorizontal: spacing.md,
+    },
+
     categoryHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
-        padding: 16,
-        backgroundColor: "#FFFFFF",
-        borderBottomWidth: 1,
-        borderColor: "#EEEEEE",
+        padding: spacing.md,
+        backgroundColor: colors.background,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.surface,
     },
-    categoryTitle: { fontSize: 16, fontWeight: "600" },
-    arrow: { fontSize: 12 },
-    itemsContainer: { paddingLeft: 24, backgroundColor: "#FAFAFA" },
+    categoryTitle: {
+        ...typography.button,
+        color: colors.textPrimary,
+    },
+    arrow: {
+        ...typography.body,
+        color: colors.textSecondary,
+    },
+
+    itemsContainer: {
+        paddingLeft: spacing.md,
+        backgroundColor: colors.surface,
+    },
     itemRow: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderBottomWidth: 1,
-        borderColor: "#EEEEEE",
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.surface,
     },
-    itemText: { fontSize: 14 },
-    noItemsText: { fontStyle: "italic", color: "#999999", padding: 16 },
+    itemText: {
+        ...typography.body,
+        color: colors.textPrimary,
+    },
+    noItemsText: {
+        ...typography.body,
+        fontStyle: "italic",
+        color: colors.textSecondary,
+        padding: spacing.md,
+    },
+
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#0C234B",
+        backgroundColor: colors.primary,
     },
-    loadingText: { color: "#FFFFFF", marginTop: 8 },
-    errorText: { color: "red", fontSize: 16, textAlign: "center", padding: 16 },
-    sectionContainer: { marginBottom: 24 },
-    sectionHeader: {
-        fontSize: 18,
-        fontWeight: "700",
-        marginBottom: 8,
-        paddingHorizontal: 16,
+    loadingText: {
+        ...typography.body,
+        color: colors.background,
+        marginTop: spacing.sm,
+    },
+    errorText: {
+        ...typography.body,
+        color: colors.error,
+        textAlign: "center",
+        padding: spacing.md,
     },
 });

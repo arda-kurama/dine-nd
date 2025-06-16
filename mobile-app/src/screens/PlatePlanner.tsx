@@ -180,13 +180,21 @@ export default function PlatePlanner({ route }: Props) {
                     <View style={styles.resultSection}>
                         <Text style={styles.sectionHeaderText}>Your Plate</Text>
 
-                        {result.items.map((item, idx) => (
-                            <View key={idx} style={styles.comboCard}>
-                                <Text style={styles.comboText}>
-                                    {item.category} {"→"} {item.name}
-                                </Text>
-                            </View>
-                        ))}
+                        {result.items.map((item, idx) => {
+                            // Split and format returned items from API
+                            const raw = `${item.category}|${item.name}`;
+                            const parts = raw.split("|");
+                            const displayCategory = parts[3];
+                            const displayName = parts[4];
+
+                            return (
+                                <View key={idx} style={styles.comboCard}>
+                                    <Text style={styles.comboText}>
+                                        {displayCategory} {"->"} {displayName}
+                                    </Text>
+                                </View>
+                            );
+                        })}
 
                         {/* Totals card */}
                         <View style={styles.totalsCard}>

@@ -165,35 +165,32 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             </View>
 
             {/* Meal switcher */}
-            <View style={styles.mealSwitcher as StyleProp<ViewStyle>}>
-                {mealKeys.map((meal) => (
-                    <TouchableOpacity
-                        key={meal}
-                        style={
-                            [
-                                styles.mealButton,
-                                meal === currentMeal &&
-                                    styles.selectedMealButton,
-                            ] as StyleProp<ViewStyle>
-                        }
-                        onPress={() => setCurrentMeal(meal)}
-                        disabled={!hallObj[meal]?.available}
-                    >
-                        <Text
-                            style={
-                                [
-                                    styles.mealText,
-                                    meal === currentMeal &&
-                                        styles.selectedMealText,
-                                    !hallObj[meal]?.available &&
-                                        styles.disabledMealText,
-                                ] as StyleProp<TextStyle>
-                            }
+            <View style={styles.pillWrapper}>
+                <View style={styles.mealSwitcherContainer}>
+                    {mealKeys.map((meal) => (
+                        <TouchableOpacity
+                            key={meal}
+                            onPress={() => setCurrentMeal(meal)}
+                            style={[
+                                styles.mealSwitcherBtn,
+                                meal === currentMeal
+                                    ? styles.mealSwitcherBtnActive
+                                    : styles.mealSwitcherBtnUnselected,
+                            ]}
                         >
-                            {meal}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
+                            <Text
+                                style={[
+                                    styles.mealSwitcherTxt,
+                                    meal === currentMeal
+                                        ? styles.mealSwitcherTxtActive
+                                        : styles.mealSwitcherTxtUnselected,
+                                ]}
+                            >
+                                {meal}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </View>
 
             {/* Sections */}
@@ -384,31 +381,39 @@ const styles = StyleSheet.create({
         color: colors.background,
     },
 
-    mealSwitcher: {
-        flexDirection: "row",
-        justifyContent: "space-around",
+    pillWrapper: {
         backgroundColor: colors.primary,
+        padding: spacing.sm,
+    },
+    mealSwitcherContainer: {
+        flexDirection: "row",
+        borderRadius: spacing.sm,
+        overflow: "hidden",
+    },
+    mealSwitcherBtn: {
+        flex: 1,
         paddingVertical: spacing.sm,
+        alignItems: "center",
+        justifyContent: "center",
     },
-    mealButton: {
-        paddingVertical: spacing.xs,
-        paddingHorizontal: spacing.md,
+    mealSwitcherBtnActive: {
+        backgroundColor: colors.accent,
     },
-    selectedMealButton: {
-        borderBottomWidth: 2,
-        borderColor: colors.accent,
-    },
-    mealText: {
+    mealSwitcherTxt: {
         ...typography.body,
-        color: colors.background,
+        color: colors.surface, // white text on navy/unselected
     },
-    selectedMealText: {
+    mealSwitcherTxtActive: {
         ...typography.body,
+        color: colors.surface,
         fontWeight: "700",
     },
-    disabledMealText: {
+    mealSwitcherBtnUnselected: {
+        backgroundColor: `${colors.background}33`,
+    },
+    mealSwitcherTxtUnselected: {
         ...typography.body,
-        color: colors.textSecondary,
+        color: colors.background,
     },
 
     body: {

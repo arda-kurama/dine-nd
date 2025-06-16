@@ -7,9 +7,6 @@ import {
     ScrollView,
     ActivityIndicator,
     StyleSheet,
-    StyleProp,
-    ViewStyle,
-    TextStyle,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -109,7 +106,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#C99700" />
+                    <ActivityIndicator size="large" color={colors.accent} />
                     <Text style={styles.loadingText}>Loading menu…</Text>
                 </View>
             </SafeAreaView>
@@ -121,9 +118,32 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             </SafeAreaView>
         );
 
-    // Define useful variables for rendering
+    // Early return: no meals available at this hall today
     const hallObj = diningHalls![hallId]!;
     const mealKeys = Object.keys(hallObj);
+    const anyMealOpen = mealKeys.some((meal) => hallObj[meal]?.available);
+    if (!anyMealOpen) {
+        return (
+            <SafeAreaView style={styles.container}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.hallName}>{hallName}</Text>
+                </View>
+
+                {/* Closed-Today Message */}
+                <View style={styles.closedContainer}>
+                    <Text style={styles.closedTitle}>
+                        {hallName} is closed today.
+                    </Text>
+                    <Text style={styles.closedSubtitle}>
+                        Check back tomorrow or try another dining hall.
+                    </Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    // Normal case: render all sections
     const allCategories = Object.keys(hallObj[currentMeal]?.categories || {});
 
     // Organize categories into sections based on definitions or mark it as "Other"
@@ -135,16 +155,14 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         def ? sectionMap[def.title].push(cat) : other.push(cat);
     });
 
-    // Render the dining hall menu screen
+    // Render screen
     return (
         <SafeAreaView style={styles.container}>
             {/* Header */}
-            <View style={styles.header as StyleProp<ViewStyle>}>
-                <Text style={styles.hallName as StyleProp<TextStyle>}>
-                    {hallName}
-                </Text>
+            <View style={styles.header}>
+                <Text style={styles.hallName}>{hallName}</Text>
                 <TouchableOpacity
-                    style={styles.platePlannerButton as StyleProp<ViewStyle>}
+                    style={styles.platePlannerButton}
                     onPress={() =>
                         navigation.navigate("PlatePlanner", {
                             hallId,
@@ -154,11 +172,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     }
                     activeOpacity={0.7}
                 >
-                    <Text
-                        style={
-                            styles.platePlannerButtonText as StyleProp<TextStyle>
-                        }
-                    >
+                    <Text style={styles.platePlannerButtonText}>
                         Plan My Plate
                     </Text>
                 </TouchableOpacity>
@@ -195,84 +209,63 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
             {/* Sections */}
             <ScrollView
-                style={styles.body as StyleProp<ViewStyle>}
+                style={styles.body}
                 contentContainerStyle={{ paddingBottom: spacing.lg }}
             >
-                {allCategories.length === 0 ? (
-                    <View style={styles.noCategories as StyleProp<ViewStyle>}>
-                        <Text
-                            style={
-                                styles.noCategoriesText as StyleProp<TextStyle>
-                            }
-                        >
-                            {hallObj[currentMeal]?.available === false
-                                ? `No items for ${currentMeal}.`
-                                : "Loading items..."}
-                        </Text>
+                {SECTION_DEFINITIONS.map((def) => {
+                    const cats = sectionMap[def.title];
+                    if (!cats.length) return null;
+                    return (
+                        <View key={def.title} style={styles.sectionContainer}>
+                            <Text style={styles.sectionHeader}>
+                                {def.title}
+                            </Text>
+                            {cats.map((cat) => (
+                                <CategoryBlock
+                                    key={cat}
+                                    category={cat}
+                                    items={
+                                        hallObj[currentMeal]?.categories[cat] ||
+                                        []
+                                    }
+                                    expanded={expanded[cat]}
+                                    onToggle={() =>
+                                        setExpanded((p) => ({
+                                            ...p,
+                                            [cat]: !p[cat],
+                                        }))
+                                    }
+                                    navigation={navigation}
+                                    hallId={hallId}
+                                    meal={currentMeal}
+                                />
+                            ))}
+                        </View>
+                    );
+                })}
+                {other.length > 0 && (
+                    <View style={styles.sectionContainer}>
+                        <Text style={styles.sectionHeader}>Other</Text>
+                        {other.map((cat) => (
+                            <CategoryBlock
+                                key={cat}
+                                category={cat}
+                                items={
+                                    hallObj[currentMeal]?.categories[cat] || []
+                                }
+                                expanded={expanded[cat]}
+                                onToggle={() =>
+                                    setExpanded((p) => ({
+                                        ...p,
+                                        [cat]: !p[cat],
+                                    }))
+                                }
+                                navigation={navigation}
+                                hallId={hallId}
+                                meal={currentMeal}
+                            />
+                        ))}
                     </View>
-                ) : (
-                    <>
-                        {SECTION_DEFINITIONS.map((def) => {
-                            const cats = sectionMap[def.title];
-                            if (!cats.length) return null;
-                            return (
-                                <View
-                                    key={def.title}
-                                    style={styles.sectionContainer}
-                                >
-                                    <Text style={styles.sectionHeader}>
-                                        {def.title}
-                                    </Text>
-                                    {cats.map((cat) => (
-                                        <CategoryBlock
-                                            key={cat}
-                                            category={cat}
-                                            items={
-                                                hallObj[currentMeal]
-                                                    ?.categories[cat] || []
-                                            }
-                                            expanded={expanded[cat]}
-                                            onToggle={() =>
-                                                setExpanded((p) => ({
-                                                    ...p,
-                                                    [cat]: !p[cat],
-                                                }))
-                                            }
-                                            navigation={navigation}
-                                            hallId={hallId}
-                                            meal={currentMeal}
-                                        />
-                                    ))}
-                                </View>
-                            );
-                        })}
-                        {other.length > 0 && (
-                            <View style={styles.sectionContainer}>
-                                <Text style={styles.sectionHeader}>Other</Text>
-                                {other.map((cat) => (
-                                    <CategoryBlock
-                                        key={cat}
-                                        category={cat}
-                                        items={
-                                            hallObj[currentMeal]?.categories[
-                                                cat
-                                            ] || []
-                                        }
-                                        expanded={expanded[cat]}
-                                        onToggle={() =>
-                                            setExpanded((p) => ({
-                                                ...p,
-                                                [cat]: !p[cat],
-                                            }))
-                                        }
-                                        navigation={navigation}
-                                        hallId={hallId}
-                                        meal={currentMeal}
-                                    />
-                                ))}
-                            </View>
-                        )}
-                    </>
                 )}
             </ScrollView>
         </SafeAreaView>
@@ -300,30 +293,22 @@ function CategoryBlock({
     return (
         <View>
             <TouchableOpacity
-                style={styles.categoryHeader as StyleProp<ViewStyle>}
+                style={styles.categoryHeader}
                 onPress={onToggle}
                 activeOpacity={0.7}
             >
-                <Text style={styles.categoryTitle as StyleProp<TextStyle>}>
-                    {category}
-                </Text>
-                <Text style={styles.arrow as StyleProp<TextStyle>}>
-                    {expanded ? "▲" : "▼"}
-                </Text>
+                <Text style={styles.categoryTitle}>{category}</Text>
+                <Text style={styles.arrow}>{expanded ? "▲" : "▼"}</Text>
             </TouchableOpacity>
             {expanded && (
-                <View style={styles.itemsContainer as StyleProp<ViewStyle>}>
+                <View style={styles.itemsContainer}>
                     {items.length === 0 ? (
-                        <Text
-                            style={styles.noItemsText as StyleProp<TextStyle>}
-                        >
-                            (No items)
-                        </Text>
+                        <Text style={styles.noItemsText}>(No items)</Text>
                     ) : (
                         items.map((item, i) => (
                             <TouchableOpacity
                                 key={`${category}-${i}`}
-                                style={styles.itemRow as StyleProp<ViewStyle>}
+                                style={styles.itemRow}
                                 onPress={() =>
                                     navigation.navigate("ItemDetail", {
                                         hallId,
@@ -333,13 +318,7 @@ function CategoryBlock({
                                     })
                                 }
                             >
-                                <Text
-                                    style={
-                                        styles.itemText as StyleProp<TextStyle>
-                                    }
-                                >
-                                    {item.name}
-                                </Text>
+                                <Text style={styles.itemText}>{item.name}</Text>
                             </TouchableOpacity>
                         ))
                     )}
@@ -381,6 +360,25 @@ const styles = StyleSheet.create({
         color: colors.background,
     },
 
+    closedContainer: {
+        flex: 1,
+        justifyContent: "flex-start",
+        marginTop: spacing.md,
+        alignItems: "center",
+        padding: spacing.md,
+    },
+    closedTitle: {
+        ...typography.h2,
+        color: colors.textPrimary,
+        marginBottom: spacing.sm,
+        textAlign: "center",
+    },
+    closedSubtitle: {
+        ...typography.body,
+        color: colors.textSecondary,
+        textAlign: "center",
+    },
+
     pillWrapper: {
         backgroundColor: colors.primary,
         padding: spacing.sm,
@@ -401,7 +399,7 @@ const styles = StyleSheet.create({
     },
     mealSwitcherTxt: {
         ...typography.body,
-        color: colors.surface, // white text on navy/unselected
+        color: colors.surface,
     },
     mealSwitcherTxtActive: {
         ...typography.body,
@@ -419,15 +417,6 @@ const styles = StyleSheet.create({
     body: {
         flex: 1,
     },
-    noCategories: {
-        padding: spacing.md,
-        alignItems: "center",
-    },
-    noCategoriesText: {
-        ...typography.body,
-        color: colors.textSecondary,
-    },
-
     sectionContainer: {
         padding: spacing.sm,
     },

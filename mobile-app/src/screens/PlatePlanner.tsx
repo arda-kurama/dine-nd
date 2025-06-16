@@ -305,14 +305,13 @@ const styles = StyleSheet.create({
     },
 
     totalsCard: {
+        marginTop: spacing.md,
+    },
+    totalsContainer: {
         backgroundColor: colors.background,
         borderRadius: radii.md,
         padding: spacing.md,
-        marginTop: spacing.md,
         ...shadows.card,
-    },
-    totalsContainer: {
-        marginTop: spacing.sm,
     },
     totalsText: {
         ...typography.body,

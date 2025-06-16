@@ -26,11 +26,6 @@ export const radii = {
     lg: 12,
 };
 
-/**
- * Shadows for cards, etc.
- * ViewStyle works even on Android (elevation),
- * and iOS will pick up the shadow* props.
- */
 export const shadows: {
     card: ViewStyle;
     heavy?: ViewStyle;
@@ -51,11 +46,6 @@ export const shadows: {
     },
 };
 
-/**
- * Text styles.
- * We tell TS these are TextStyle so you can safely spread them
- * into a StyleSheet.
- */
 export const typography: {
     h1: TextStyle;
     h2: TextStyle;

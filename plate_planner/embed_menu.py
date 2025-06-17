@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import re
 from typing import Dict, List
 
 from openai import OpenAI
@@ -9,6 +10,17 @@ from pinecone import Pinecone
 # Config
 INDEX_NAME: str = "dine-nd-menu"
 BATCH_SIZE: int = 100  # Pinecone upsert request size limit safety margin
+
+# Format sectiond definitions
+with open("../mobile-app/src/components/section_defs.json") as fp:
+    raw_defs = json.load(fp)
+SECTION_DEFS = [(d["title"], re.compile(d["pattern"])) for d in raw_defs]
+
+def classify_section(category: str) -> str:
+    for title, rx in SECTION_DEFS:
+        if rx.search(category):
+            return title
+    return "Other"
 
 def load_menu(path: str) -> Dict:
     """Load and return the consolidated menu JSON from *path*."""
@@ -43,6 +55,9 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                     else:
                         allergens = []
 
+                    # Sort the categories into sections
+                    section = classify_section(category)
+
                     # Build the input text for embedding generation
                     text: str = f"{name}: {nutrition}"
                     embedding_resp = client.embeddings.create(
@@ -62,6 +77,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                                 "category": category,
                                 **nutrition,
                                 "allergens": allergens,
+                                "section": section,
                             },
                         }
                     )

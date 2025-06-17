@@ -1,0 +1,25 @@
+[
+    { "title": "Homestyle", "pattern": "Homestyle|Breakfast|Bistro" },
+    { "title": "Mexican", "pattern": "^Mexican" },
+    { "title": "Asian", "pattern": "^Asian" },
+    { "title": "Grill", "pattern": "^Grill" },
+    { "title": "Quesadilla", "pattern": "^Quesadilla|Southwest Rice Bowl" },
+    { "title": "Toasting Station", "pattern": "^Toasting Station|^Bread" },
+    { "title": "Waffle Bar", "pattern": "^Waffle And Pancake" },
+    { "title": "Oatmeal", "pattern": "Oatmeal" },
+    { "title": "Myo Omlette", "pattern": "^Myo Omelette" },
+    { "title": "Protein Bar", "pattern": "Protein Bar" },
+    { "title": "Pizza", "pattern": "Pizzaria|^Myo Pizza" },
+    { "title": "Pasta", "pattern": "^Pasta" },
+    { "title": "Deli", "pattern": "^Deli" },
+    { "title": "Salad", "pattern": "^Salad Bar|.*Salad$|Condiments" },
+    { "title": "Vegan", "pattern": "^Vegan" },
+    { "title": "Soup", "pattern": "Soup" },
+    { "title": "Fresh Fruit", "pattern": "Fresh Fruit|Fruit" },
+    { "title": "Yogurt & Cereal", "pattern": "Yogurt|Cereal" },
+    { "title": "Dessert", "pattern": "^Dessert|Soft Serve|Toppings|Pastries" },
+    {
+        "title": "Drinks",
+        "pattern": "Fountain Drinks|Juice|Milk|Coffee & Tea|Beverage"
+    }
+]

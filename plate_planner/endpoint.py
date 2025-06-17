@@ -1,7 +1,9 @@
 from functools import lru_cache
 import json
 import os
+import re
 
+from urllib.request import urlopen
 from flask import Flask, jsonify, request
 from openai import OpenAI
 from pinecone import Pinecone
@@ -24,11 +26,38 @@ def get_pinecone_index():
     pc = Pinecone(api_key=key, environment=env)
     return pc.Index("dine-nd-menu")
 
+# Format sectiond definitions
+MENU_URL = os.getenv("MENU_URL", "https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
+def get_menu():
+    with urlopen(MENU_URL) as r:
+        return json.load(r)
+
+with open("../mobile-app/src/components/section_defs.json") as fp:
+    raw_defs = json.load(fp)
+SECTION_DEFS = [(d["title"], re.compile(d["pattern"])) for d in raw_defs]
+
 # Routes
 @app.route("/", methods=["GET"])
 def health():
     """Lightweight health check used by Zappa's deploy validation."""
     return jsonify(status="ok"), 200
+
+@app.route("/sections", methods=["GET"])
+def get_sections():
+    hall = request.args.get("hall")
+    meal = request.args.get("meal")
+    MENU = get_menu()
+    try:
+        cats = MENU["dining_halls"][hall][meal]["categories"].keys()
+    except KeyError:
+        return jsonify(error="unknown hall or meal"), 400
+
+    secs = [
+      title
+      for title, rx in SECTION_DEFS
+      if any(rx.search(cat) for cat in cats)
+    ]
+    return jsonify(sections=secs), 200
 
 @app.route("/plan-plate", methods=["POST"])
 def plan_plate():
@@ -45,6 +74,9 @@ def plan_plate():
 
     # Allergies to avoid (list of strings)
     avoid: list[str] = data.get("avoidAllergies", [])
+
+    # Section to filter by
+    sections = data.get("sections", [])
 
     # 1) Embed query
     query_parts = [f"{meal} at {hall}"]
@@ -74,6 +106,9 @@ def plan_plate():
         # Skip any item that has at least one avoided allergen
         if any(a in item_allergens for a in avoid):
             continue
+        # Skip any item that is not in the section selected
+        if sections and meta.get("section") not in sections:
+            continue
         matches.append({
             "id": getattr(m, "id", None),
             "score": getattr(m, "score", None),
@@ -91,6 +126,7 @@ def plan_plate():
         # Defense-in-depth: remind GPT to avoid these
         f"Do NOT include any items that contain these allergens: {', '.join(avoid)}.",
         "\nGiven these items:",
+        f"Include *only* items from these sections: {', '.join(sections)}.",
         json.dumps(matches, indent=2),
         "\nTargets:",
     ]

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     SafeAreaView,
     ScrollView,
@@ -10,8 +10,11 @@ import {
     ActivityIndicator,
     StyleSheet,
     Switch,
+    Platform,
+    ActionSheetIOS,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Picker } from "@react-native-picker/picker";
 
 import { ALLERGENS } from "../components/constants";
 import type { RootStackParamList } from "../components/types";
@@ -43,14 +46,18 @@ interface ApiResponse {
 }
 
 export default function PlatePlanner({ route }: Props) {
-    const { hallName, mealPeriod } = route.params;
+    const { hallId, hallName, mealPeriod } = route.params;
 
     // Macro target inputs
     const [calorieTarget, setCalorieTarget] = useState<string>("");
     const [proteinTarget, setProteinTarget] = useState<string>("");
     const [carbTarget, setCarbTarget] = useState<string>("");
     const [fatTarget, setFatTarget] = useState<string>("");
+
+    // Allergy and section selection states
     const [avoidedAllergies, setAvoidedAllergies] = useState<string[]>([]);
+    const [selectedSection, setSelectedSection] = useState<string>("");
+    const [availableSections, setAvailableSections] = useState<string[]>([]);
 
     // Loading, result, and error states
     const [loading, setLoading] = useState<boolean>(false);
@@ -64,6 +71,28 @@ export default function PlatePlanner({ route }: Props) {
         ["Carbs", carbTarget, setCarbTarget],
         ["Fat", fatTarget, setFatTarget],
     ];
+
+    // Fetch available sections for this hall+meal
+    useEffect(() => {
+        async function loadSections() {
+            try {
+                const res = await fetch(
+                    `https://uycl10fz1j.execute-api.us-east-2.amazonaws.com/dev/sections` +
+                        `?hall=${encodeURIComponent(hallId)}` +
+                        `&meal=${encodeURIComponent(mealPeriod)}`
+                );
+                if (!res.ok) throw new Error();
+                const { sections } = await res.json();
+                setAvailableSections(sections);
+                if (!sections.includes(selectedSection)) {
+                    setSelectedSection("");
+                }
+            } catch {
+                setAvailableSections([]);
+            }
+        }
+        loadSections();
+    }, [hallId, mealPeriod]);
 
     async function onPlanPlatePress() {
         const cals = calorieTarget ? parseInt(calorieTarget, 10) : undefined;
@@ -104,6 +133,7 @@ export default function PlatePlanner({ route }: Props) {
                 carbTarget: carbs,
                 fatTarget: fat,
                 avoidAllergies: avoidedAllergies,
+                sections: selectedSection ? [selectedSection] : [],
             };
             const response = await fetch(
                 "https://uycl10fz1j.execute-api.us-east-2.amazonaws.com/dev/plan-plate",
@@ -126,6 +156,20 @@ export default function PlatePlanner({ route }: Props) {
         }
     }
 
+    const showSectionPicker = () => {
+        ActionSheetIOS.showActionSheetWithOptions(
+            {
+                options: [...availableSections, "Cancel"],
+                cancelButtonIndex: availableSections.length,
+            },
+            (idx) => {
+                if (idx < availableSections.length) {
+                    setSelectedSection(availableSections[idx]);
+                }
+            }
+        );
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.headerCard}>
@@ -137,6 +181,47 @@ export default function PlatePlanner({ route }: Props) {
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >
+                {/* Section Selector */}
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionHeaderText}>
+                            Select Cuisine
+                        </Text>
+                    </View>
+                    <View style={styles.sectionBody}>
+                        {Platform.OS === "ios" ? (
+                            <TouchableOpacity
+                                onPress={showSectionPicker}
+                                style={styles.pickerButton}
+                            >
+                                <Text style={styles.pickerButtonText}>
+                                    {selectedSection || "Click Me"}
+                                </Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <Picker
+                                selectedValue={selectedSection}
+                                onValueChange={setSelectedSection}
+                                style={styles.picker}
+                                dropdownIconColor={colors.textPrimary}
+                            >
+                                <Picker.Item
+                                    label="Click Me"
+                                    value=""
+                                    color={colors.textSecondary}
+                                />
+                                {availableSections.map((title) => (
+                                    <Picker.Item
+                                        key={title}
+                                        label={title}
+                                        value={title}
+                                        color={colors.textPrimary}
+                                    />
+                                ))}
+                            </Picker>
+                        )}
+                    </View>
+                </View>
                 {/* Macro Targets */}
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
@@ -299,8 +384,6 @@ const styles = StyleSheet.create({
     },
     scrollView: { flex: 1 },
     contentContainer: { paddingBottom: spacing.lg },
-
-    // Shared section styles
     sectionCard: {
         backgroundColor: colors.background,
         borderRadius: radii.md,
@@ -321,6 +404,19 @@ const styles = StyleSheet.create({
     },
     sectionBody: {
         padding: spacing.md,
+    },
+
+    // Picker
+    picker: {
+        height: spacing.lg * 2,
+        color: colors.textPrimary,
+        backgroundColor: colors.surface,
+    },
+    pickerButton: {
+        paddingVertical: spacing.xs,
+    },
+    pickerButtonText: {
+        ...typography.button,
     },
 
     // Input rows

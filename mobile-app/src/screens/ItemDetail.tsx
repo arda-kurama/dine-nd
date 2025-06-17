@@ -73,7 +73,6 @@ export default function ItemDetail({ route }: Props) {
         },
     ];
 
-    // Render a single row in the nutrition facts table
     const renderNutrientRow = (
         label: string,
         value: number | string,
@@ -92,7 +91,6 @@ export default function ItemDetail({ route }: Props) {
         );
     };
 
-    // Render a section with a title and body text
     const renderTextSection = (title: string, body: string) => (
         <View style={styles.sectionCard} key={title}>
             <View style={styles.sectionHeader}>
@@ -104,36 +102,34 @@ export default function ItemDetail({ route }: Props) {
         </View>
     );
 
-    // Main screen render
     return (
         <SafeAreaView style={styles.container}>
+            {/* Header Card */}
+            <View style={styles.headerCard}>
+                <Text style={styles.itemName}>{name}</Text>
+                <Text
+                    style={styles.itemServing}
+                >{`Serving Size: ${serving_size}`}</Text>
+            </View>
             <ScrollView
                 contentContainerStyle={styles.content}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Item Header */}
-                <View style={styles.headerCard}>
-                    <Text style={styles.itemName}>{name}</Text>
-                    <Text
-                        style={styles.itemServing}
-                    >{`Serving Size: ${serving_size}`}</Text>
-                </View>
-
-                {/* Nutrition Facts */}
+                {/* Nutrition Facts as a single card */}
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionHeaderText}>
                             Nutrition Facts
                         </Text>
                     </View>
-                    <View style={styles.tableContainer}>
+                    <View style={styles.sectionBody}>
                         {nutrientDefs.map((n, i) =>
                             renderNutrientRow(n.label, n.value, n.daily, i)
                         )}
                     </View>
                 </View>
 
-                {/* Ingredients & Allergens */}
+                {/* Ingredients & Allergens Sections */}
                 {renderTextSection("Ingredients", ingredients)}
                 {renderTextSection("Allergens", allergens)}
             </ScrollView>
@@ -142,20 +138,13 @@ export default function ItemDetail({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.surface,
-    },
-    content: {
-        padding: spacing.md,
-    },
+    container: { flex: 1, backgroundColor: colors.surface },
+    content: { padding: spacing.md },
 
     headerCard: {
         backgroundColor: colors.primary,
-        borderRadius: radii.md,
         paddingVertical: spacing.lg,
         paddingHorizontal: spacing.md,
-        marginBottom: spacing.lg,
         ...shadows.card,
     },
     itemName: {
@@ -163,50 +152,31 @@ const styles = StyleSheet.create({
         color: colors.surface,
         marginBottom: spacing.xs,
     },
-    itemServing: {
-        ...typography.body,
-        color: colors.accent,
-    },
+    itemServing: { ...typography.body, color: colors.accent },
 
     sectionCard: {
         backgroundColor: colors.background,
         borderRadius: radii.md,
-        marginBottom: spacing.lg,
-        overflow: "hidden",
+        marginBottom: spacing.md,
         ...shadows.card,
     },
     sectionHeader: {
         backgroundColor: colors.primary,
         paddingVertical: spacing.sm,
         paddingHorizontal: spacing.md,
+        borderTopLeftRadius: radii.md,
+        borderTopRightRadius: radii.md,
     },
-    sectionHeaderText: {
-        ...typography.h2,
-        color: colors.accent,
-    },
-    sectionBody: {
-        padding: spacing.md,
-    },
+    sectionHeaderText: { ...typography.h2, color: colors.accent },
+    sectionBody: { padding: spacing.md },
 
-    tableContainer: {
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.sm,
-    },
     tableRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: spacing.xs,
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderColor: colors.surface,
+        paddingVertical: spacing.sm,
     },
-    tableCellLabel: {
-        ...typography.body,
-        color: colors.textPrimary,
-    },
-    tableCellValue: {
-        ...typography.body,
-        color: colors.textPrimary,
-    },
+    tableCellLabel: { ...typography.body, color: colors.textPrimary },
+    tableCellValue: { ...typography.body, color: colors.textPrimary },
 
     paragraph: {
         ...typography.body,

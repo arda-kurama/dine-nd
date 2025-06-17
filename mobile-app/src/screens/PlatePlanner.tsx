@@ -128,23 +128,23 @@ export default function PlatePlanner({ route }: Props) {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Fixed Header */}
-            <View style={styles.header}>
+            <View style={styles.headerCard}>
                 <Text style={styles.headerTitle}>{hallName}</Text>
                 <Text style={styles.headerSubtitle}>{mealPeriod}</Text>
             </View>
-
-            {/* Scrollable Content */}
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.controls}>
-                    <Text style={styles.sectionHeaderText}>
-                        Set Macro Targets
-                    </Text>
-                    <View style={styles.macroCard}>
+                {/* Macro Targets */}
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionHeaderText}>
+                            Set Macro Targets
+                        </Text>
+                    </View>
+                    <View style={styles.sectionBody}>
                         {macroFields.map(([label, value, setter]) => (
                             <View key={label} style={styles.inputRow}>
                                 <Text style={styles.inputLabel}>{label}</Text>
@@ -159,11 +159,16 @@ export default function PlatePlanner({ route }: Props) {
                             </View>
                         ))}
                     </View>
+                </View>
 
-                    <View style={styles.allergySection}>
+                {/* Avoid Allergens */}
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeader}>
                         <Text style={styles.sectionHeaderText}>
                             Avoid Allergens
                         </Text>
+                    </View>
+                    <View style={styles.sectionBody}>
                         <View style={styles.allergyOptions}>
                             {ALLERGENS.map((allergy) => {
                                 const isOn = avoidedAllergies.includes(allergy);
@@ -203,43 +208,56 @@ export default function PlatePlanner({ route }: Props) {
                             })}
                         </View>
                     </View>
-
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={onPlanPlatePress}
-                        disabled={loading}
-                    >
-                        {loading ? (
-                            <ActivityIndicator color={colors.primary} />
-                        ) : (
-                            <Text style={styles.buttonText}>Plan Plate</Text>
-                        )}
-                    </TouchableOpacity>
-
-                    {error && <Text style={styles.errorText}>{error}</Text>}
                 </View>
 
+                {/* Plan Button & Error */}
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={onPlanPlatePress}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <ActivityIndicator color={colors.primary} />
+                    ) : (
+                        <Text style={styles.buttonText}>Plan Plate</Text>
+                    )}
+                </TouchableOpacity>
+                {error && <Text style={styles.errorText}>{error}</Text>}
+
+                {/* Results */}
                 {result && (
-                    <View style={styles.resultSection}>
-                        <Text style={styles.sectionHeaderText}>Your Plate</Text>
-                        {result.items.map((item, idx) => {
-                            const raw = `${item.category}|${item.name}`;
-                            const parts = raw.split("|");
-                            const displayCategory = parts[3];
-                            const displayName = parts[4];
-                            return (
-                                <View key={idx} style={styles.comboCard}>
-                                    <Text style={styles.comboText}>
-                                        {displayCategory} {"->"} {displayName}
-                                    </Text>
-                                </View>
-                            );
-                        })}
-                        <View style={styles.totalsCard}>
-                            <Text style={styles.sectionHeaderText}>
-                                Total Macros
-                            </Text>
-                            <View style={styles.totalsContainer}>
+                    <>
+                        <View style={styles.sectionCard}>
+                            <View style={styles.sectionHeader}>
+                                <Text style={styles.sectionHeaderText}>
+                                    Your Plate
+                                </Text>
+                            </View>
+                            <View style={styles.sectionBody}>
+                                {result.items.map((item, idx) => {
+                                    const raw = `${item.category}|${item.name}`;
+                                    const parts = raw.split("|");
+                                    const displayCategory = parts[3];
+                                    const displayName = parts[4];
+                                    return (
+                                        <Text
+                                            key={idx}
+                                            style={styles.comboText}
+                                        >
+                                            {displayCategory} {"->"}{" "}
+                                            {displayName}
+                                        </Text>
+                                    );
+                                })}
+                            </View>
+                        </View>
+                        <View style={styles.sectionCard}>
+                            <View style={styles.sectionHeader}>
+                                <Text style={styles.sectionHeaderText}>
+                                    Total Macros
+                                </Text>
+                            </View>
+                            <View style={styles.sectionBody}>
                                 <Text style={styles.totalsText}>
                                     Calories: {result.totals.calories} kcal
                                 </Text>
@@ -254,7 +272,7 @@ export default function PlatePlanner({ route }: Props) {
                                 </Text>
                             </View>
                         </View>
-                    </View>
+                    </>
                 )}
             </ScrollView>
         </SafeAreaView>
@@ -262,14 +280,13 @@ export default function PlatePlanner({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.surface,
-    },
-    header: {
+    container: { flex: 1, backgroundColor: colors.surface },
+    headerCard: {
         backgroundColor: colors.primary,
         paddingVertical: spacing.md,
         paddingHorizontal: spacing.md,
+        marginBottom: spacing.md,
+        ...shadows.card,
     },
     headerTitle: {
         ...typography.h1,
@@ -277,37 +294,42 @@ const styles = StyleSheet.create({
     },
     headerSubtitle: {
         ...typography.body,
-        color: colors.surface,
+        color: colors.accent,
         marginTop: spacing.xs,
     },
-    scrollView: {
-        backgroundColor: colors.surface,
-        flex: 1,
-    },
-    contentContainer: {
-        paddingBottom: spacing.lg,
-    },
-    controls: {
-        paddingHorizontal: spacing.md,
-        paddingTop: spacing.md,
-    },
-    macroCard: {
+    scrollView: { flex: 1 },
+    contentContainer: { paddingBottom: spacing.lg },
+
+    // Shared section styles
+    sectionCard: {
         backgroundColor: colors.background,
         borderRadius: radii.md,
-        padding: spacing.md,
         marginBottom: spacing.md,
+        marginHorizontal: spacing.md,
         ...shadows.card,
     },
+    sectionHeader: {
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        borderTopLeftRadius: radii.md,
+        borderTopRightRadius: radii.md,
+    },
+    sectionHeaderText: {
+        ...typography.h2,
+        color: colors.accent,
+    },
+    sectionBody: {
+        padding: spacing.md,
+    },
+
+    // Input rows
     inputRow: {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: spacing.sm,
     },
-    inputLabel: {
-        flex: 1,
-        ...typography.button,
-        color: colors.textPrimary,
-    },
+    inputLabel: { flex: 1, ...typography.button, color: colors.textPrimary },
     input: {
         flex: 1,
         borderWidth: StyleSheet.hairlineWidth,
@@ -317,77 +339,44 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.xs,
         color: colors.textPrimary,
     },
-    allergySection: {
-        marginBottom: spacing.md,
-    },
-    allergyOptions: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        backgroundColor: colors.background,
-        borderRadius: radii.md,
-        padding: spacing.md,
-        marginBottom: spacing.md,
-        ...shadows.card,
-    },
+
+    // Allergy options
+    allergyOptions: { flexDirection: "row", flexWrap: "wrap" },
     switchContainer: {
         width: "50%",
         flexDirection: "row",
         alignItems: "center",
         paddingVertical: spacing.xs,
     },
-    switch: {
-        transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
-    },
+    switch: { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] },
     switchLabel: {
         ...typography.body,
         color: colors.textPrimary,
         marginLeft: spacing.xs,
     },
+
+    // Buttons & errors
     button: {
         backgroundColor: colors.accent,
         padding: spacing.sm,
         borderRadius: radii.sm,
         alignItems: "center",
         marginBottom: spacing.md,
+        marginHorizontal: spacing.md,
     },
-    buttonText: {
-        ...typography.button,
-        color: colors.surface,
-    },
+    buttonText: { ...typography.button, color: colors.surface },
     errorText: {
         ...typography.body,
         color: colors.error,
         textAlign: "center",
         marginBottom: spacing.md,
     },
-    resultSection: {
-        paddingHorizontal: spacing.md,
-        paddingTop: spacing.md,
-    },
-    sectionHeaderText: {
-        ...typography.h2,
-        color: colors.textPrimary,
-        marginBottom: spacing.sm,
-    },
-    comboCard: {
-        backgroundColor: colors.background,
-        borderRadius: radii.md,
-        padding: spacing.md,
-        marginBottom: spacing.sm,
-        ...shadows.card,
-    },
+
+    // Result cards
     comboText: {
         ...typography.body,
         color: colors.textPrimary,
-    },
-    totalsCard: {
-        marginTop: spacing.md,
-    },
-    totalsContainer: {
-        backgroundColor: colors.background,
-        borderRadius: radii.md,
-        padding: spacing.md,
-        ...shadows.card,
+        paddingVertical: spacing.xs,
     },
     totalsText: {
         ...typography.body,

@@ -157,12 +157,12 @@ const styles = StyleSheet.create({
         padding: spacing.md,
     },
     cardWrapper: {
-        marginHorizontal: 0,
-        marginBottom: spacing.xs,
+        marginVertical: spacing.xs,
+        marginHorizontal: spacing.md,
         borderRadius: radii.md,
         overflow: "hidden",
         ...shadows.card,
-        width: width,
+        width: width - spacing.xl,
     },
     hallImage: {
         width: width,

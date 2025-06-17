@@ -32,8 +32,16 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                     if not isinstance(dish, dict):
                         continue
 
+                    # Get raw data from dish
                     name: str = dish.get("name", "Unnamed Dish")
                     nutrition: Dict = dish.get("nutrition", {})
+                    raw_allergens = dish.get("allergens", "")
+
+                    # Coerce into a list of trimmed allergen names
+                    if isinstance(raw_allergens, str):
+                        allergens = [a.strip() for a in raw_allergens.split(",") if a.strip()]
+                    else:
+                        allergens = []
 
                     # Build the input text for embedding generation
                     text: str = f"{name}: {nutrition}"
@@ -53,6 +61,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                                 "meal": meal_name,
                                 "category": category,
                                 **nutrition,
+                                "allergens": allergens,
                             },
                         }
                     )

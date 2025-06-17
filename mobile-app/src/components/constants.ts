@@ -68,3 +68,16 @@ export const SECTION_DEFINITIONS: {
             /Fountain Drinks|Juice|Milk|Coffee & Tea|Beverage/.test(n),
     },
 ];
+
+export const ALLERGENS = [
+    "Eggs",
+    "Fish",
+    "Milk",
+    "Peanuts",
+    "Pork",
+    "Sesame Seed",
+    "Shellfish",
+    "Soy",
+    "Tree Nuts",
+    "Wheat",
+];

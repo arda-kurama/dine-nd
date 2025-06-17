@@ -9,9 +9,11 @@ import {
     Alert,
     ActivityIndicator,
     StyleSheet,
+    Switch,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
+import { ALLERGENS } from "../components/constants";
 import type { RootStackParamList } from "../components/types";
 import {
     colors,
@@ -21,7 +23,7 @@ import {
     shadows,
 } from "../components/themes";
 
-// Define props type for this screen screen
+// Define props type for this screen
 type Props = NativeStackScreenProps<RootStackParamList, "PlatePlanner">;
 
 // Response shape from the planning API
@@ -40,10 +42,6 @@ interface ApiResponse {
     };
 }
 
-/**
- * PlatePlanner allows users to set macro targets and
- * generates a plate suggestion based on available items.
- */
 export default function PlatePlanner({ route }: Props) {
     const { hallName, mealPeriod } = route.params;
 
@@ -52,6 +50,7 @@ export default function PlatePlanner({ route }: Props) {
     const [proteinTarget, setProteinTarget] = useState<string>("");
     const [carbTarget, setCarbTarget] = useState<string>("");
     const [fatTarget, setFatTarget] = useState<string>("");
+    const [avoidedAllergies, setAvoidedAllergies] = useState<string[]>([]);
 
     // Loading, result, and error states
     const [loading, setLoading] = useState<boolean>(false);
@@ -66,20 +65,12 @@ export default function PlatePlanner({ route }: Props) {
         ["Fat", fatTarget, setFatTarget],
     ];
 
-    /**
-     * Handles the Plan Plate button press:
-     * - Validates numeric input
-     * - Sends POST to API
-     * - Sets result or error
-     */
     async function onPlanPlatePress() {
-        // Parse inputs
         const cals = calorieTarget ? parseInt(calorieTarget, 10) : undefined;
         const prot = proteinTarget ? parseInt(proteinTarget, 10) : undefined;
         const carbs = carbTarget ? parseInt(carbTarget, 10) : undefined;
         const fat = fatTarget ? parseInt(fatTarget, 10) : undefined;
 
-        // Validate numbers
         if (
             (cals !== undefined && isNaN(cals)) ||
             (prot !== undefined && isNaN(prot)) ||
@@ -112,6 +103,7 @@ export default function PlatePlanner({ route }: Props) {
                 proteinTarget: prot,
                 carbTarget: carbs,
                 fatTarget: fat,
+                avoidAllergies: avoidedAllergies,
             };
             const response = await fetch(
                 "https://uycl10fz1j.execute-api.us-east-2.amazonaws.com/dev/plan-plate",
@@ -134,31 +126,83 @@ export default function PlatePlanner({ route }: Props) {
         }
     }
 
-    // Main page render
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                {/* Header title only */}
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>{hallName}</Text>
-                    <Text style={styles.headerSubtitle}>{mealPeriod}</Text>
-                </View>
+            {/* Fixed Header */}
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>{hallName}</Text>
+                <Text style={styles.headerSubtitle}>{mealPeriod}</Text>
+            </View>
 
-                {/* Input controls */}
+            {/* Scrollable Content */}
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.contentContainer}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.controls}>
-                    {macroFields.map(([label, value, setter]) => (
-                        <View key={label} style={styles.inputRow}>
-                            <Text style={styles.inputLabel}>{label}</Text>
-                            <TextInput
-                                style={styles.input}
-                                keyboardType="numeric"
-                                placeholder="--"
-                                placeholderTextColor={colors.textSecondary}
-                                value={value}
-                                onChangeText={setter}
-                            />
+                    <Text style={styles.sectionHeaderText}>
+                        Set Macro Targets
+                    </Text>
+                    <View style={styles.macroCard}>
+                        {macroFields.map(([label, value, setter]) => (
+                            <View key={label} style={styles.inputRow}>
+                                <Text style={styles.inputLabel}>{label}</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    keyboardType="numeric"
+                                    placeholder="--"
+                                    placeholderTextColor={colors.textSecondary}
+                                    value={value}
+                                    onChangeText={setter}
+                                />
+                            </View>
+                        ))}
+                    </View>
+
+                    <View style={styles.allergySection}>
+                        <Text style={styles.sectionHeaderText}>
+                            Avoid Allergens
+                        </Text>
+                        <View style={styles.allergyOptions}>
+                            {ALLERGENS.map((allergy) => {
+                                const isOn = avoidedAllergies.includes(allergy);
+                                return (
+                                    <View
+                                        key={allergy}
+                                        style={styles.switchContainer}
+                                    >
+                                        <Switch
+                                            value={isOn}
+                                            onValueChange={(val) =>
+                                                setAvoidedAllergies((prev) =>
+                                                    val
+                                                        ? [...prev, allergy]
+                                                        : prev.filter(
+                                                              (a) =>
+                                                                  a !== allergy
+                                                          )
+                                                )
+                                            }
+                                            trackColor={{
+                                                true: colors.primary,
+                                                false: colors.surface,
+                                            }}
+                                            thumbColor={
+                                                isOn
+                                                    ? colors.accent
+                                                    : colors.background
+                                            }
+                                            style={styles.switch}
+                                        />
+                                        <Text style={styles.switchLabel}>
+                                            {allergy}
+                                        </Text>
+                                    </View>
+                                );
+                            })}
                         </View>
-                    ))}
+                    </View>
 
                     <TouchableOpacity
                         style={styles.button}
@@ -175,18 +219,14 @@ export default function PlatePlanner({ route }: Props) {
                     {error && <Text style={styles.errorText}>{error}</Text>}
                 </View>
 
-                {/* Results: simplified cards */}
                 {result && (
                     <View style={styles.resultSection}>
                         <Text style={styles.sectionHeaderText}>Your Plate</Text>
-
                         {result.items.map((item, idx) => {
-                            // Split and format returned items from API
                             const raw = `${item.category}|${item.name}`;
                             const parts = raw.split("|");
                             const displayCategory = parts[3];
                             const displayName = parts[4];
-
                             return (
                                 <View key={idx} style={styles.comboCard}>
                                     <Text style={styles.comboText}>
@@ -195,8 +235,6 @@ export default function PlatePlanner({ route }: Props) {
                                 </View>
                             );
                         })}
-
-                        {/* Totals card */}
                         <View style={styles.totalsCard}>
                             <Text style={styles.sectionHeaderText}>
                                 Total Macros
@@ -228,22 +266,37 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.surface,
     },
-
     header: {
-        padding: spacing.md,
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.md,
     },
     headerTitle: {
         ...typography.h1,
-        color: colors.textPrimary,
+        color: colors.surface,
     },
     headerSubtitle: {
         ...typography.body,
-        color: colors.textSecondary,
+        color: colors.surface,
         marginTop: spacing.xs,
     },
-
+    scrollView: {
+        backgroundColor: colors.surface,
+        flex: 1,
+    },
+    contentContainer: {
+        paddingBottom: spacing.lg,
+    },
     controls: {
+        paddingHorizontal: spacing.md,
+        paddingTop: spacing.md,
+    },
+    macroCard: {
+        backgroundColor: colors.background,
+        borderRadius: radii.md,
         padding: spacing.md,
+        marginBottom: spacing.md,
+        ...shadows.card,
     },
     inputRow: {
         flexDirection: "row",
@@ -264,13 +317,38 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.xs,
         color: colors.textPrimary,
     },
-
+    allergySection: {
+        marginBottom: spacing.md,
+    },
+    allergyOptions: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        backgroundColor: colors.background,
+        borderRadius: radii.md,
+        padding: spacing.md,
+        marginBottom: spacing.md,
+        ...shadows.card,
+    },
+    switchContainer: {
+        width: "50%",
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: spacing.xs,
+    },
+    switch: {
+        transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+    },
+    switchLabel: {
+        ...typography.body,
+        color: colors.textPrimary,
+        marginLeft: spacing.xs,
+    },
     button: {
         backgroundColor: colors.accent,
         padding: spacing.sm,
         borderRadius: radii.sm,
         alignItems: "center",
-        marginTop: spacing.sm,
+        marginBottom: spacing.md,
     },
     buttonText: {
         ...typography.button,
@@ -280,12 +358,11 @@ const styles = StyleSheet.create({
         ...typography.body,
         color: colors.error,
         textAlign: "center",
-        marginTop: spacing.sm,
+        marginBottom: spacing.md,
     },
-
-    // Results styling
     resultSection: {
-        padding: spacing.md,
+        paddingHorizontal: spacing.md,
+        paddingTop: spacing.md,
     },
     sectionHeaderText: {
         ...typography.h2,
@@ -303,7 +380,6 @@ const styles = StyleSheet.create({
         ...typography.body,
         color: colors.textPrimary,
     },
-
     totalsCard: {
         marginTop: spacing.md,
     },

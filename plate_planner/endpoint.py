@@ -43,6 +43,9 @@ def plan_plate():
     carbs = data.get("carbTarget")
     fat = data.get("fatTarget")
 
+    # Allergies to avoid (list of strings)
+    avoid: list[str] = data.get("avoidAllergies", [])
+
     # 1) Embed query
     query_parts = [f"{meal} at {hall}"]
     if protein:
@@ -64,13 +67,18 @@ def plan_plate():
     resp = index.query(vector=user_vec, top_k=15, filter={"hall": hall, "meal": meal})
 
     # Make matches JSON‑serialisable
-    matches = []
+    matches: list[dict] = []
     for m in resp.get("matches", []):
+        meta = getattr(m, "metadata", {}) or {}
+        item_allergens = meta.get("allergens", [])  # now a list[str]
+        # Skip any item that has at least one avoided allergen
+        if any(a in item_allergens for a in avoid):
+            continue
         matches.append({
             "id": getattr(m, "id", None),
             "score": getattr(m, "score", None),
             "values": getattr(m, "values", getattr(m, "vector", None)),
-            **(getattr(m, "metadata", {}) or {}),
+            **meta,
         })
 
     # 3) Prompt GPT for plate suggestion (strict JSON)
@@ -80,6 +88,9 @@ def plan_plate():
     }
     prompt_lines = [
         "You are a meal-planning assistant. Given these items:",
+        # Defense-in-depth: remind GPT to avoid these
+        f"Do NOT include any items that contain these allergens: {', '.join(avoid)}.",
+        "\nGiven these items:",
         json.dumps(matches, indent=2),
         "\nTargets:",
     ]

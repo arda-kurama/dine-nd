@@ -319,21 +319,11 @@ export default function PlatePlanner({ route }: Props) {
                                 </Text>
                             </View>
                             <View style={styles.sectionBody}>
-                                {result.items.map((item, idx) => {
-                                    const raw = `${item.category}|${item.name}`;
-                                    const parts = raw.split("|");
-                                    const displayCategory = parts[3];
-                                    const displayName = parts[4];
-                                    return (
-                                        <Text
-                                            key={idx}
-                                            style={styles.comboText}
-                                        >
-                                            {displayCategory} {"->"}{" "}
-                                            {displayName}
-                                        </Text>
-                                    );
-                                })}
+                                {result.items.map((item, idx) => (
+                                    <Text key={idx} style={styles.comboText}>
+                                        {item.name} {"->"} {item.servings}
+                                    </Text>
+                                ))}
                             </View>
                         </View>
                         <View style={styles.sectionCard}>

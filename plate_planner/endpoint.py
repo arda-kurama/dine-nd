@@ -169,8 +169,32 @@ def plan_plate():
     }
     prompt_lines = [
         "You are a meal-planning assistant.",
-        f"Do NOT include any items that contain these allergens: {', '.join(avoid)}.",
-        f"Include *only* items from these sections: {', '.join(sections)}.",
+        
+        # Lock item names to metadata
+        "Do NOT modify the 'name' field. Use the exact string provided—no changes, no notes, no parentheses, no rewording.",
+
+        # Reccomend well-balanced meals
+        "Build each plate to be both nutritionally balanced and enjoyable to eat.",
+        "Each plate should include 3-5 distinct items that together represent all five major food groups: protein, grains or starches, vegetables, fruits, and healthy fats.",
+        "Favor variety in color, texture, and flavor—combine crunchy and soft, savory and fresh, warm and cold items when appropriate.",
+
+        # Loosen macro targetting for better reccomendations
+        "Match calorie and macronutrient targets as closely as possible, ideally within ±10%. Never exceed targets by more than 15%.",
+        "Use at most 2 servings per item; prefer 1 serving unless more is clearly needed to meet a target.",
+
+        # Filtering logic
+        f"Exclude any items that contain these allergens: {', '.join(avoid)}.",
+        f"Include only items from these sections: {', '.join(sections)}.",
+
+        # Optimize selections
+        "Avoid redundant items—no duplicates or multiple items from the same category unless needed.",
+        "Favor items with higher nutrient density and fewer empty calories.",
+
+        # Fail gracefully
+        "If you cannot meet all macro targets using the available items, return the best approximation.",
+
+        # Candidate items list
+        "\nHere are your available food items:",
         json.dumps(matches, indent=2),
         "\nTargets:",
     ]
@@ -185,7 +209,7 @@ def plan_plate():
     
     # Enforce JSON-only response
     prompt_lines.append(
-        "\nProvide *only* JSON in this exact schema (no prose):\n" +
+        "\nReturn *only* JSON in this exact schema (no prose):\n" +
         json.dumps(schema, indent=2)
     )
 

@@ -138,7 +138,7 @@ def plan_plate():
 
     # 3) Retrieve similar items from Pinecone
     index = get_pinecone_index()
-    resp = index.query(vector=user_vec, top_k=15, filter={"hall": hall, "meal": meal})
+    resp = index.query(vector=user_vec, top_k=75, filter={"hall": hall, "meal": meal})
 
     # 4) Filter out unwanted items
     matches: list[dict] = []

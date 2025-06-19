@@ -245,35 +245,32 @@ def plan_plate():
     plan = json.loads(result_text)
 
     # 7) Build a lookup of true nutrition by BOTH id and dishName
-    nutrition_map: dict[str, dict[str, int]] = {}
+    nutrition_map: dict[str, dict[str,int]] = {}
     for m in matches:
-        full_id = m.get("id", "")
-        dish = full_id.split("|")[-1].strip()
+        full_id = m["id"]
+        dish    = full_id.split("|")[-1].strip()
+
+        # pull from the actual metadata keys, coercing to int
+        cal  = int(m.get("calories",              0))
+        prot = int(m.get("protein",               0))
+        carb = int(m.get("total_carbohydrate",    0))
+        fat  = int(m.get("total_fat",             0))
+
         nut = {
-            "calories": m.get("calories", 0),
-            "protein":  m.get("protein",  0),
-            "carbs":    m.get("carbs",    0),
-            "fat":      m.get("fat",      0),
+            "calories": cal,
+            "protein":  prot,
+            "carbs":    carb,
+            "fat":      fat,
         }
-        # map by full ID
         nutrition_map[full_id] = nut
-        # and also by plain dish name
         nutrition_map[dish]   = nut
 
     # 8) Recompute totals exactly
     true_totals = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
-    for item in plan.get("items", []):
-        name = item.get("name", "")
+    for item in plan["items"]:
+        name     = item["name"]
         servings = item.get("servings", 1)
-        # first try full ID, then dish name
-        nut = nutrition_map.get(name)
-        if nut is None and "|" in name:
-            # fallback: strip to dish only
-            dish = name.split("|")[-1].trim()
-            nut = nutrition_map.get(dish, {})
-        elif nut is None:
-            nut = {}
-        # sum true values
+        nut      = nutrition_map.get(name, {})
         for macro in true_totals:
             true_totals[macro] += nut.get(macro, 0) * servings
 

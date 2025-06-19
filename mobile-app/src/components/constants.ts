@@ -1,5 +1,5 @@
 import { Dimensions } from "react-native";
-import defs from "../../../section_defs.json";
+import sectionDefs from "./section_defs.json";
 
 export const GITHUB_PAGES_BASE = "https://arda-kurama.github.io/dine-nd";
 export const SUMMARY_URL = `${GITHUB_PAGES_BASE}/menu_summary.json`;
@@ -26,7 +26,7 @@ export const hallImages: Record<string, { uri: string }> = {
 
 // Group categories into sections by matching names using regexes
 
-export const SECTION_DEFINITIONS = defs.map(({ title, pattern }) => ({
+export const SECTION_DEFINITIONS = sectionDefs.map(({ title, pattern }) => ({
     title,
     match: (n: string) => new RegExp(pattern).test(n),
 }));

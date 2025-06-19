@@ -2,67 +2,88 @@ import json
 import os
 import sys
 import re
-from typing import Dict, List
 
+from typing import Dict, List
 from openai import OpenAI
 from pinecone import Pinecone
 
 # Config
 INDEX_NAME: str = "dine-nd-menu"
-BATCH_SIZE: int = 100  # Pinecone upsert request size limit safety margin
 
-# Compute repo-root from this script's folder (for CI/CD)
+# Batch size chosen to stay under Pinecone's limit
+BATCH_SIZE: int = 100
+
+# Path to the shared section definitions JSON
 BASE_DIR = os.path.dirname(__file__)
-ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
+JSON_PATH = os.path.join(BASE_DIR, "..", "mobile-app", "src", "components", "section_defs.json")
 
-# Load section_defs.json from <repo-root>/section_defs.json
-with open(os.path.join(ROOT_DIR, "section_defs.json"), "r") as fp:
+# Load and compile regex patterns for section classification
+with open(JSON_PATH) as fp:
     raw_defs = json.load(fp)
 SECTION_DEFS = [(d["title"], re.compile(d["pattern"])) for d in raw_defs]
 
 def classify_section(category: str) -> str:
+    """
+    Return the section title that matches the given category string.
+    Falls back to "Other" if no pattern matches.
+    """
     for title, rx in SECTION_DEFS:
         if rx.search(category):
             return title
     return "Other"
 
 def load_menu(path: str) -> Dict:
-    """Load and return the consolidated menu JSON from *path*."""
+    """
+    Read and parse the consolidated_menu.json at the given path.
+    Returns the JSON as a Python dict.
+    """
     with open(path, "r", encoding="utf-8") as fp:
         return json.load(fp)
 
 def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
-    """Convert *menu* into a list of Pinecone vector dictionaries."""
+    """
+    Convert the menu data into a list of Pinecone vector dictionaries.
+    Each vector entry contains:
+      - `id` (hall|meal|category|dish name)
+      - `values` (the embedding)
+      - `metadata` (hall, meal, category, nutrition, allergens, section)
+    """
 
     batch: List[Dict] = []
+
+    # Iterate through halls and meals
     for hall, hall_data in menu.get("dining_halls", {}).items():
         for meal_name, meal_data in hall_data.items():
+            # Skip meals not currently available
             if not meal_data.get("available", False):
-                continue  # Skip unavailable meals
+                continue
 
+            # Iterate through each category in this meal
             for category, dishes in meal_data.get("categories", {}).items():
+                # Ensure category entry is a list
                 if not isinstance(dishes, list):
                     continue
 
                 for dish in dishes:
+                    # Each dish should be a dict
                     if not isinstance(dish, dict):
                         continue
 
-                    # Get raw data from dish
+                    # Extract dish fields, with defaults
                     name: str = dish.get("name", "Unnamed Dish")
                     nutrition: Dict = dish.get("nutrition", {})
                     raw_allergens = dish.get("allergens", "")
 
-                    # Coerce into a list of trimmed allergen names
+                    # Normalize allergens into a list of strings
                     if isinstance(raw_allergens, str):
                         allergens = [a.strip() for a in raw_allergens.split(",") if a.strip()]
                     else:
                         allergens = []
 
-                    # Sort the categories into sections
+                    # Classify this category into a section title
                     section = classify_section(category)
 
-                    # Build the input text for embedding generation
+                    # Prepare the text for embedding
                     text: str = f"{name}: {nutrition}"
                     embedding_resp = client.embeddings.create(
                         model="text-embedding-3-small",
@@ -70,6 +91,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                     )
                     embedding = embedding_resp.data[0].embedding
 
+                    # Construct a unique doc ID
                     doc_id: str = f"{hall}|{meal_name}|{category}|{name}"
                     batch.append(
                         {
@@ -88,13 +110,20 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
     return batch
 
 def main() -> None:
+    """
+    Entry point:
+      - Parses CLI arguments.
+      - Initializes OpenAI & Pinecone clients.
+      - Clears existing index data.
+      - Builds new vectors and upserts them in batches.
+    """
     if len(sys.argv) != 2:
         sys.exit("Usage: python embed_menu.py <path-to-consolidated_menu.json>")
 
     menu_path: str = sys.argv[1]
     menu: Dict = load_menu(menu_path)
 
-    # Initialise clients
+    # Initialise API clients
     openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     pinecone_client = Pinecone(
         api_key=os.environ["PINECONE_API_KEY"],
@@ -102,16 +131,16 @@ def main() -> None:
     )
     index = pinecone_client.Index(INDEX_NAME)
 
-    # 1) CLEAR EXISTING DATA
+    # 1) Delete all existing vectors from the index
     print(f"Clearing all existing vectors from index '{INDEX_NAME}'…")
-    index.delete(delete_all=True)  # Completely wipes the index
+    index.delete(delete_all=True)
     print("Index cleared. Inserting fresh data…")
 
-    # 2) BUILD NEW VECTORS
+    # 2) Build the new vectors
     vectors: List[Dict] = build_vectors(menu, openai_client)
     print(f"Prepared {len(vectors)} vectors for upsert.")
 
-    # 3) UPSERT IN BATCHES
+    # 3) Upsert new vectors in batches
     for start in range(0, len(vectors), BATCH_SIZE):
         chunk = vectors[start : start + BATCH_SIZE]
         index.upsert(vectors=chunk)

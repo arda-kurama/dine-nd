@@ -1,8 +1,8 @@
-from functools import lru_cache
 import json
 import os
 import re
 
+from functools import lru_cache
 from urllib.request import urlopen
 from flask import Flask, jsonify, request
 from openai import OpenAI
@@ -13,12 +13,21 @@ app = Flask(__name__)
 # Lazy helpers – created only on first real request
 @lru_cache
 def get_openai() -> OpenAI:
+    """
+    Return a cached OpenAI client.
+    Raises an error if API key is not set.
+    """
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY is missing from environment")
     return OpenAI(api_key=api_key)
+
 @lru_cache
 def get_pinecone_index():
+    """
+    Return a cached Pinecone Index instance.
+    Expects PINECONE_API_KEY and PINECONE_ENV in env.
+    """
     key = os.getenv("PINECONE_API_KEY")
     env = os.getenv("PINECONE_ENV")
     if not key or not env:
@@ -26,37 +35,49 @@ def get_pinecone_index():
     pc = Pinecone(api_key=key, environment=env)
     return pc.Index("dine-nd-menu")
 
-# Format sectiond definitions
+# URL of the published menu JSON
 MENU_URL = os.getenv("MENU_URL", "https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
+
 def get_menu():
+    """
+    Fetch and parse the consolidated menu from MENU_URL.
+    """
     with urlopen(MENU_URL) as r:
         return json.load(r)
 
-# Compute repo-root from this script's folder (for CI/CD)
+# Load the same section definitions used by the mobile app
 BASE_DIR = os.path.dirname(__file__)
-ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
-
-# Load section_defs.json from <repo-root>/section_defs.json
-with open(os.path.join(ROOT_DIR, "section_defs.json"), "r") as fp:
+JSON_PATH = os.path.join(BASE_DIR, "..", "mobile-app", "src", "components", "section_defs.json")
+with open(JSON_PATH) as fp:
     raw_defs = json.load(fp)
 SECTION_DEFS = [(d["title"], re.compile(d["pattern"])) for d in raw_defs]
 
 # Routes
 @app.route("/", methods=["GET"])
 def health():
-    """Lightweight health check used by Zappa's deploy validation."""
+    """
+    Health check endpoint. Used by Zappa's deploy validation.
+    Returns 200 OK if the server is running.
+    """
     return jsonify(status="ok"), 200
 
 @app.route("/sections", methods=["GET"])
 def get_sections():
+    """
+    Given `hall` and `meal` query parameters, returns
+    the list of section titles that apply based on categories.
+    """
     hall = request.args.get("hall")
     meal = request.args.get("meal")
     MENU = get_menu()
+
+    # Safely extract category keys or return an error
     try:
         cats = MENU["dining_halls"][hall][meal]["categories"].keys()
     except KeyError:
         return jsonify(error="unknown hall or meal"), 400
 
+    # Return all sections that match at least one category name
     secs = [
       title
       for title, rx in SECTION_DEFS
@@ -66,24 +87,29 @@ def get_sections():
 
 @app.route("/plan-plate", methods=["POST"])
 def plan_plate():
-    """Generate a meal plan hitting macro targets using Pinecone + GPT-4."""
+    """
+    Generate a recommended plate hitting macro targets.
+    1) Build a textual query with hall/meal/macros.
+    2) Embed it with OpenAI.
+    3) Query Pinecone for top items.
+    4) Filter by allergies & selected sections.
+    5) Prompt GPT-4 for a strict-JSON meal plan.
+    """
     data = request.get_json(force=True)
     hall: str | None = data.get("hall")
     meal: str | None = data.get("meal")
 
-    # Macros (may be None)
+    # Extract macro targets (may be None)
     cal = data.get("calorieTarget")
     protein = data.get("proteinTarget")
     carbs = data.get("carbTarget")
     fat = data.get("fatTarget")
 
-    # Allergies to avoid (list of strings)
+    # Allergy and section filters to avoid
     avoid: list[str] = data.get("avoidAllergies", [])
-
-    # Section to filter by
     sections = data.get("sections", [])
 
-    # 1) Embed query
+    # 1) Build the query string
     query_parts = [f"{meal} at {hall}"]
     if protein:
         query_parts.append(f"{protein}g protein")
@@ -95,25 +121,30 @@ def plan_plate():
         query_parts.append(f"~{cal} kcal")
     query_text = ", ".join(query_parts)
 
+    # 2) Create embedding for the query
     openai = get_openai()
     emb = openai.embeddings.create(model="text-embedding-3-small", input=query_text)
     user_vec = emb.data[0].embedding
 
-    # 2) Retrieve menu items from Pinecone
+    # 3) Retrieve similar items from Pinecone
     index = get_pinecone_index()
     resp = index.query(vector=user_vec, top_k=15, filter={"hall": hall, "meal": meal})
 
-    # Make matches JSON‑serialisable
+    # 4) Filter out unwanted items
     matches: list[dict] = []
     for m in resp.get("matches", []):
         meta = getattr(m, "metadata", {}) or {}
-        item_allergens = meta.get("allergens", [])  # now a list[str]
-        # Skip any item that has at least one avoided allergen
+        item_allergens = meta.get("allergens", [])
+
+        # Skip if any avoided allergy is present
         if any(a in item_allergens for a in avoid):
             continue
-        # Skip any item that is not in the section selected
+
+        # Skip if not in selected section
         if sections and meta.get("section") not in sections:
             continue
+
+        # Collect the match data
         matches.append({
             "id": getattr(m, "id", None),
             "score": getattr(m, "score", None),
@@ -121,16 +152,14 @@ def plan_plate():
             **meta,
         })
 
-    # 3) Prompt GPT for plate suggestion (strict JSON)
+    # 5) Build a string-JSON prompt for GPT
     schema = {
         "items": [{"name": "...", "servings": 1}],
         "totals": {k: 0 for k in ("calories", "protein", "carbs", "fat")},
     }
     prompt_lines = [
-        "You are a meal-planning assistant. Given these items:",
-        # Defense-in-depth: remind GPT to avoid these
+        "You are a meal-planning assistant.",
         f"Do NOT include any items that contain these allergens: {', '.join(avoid)}.",
-        "\nGiven these items:",
         f"Include *only* items from these sections: {', '.join(sections)}.",
         json.dumps(matches, indent=2),
         "\nTargets:",
@@ -143,6 +172,8 @@ def plan_plate():
         prompt_lines.append(f"- Carbohydrates: {carbs}g")
     if fat:
         prompt_lines.append(f"- Fat: {fat}g")
+    
+    # Enforce JSON-only response
     prompt_lines.append(
         "\nProvide *only* JSON in this exact schema (no prose):\n" +
         json.dumps(schema, indent=2)
@@ -157,8 +188,9 @@ def plan_plate():
     )
     result_json = chat.choices[0].message.content.strip()
 
+    # Return GPT-s JSON directly
     return app.response_class(result_json, status=200, mimetype="application/json")
 
 if __name__ == "__main__":
-    # Local dev: python endpoint.py
+    # Local development server
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)

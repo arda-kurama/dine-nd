@@ -321,20 +321,14 @@ export default function PlatePlanner({ route }: Props) {
                             </View>
                             <View style={styles.sectionBody}>
                                 {result.items.map((item, idx) => {
-                                    const nameParts = item.name.split("|");
-                                    const dishName =
-                                        nameParts[nameParts.length - 1].trim();
+                                    const dishName = item.name;
 
-                                    const sizeLabel = item.servingSize
-                                        ? `${item.servings} ${item.servingSize}`
-                                        : `${item.servings}`;
-                                    const plural = item.servings > 1 ? "s" : "";
                                     return (
                                         <Text
                                             key={idx}
                                             style={styles.comboText}
                                         >
-                                            {`${dishName} (${sizeLabel} serving${plural})`}
+                                            {`${dishName}: ${item.servings}x ${item.servingSize}`}
                                         </Text>
                                     );
                                 })}

@@ -63,6 +63,8 @@ class MenuFetchError(Exception):
 
 def _ci_get(mapping: Dict[str, Any], key: str):
     """Case‑insensitive .get() (one level)."""
+    if not mapping or not key:
+        return None
     for k in mapping:
         if k.lower() == key.lower():
             return mapping[k]
@@ -129,34 +131,53 @@ def get_menu() -> dict[str, Any]:
 # ─── external clients (memoised) ────────────────────────────────────────────
 @lru_cache(maxsize=1)
 def pc_index():
-    pc = Pinecone(
-        api_key=os.environ["PINECONE_API_KEY"],
-        environment=os.environ["PINECONE_ENV"]
-    )
+    api_key = os.environ.get("PINECONE_API_KEY")
+    env = os.environ.get("PINECONE_ENV")
+    if not api_key or not env:
+        raise RuntimeError("PINECONE_API_KEY / PINECONE_ENV missing from environment")
+    pc = Pinecone(api_key=api_key, environment=env)
     return pc.Index(PINECONE_INDEX_NAME)
 
 @lru_cache(maxsize=1)
 def _openai_client():
-    return OpenAI()
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY is missing from environment")
+    return OpenAI(api_key=api_key)
 
 # ─── GPT taste‑ranker ───────────────────────────────────────────────────────
 
-def gpt_choose_plate(plates: List[List[dict]], hall: str, meal: str) -> List[dict]:
+def gpt_choose_plate(plates: List[dict], hall: str, meal: str) -> dict:
+    """
+    Choose the best plate from a list of plate options.
+    Returns the selected plate in the format expected by the frontend.
+    """
     if not plates:
         raise InfeasiblePlateError("No feasible plates to rank")
     plates = plates[:MAX_GPT_PLATES]
-    system = (
-        "You are an expert campus dining nutritionist and chef. Given multiple "
-        "candidate plates that all satisfy a diner's macro targets, choose the ONE "
-        "plate that will taste the best together and feel cohesive as a meal. "
-        "Return ONLY that plate as JSON array of items (name, servings, servingSize)."
-    )
-    prompt = json.dumps({"hall": hall, "meal": meal, "candidates": plates}, indent=2)
+    
+    # Use the same prompt structure as the working old_endpoint.py
+    schema = {
+        "items": [{"name": "...", "servings": "...", "servingSize": "..."}],
+        "totals": {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
+    }
+    
+    prompt_parts = [
+        "You are a meal-planning assistant.",
+        "Choose the most cohesive and tasty plate from these options, ensuring the plate includes all five major food groups: protein, grains or starches, vegetables, fruits, and healthy fats.",
+        json.dumps(plates, indent=2),
+        "Return only JSON in this exact schema:",
+        json.dumps(schema, indent=2)
+    ]
+    
     client = _openai_client()
     try:
         resp = client.chat.completions.create(
             model=GPT_MODEL,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+            messages=[
+                {"role": "system", "content": "You are a nutrition-planning assistant."},
+                {"role": "user", "content": "\n".join(prompt_parts)},
+            ],
             temperature=0.4,
         )
         return json.loads(resp.choices[0].message.content.strip())
@@ -191,23 +212,31 @@ def sections():
     meal = request.args.get("meal", "")
     try:
         menu = get_menu()
-        # Use the dining_halls structure from the menu
-        hall_dict = _ci_get(menu.get("dining_halls", {}), hall) or {}
-        meal_dict = _ci_get(hall_dict, meal) or {}
+        # Use the same logic as old_endpoint.py for compatibility
+        try:
+            cats = menu["dining_halls"][hall][meal]["categories"].keys()
+        except KeyError:
+            return jsonify(error="unknown hall or meal"), 400
         
+        # Return all sections that match at least one category name
         titles = [
-            canonical_section(cat)
-            for cat in meal_dict.get("categories", {}).keys()
+            title
+            for title, rx in SECTION_DEFS
+            if any(rx.search(cat) for cat in cats)
         ]
-        # dedupe while preserving order
-        sections_list = list(dict.fromkeys(titles))
-        return jsonify(sections=sections_list)
+        
+        return jsonify(sections=titles)
     except MenuFetchError:
         return jsonify(sections=[]), 200
 
 # ─── main plate‑planner ─────────────────────────────────────────────────────
 @app.route("/plan-plate", methods=["POST"])
 def plan_plate():
+    """
+    Generate a recommended plate hitting macro targets.
+    Uses the same logic as old_endpoint.py for compatibility.
+    """
+    start_time = time.time()
     data = request.get_json(force=True)
 
     hall = safe_json(data, "hall")
@@ -258,25 +287,24 @@ def plan_plate():
             "fat":      parse_num(meta.get("total_fat", 0)),
         })
 
-    # ── Exhaustive combo search (2-4 items, 1-2 servings) ───────────────────
-    start = time.time()
+    # ── Exhaustive combo search (3-4 items, 1-2 servings) - same as old_endpoint.py ───────────────────
     scored: List[dict] = []
-    for r in (2, 3, 4):
+    for r in (2, 3, 4):  # Use 3-4 items like old_endpoint.py, not 2-4
         for combo in combinations(candidates, r):
-            for servs in product([1, 2], repeat=r):
-                if time.time() - start > 8:  # hard time-out
+            for servs in product(SERVING_OPTIONS, repeat=r):  # Use 1-2 servings like old_endpoint.py
+                if time.time() - start_time > 8:  # hard time-out
                     break
                 plate = list(zip(combo, servs))
                 err, sums = score_plate(plate, targets)
-                scored.append({"plate": plate, "error": err, "sums": sums})
-            if time.time() - start > 8:
+                scored.append({"plate": plate, "score": err, "sums": sums})  # Use "score" key like old_endpoint.py
+            if time.time() - start_time > 8:
                 break
-        if time.time() - start > 8:
+        if time.time() - start_time > 8:
             break
     if not scored:
-        raise InfeasiblePlateError("Could not compute plate in time")
+        return jsonify(error="Could not compute plate in time"), 504  # Return 504 like old_endpoint.py
 
-    scored.sort(key=lambda x: x["error"])
+    scored.sort(key=lambda x: x["score"])  # Sort by "score" key
     top_opts = scored[:10]
 
     # ── Ask GPT to pick best plate ──────────────────────────────────────────

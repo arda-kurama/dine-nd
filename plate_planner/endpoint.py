@@ -199,7 +199,7 @@ def plan_plate():
     top_options = scored[:10]
 
     # Prompt GPT to pick from top options
-    schema = {"items": [{"name": "...", "servings": 1}],
+    schema = {"items": [{"name": "...", "servings": "...", "servingSize": "..."}],
               "totals": {k: 0 for k in targets}}
     options = [
         {"items": [{"name": itm['name'], "servings": serv, "servingSize": itm["servingSize"]} for itm, serv in opt['plate']],

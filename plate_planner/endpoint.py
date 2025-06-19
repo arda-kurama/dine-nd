@@ -158,17 +158,18 @@ def plan_plate():
     for m in resp.get("matches", []):
         meta = getattr(m, "metadata", {}) or {}
         item_allergens = [a.lower() for a in meta.get("allergens", [])]
-        
+
         # Skip if any avoided allergy is present
         if any(a.lower() in item_allergens for a in avoid):
             continue
 
         # Collect the match data
         matches.append({
+            **meta,
             "id": getattr(m, "id", None),
             "score": getattr(m, "score", None),
             "values": getattr(m, "values", getattr(m, "vector", None)),
-            **meta,
+            "allergens": item_allergens,
         })
 
     # 5) Build a string-JSON prompt for GPT

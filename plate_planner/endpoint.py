@@ -11,6 +11,7 @@ Provides:
 import json
 import os
 import re
+import time
 from functools import lru_cache
 from urllib.request import urlopen
 from itertools import combinations, product
@@ -131,6 +132,8 @@ def plan_plate():
     4) Filter by allergies & selected sections.
     5) Prompt GPT-4 for a strict-JSON meal plan.
     """
+    # start timer
+    start_time = time.time()
     data = request.get_json(force=True)
     hall: str | None = data.get("hall")
     meal: str | None = data.get("meal")
@@ -160,10 +163,10 @@ def plan_plate():
     f = {"hall": hall, "meal": meal}
     if sections: f["section"] = {"$in": sections}
     if avoid:    f["allergens"] = {"$nin": avoid}
-    resp = idx.query(vector=user_vec, top_k=50, filter=f, include_metadata=True)
+    resp = idx.query(vector=user_vec, top_k=25, filter=f, include_metadata=True)
 
     candidates = []
-    for m in resp.get("matches", []):
+    for m in resp.get("matches", [])[:20]:
         meta = m.metadata if hasattr(m, 'metadata') else m.get('metadata', {})
         dish = m.id.split("|")[-1].strip()
         candidates.append({
@@ -174,19 +177,27 @@ def plan_plate():
             "fat":      parse_num(meta.get("total_fat", 0)),
         })
 
-    # Generate combos with up to 3 servings per item
+    # Generate combos of 3-4 items with 1-2 servings each
     scored = []
-    for r in (3, 4, 5):
+    for r in (3, 4):
         for combo in combinations(candidates, r):
-            # assign 1, 2, or 3 servings each
-            for servs in product([1, 2, 3], repeat=r):
+            for servs in product([1, 2], repeat=r):
+                if time.time() - start_time > 8:
+                    break
                 plate = list(zip(combo, servs))
                 sc, sums = score_plate(plate, targets)
                 scored.append({"plate": plate, "score": sc, "sums": sums})
+            if time.time() - start_time > 8:
+                break
+        if time.time() - start_time > 8:
+            break
+    if not scored:
+        return jsonify(error="Could not compute plate in time"), 504
+
     scored.sort(key=lambda x: x['score'])
     top_options = scored[:10]
 
-    # Ask GPT to pick one tasty option
+    # Prompt GPT to pick from top options
     schema = {"items": [{"name": "...", "servings": 1}],
               "totals": {k: 0 for k in targets}}
     options = [
@@ -196,7 +207,7 @@ def plan_plate():
     ]
     prompt = [
         "You are a meal-planning assistant.",
-        "Choose the most cohesive and tasty plate from these options, each with items and exact macros.",
+        "Choose the most cohesive and tasty plate from these options, ensuring the plate includes all five major food groups: protein, grains or starches, vegetables, fruits, and healthy fats.",
         json.dumps(options, indent=2),
         "Return only JSON in this exact schema:",
         json.dumps(schema, indent=2)

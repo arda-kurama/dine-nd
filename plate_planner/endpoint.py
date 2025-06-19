@@ -45,6 +45,14 @@ def get_pinecone_index():
     pc = Pinecone(api_key=key, environment=env)
     return pc.Index("dine-nd-menu")
 
+def parse_num(x):
+    if isinstance(x, (int, float)):
+        return int(x)
+    if isinstance(x, str):
+        m = re.search(r"\d+", x)
+        return int(m.group()) if m else 0
+    return 0
+
 # URL of the published menu JSON
 MENU_URL = os.getenv("MENU_URL", "https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
 
@@ -250,27 +258,22 @@ def plan_plate():
         full_id = m["id"]
         dish    = full_id.split("|")[-1].strip()
 
-        # pull from the actual metadata keys, coercing to int
-        cal  = int(m.get("calories",              0))
-        prot = int(m.get("protein",               0))
-        carb = int(m.get("total_carbohydrate",    0))
-        fat  = int(m.get("total_fat",             0))
-
         nut = {
-            "calories": cal,
-            "protein":  prot,
-            "carbs":    carb,
-            "fat":      fat,
+            "calories": parse_num(m.get("calories", 0)),
+            "protein":  parse_num(m.get("protein", "0")),
+            "carbs":    parse_num(m.get("total_carbohydrate", "0")),
+            "fat":      parse_num(m.get("total_fat", "0")),
         }
         nutrition_map[full_id] = nut
         nutrition_map[dish]   = nut
 
     # 8) Recompute totals exactly
     true_totals = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
-    for item in plan["items"]:
-        name     = item["name"]
+    for item in plan.get("items", []):
+        name     = item.get("name", "")
         servings = item.get("servings", 1)
-        nut      = nutrition_map.get(name, {})
+        # lookup by full id or fallback to plain name
+        nut = nutrition_map.get(name) or nutrition_map.get(name.split("|")[-1].strip(), {})
         for macro in true_totals:
             true_totals[macro] += nut.get(macro, 0) * servings
 

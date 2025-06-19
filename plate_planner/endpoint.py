@@ -26,7 +26,7 @@ from flask import Flask, jsonify, request
 from werkzeug.exceptions import BadRequest
 
 # ─── config ──────────────────────────────────────────────────────────────────
-MENU_URL            = os.getenv("MENU_URL", "https://dine.nd.edu/api/combined-menu.json")
+MENU_URL            = os.getenv("MENU_URL", "https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "dine-nd-menu")
 GPT_MODEL           = os.getenv("GPT_MODEL", "gpt-4o-mini")
 MENU_TTL_SECONDS    = 3600  # 1 h cache

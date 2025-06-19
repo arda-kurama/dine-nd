@@ -1,3 +1,13 @@
+"""
+Embed menu items for DineND into a Pinecone vector index.
+
+This script:
+  1. Loads a consolidated menu JSON file.
+  2. Classifies each dish into a section using regex rules.
+  3. Generates text embeddings via OpenAI.
+  4. Upserts embeddings (and metadata) into a Pinecone index in batches.
+"""
+
 import json
 import os
 import sys

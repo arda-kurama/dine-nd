@@ -1,3 +1,13 @@
+"""
+Module for merging and summarizing scraped dining-hall meal data.
+
+This file provides two core functions:
+- consolidate_meal_data: Combine a list of MealData objects into a single
+  consolidated menu dict with a timestamp, date, and per-hall/meal/category structure.
+- create_lightweight_summary: Produce a simplified summary mapping each
+  dining hall to the count of meals available.
+"""
+
 from datetime import datetime
 from typing import List, Dict, Any
 from .constants import DATE_STR, HALLS, MealData

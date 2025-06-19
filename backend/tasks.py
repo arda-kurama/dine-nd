@@ -1,3 +1,13 @@
+"""
+Browser setup and task discovery for DineND scraping.
+
+Contains:
+- make_chrome: Configure and return a headless Selenium Chrome WebDriver.
+- get_meal_links_for_hall: Fetch available meal names for a hall on DATE_STR.
+- discover_tasks_resilient: Iterate over all halls to build the full list of
+  (hall, meal) scraping tasks.
+"""
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service

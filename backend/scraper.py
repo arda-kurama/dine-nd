@@ -1,3 +1,14 @@
+"""
+Headless-browser scraper for a single dining-hall meal.
+
+Defines scrape_one_memory_optimized(hall, meal) which:
+1. Launches a headless Chrome session.
+2. Navigates to the given hall’s menu on DATE_STR.
+3. Opens each item’s nutrition label and parses it.
+4. Groups FoodItems by category.
+5. Returns a MealData tuple (hall, meal, availability, categories).
+"""
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC

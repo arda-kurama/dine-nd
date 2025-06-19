@@ -1,3 +1,13 @@
+"""
+Flask API for DineND meal planning.
+
+Provides:
+  - Health check at `/`
+  - Section listing for a given hall & meal at `/sections`
+  - Plate planning (macro-based) at `/plan-plate`
+    which queries Pinecone and GPT-4 for a balanced meal.
+"""
+
 import json
 import os
 import re

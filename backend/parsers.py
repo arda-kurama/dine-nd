@@ -1,3 +1,13 @@
+"""
+Utilities to parse nutrition-label HTML into structured Python data.
+
+Provides:
+- extract_numeric_value: Extract an integer from strings like "123 kcal" or "45mg".
+- parse_nutrition_html: Given the raw HTML of a nutrition panel, return a dict
+  containing name, serving_size, detailed nutrition, daily values,
+  ingredients, and allergens.
+"""
+
 import re
 from typing import Dict, Any
 from bs4 import BeautifulSoup

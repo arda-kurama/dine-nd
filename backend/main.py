@@ -1,3 +1,14 @@
+"""
+Command-line entry point to scrape, consolidate, and summarize DineND menus.
+
+Workflow:
+1. Discover available hall/meal pairs.
+2. Scrape each in parallel with memory optimization.
+3. Write out consolidated_menu.json and menu_summary.json.
+4. Print a completion report (counts, file sizes, errors).
+Exits with code 1 if no meals are found.
+"""
+
 import json
 import sys
 import os

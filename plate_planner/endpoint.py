@@ -171,6 +171,7 @@ def plan_plate():
         dish = m.id.split("|")[-1].strip()
         candidates.append({
             "name": dish,
+            "servingSize": meta.get("serving_size", ""),
             "calories": parse_num(meta.get("calories", 0)),
             "protein":  parse_num(meta.get("protein", 0)),
             "carbs":    parse_num(meta.get("total_carbohydrate", 0)),
@@ -201,7 +202,7 @@ def plan_plate():
     schema = {"items": [{"name": "...", "servings": 1}],
               "totals": {k: 0 for k in targets}}
     options = [
-        {"items": [{"name": itm['name'], "servings": serv} for itm, serv in opt['plate']],
+        {"items": [{"name": itm['name'], "servings": serv, "servingSize": itm["servingSize"]} for itm, serv in opt['plate']],
          "totals": opt['sums']}
         for opt in top_options
     ]

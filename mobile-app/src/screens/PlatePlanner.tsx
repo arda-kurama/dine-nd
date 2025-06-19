@@ -34,6 +34,7 @@ interface ApiItem {
     category: string;
     name: string;
     servings: number;
+    servingSize: string;
 }
 interface ApiResponse {
     items: ApiItem[];
@@ -323,16 +324,17 @@ export default function PlatePlanner({ route }: Props) {
                                     const nameParts = item.name.split("|");
                                     const dishName =
                                         nameParts[nameParts.length - 1].trim();
+
+                                    const sizeLabel = item.servingSize
+                                        ? `${item.servings} ${item.servingSize}`
+                                        : `${item.servings}`;
+                                    const plural = item.servings > 1 ? "s" : "";
                                     return (
                                         <Text
                                             key={idx}
                                             style={styles.comboText}
                                         >
-                                            {`${dishName} (${
-                                                item.servings
-                                            } serving${
-                                                item.servings > 1 ? "s" : ""
-                                            })`}
+                                            {`${dishName} (${sizeLabel} serving${plural})`}
                                         </Text>
                                     );
                                 })}

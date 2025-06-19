@@ -13,7 +13,7 @@ import os
 import re
 from functools import lru_cache
 from urllib.request import urlopen
-from itertools import combinations
+from itertools import combinations, product
 
 from flask import Flask, jsonify, request
 from openai import OpenAI
@@ -81,9 +81,10 @@ def score_plate(plate, targets):
     Returns (score, sums_dict).
     """
     sums = {k: 0 for k in targets}
-    for item in plate:
+    # plate: list of tuples (item_dict, servings)
+    for item, serv in plate:
         for k in sums:
-            sums[k] += item.get(k, 0)
+            sums[k] += item.get(k, 0) * serv
     score = sum((sums[k] - targets[k])**2 for k in targets if targets[k] is not None)
     return score, sums
 
@@ -135,83 +136,68 @@ def plan_plate():
     meal: str | None = data.get("meal")
 
     # Extract macro targets (may be None)
-    cal = data.get("calorieTarget")
-    protein = data.get("proteinTarget")
-    carbs = data.get("carbTarget")
-    fat = data.get("fatTarget")
-
-    # Allergy and section filters to avoid
-    avoid: list[str] = [a.lower() for a in data.get("avoidAllergies", [])]
+    targets = {
+        "calories": data.get("calorieTarget") or 0,
+        "protein":  data.get("proteinTarget") or 0,
+        "carbs":    data.get("carbTarget") or 0,
+        "fat":      data.get("fatTarget") or 0,
+    }
+    avoid = [a.lower() for a in data.get("avoidAllergies", [])]
     sections = data.get("sections", [])
 
-    # 1) Build the query string
-    query_parts = [f"{meal} at {hall}"]
-    if protein:
-        query_parts.append(f"{protein}g protein")
-    if carbs:
-        query_parts.append(f"{carbs}g carbs")
-    if fat:
-        query_parts.append(f"{fat}g fat")
-    if cal:
-        query_parts.append(f"~{cal} kcal")
-    query_text = ", ".join(query_parts)
-
-    # 2) Create embedding for the query
+    # Embed user query
+    parts = [f"{meal} at {hall}"]
+    for k, label in [("protein", "g protein"), ("carbs", "g carbs"), ("fat", "g fat"), ("calories", "kcal")]:
+        if targets[k]: parts.append(f"{targets[k]}{label}")
+    query_text = ", ".join(parts)
     openai = get_openai()
-    emb = openai.embeddings.create(model="text-embedding-3-small", input=query_text)
-    user_vec = emb.data[0].embedding
+    user_vec = openai.embeddings.create(
+        model="text-embedding-3-small", input=query_text
+    ).data[0].embedding
 
-    # Query Pinecone for raw candidates
-    index = get_pinecone_index()
-    pinecone_filter = {"hall": hall, "meal": meal}
-    if sections:
-        pinecone_filter["section"] = {"$in": sections}
-    if avoid:
-        pinecone_filter["allergens"] = {"$nin": avoid}
-    resp = index.query(
-        vector=user_vec,
-        top_k=100,
-        filter=pinecone_filter,
-        include_metadata=True,
-    )
+    # Fetch candidates
+    idx = get_pinecone_index()
+    f = {"hall": hall, "meal": meal}
+    if sections: f["section"] = {"$in": sections}
+    if avoid:    f["allergens"] = {"$nin": avoid}
+    resp = idx.query(vector=user_vec, top_k=50, filter=f, include_metadata=True)
 
-    # Build candidate list with true macros
     candidates = []
-    for match in resp.get("matches", []):
-        meta = match.metadata if hasattr(match, 'metadata') else match.get('metadata', {})
-        dish = match.id.split('|')[-1].strip()
+    for m in resp.get("matches", []):
+        meta = m.metadata if hasattr(m, 'metadata') else m.get('metadata', {})
+        dish = m.id.split("|")[-1].strip()
         candidates.append({
             "name": dish,
-            "calories": parse_num(meta.get('calories', 0)),
-            "protein": parse_num(meta.get('protein', 0)),
-            "carbs": parse_num(meta.get('total_carbohydrate', 0)),
-            "fat": parse_num(meta.get('total_fat', 0)),
+            "calories": parse_num(meta.get("calories", 0)),
+            "protein":  parse_num(meta.get("protein", 0)),
+            "carbs":    parse_num(meta.get("total_carbohydrate", 0)),
+            "fat":      parse_num(meta.get("total_fat", 0)),
         })
 
-    targets = {
-        "calories": cal or 0,
-        "protein": protein or 0,
-        "carbs": carbs or 0,
-        "fat": fat or 0,
-    }
-
-    # Generate all combos of 3-5 items, score them, and pick top 10
+    # Generate combos with up to 3 servings per item
     scored = []
-    for r in (3,4,5):
+    for r in (3, 4, 5):
         for combo in combinations(candidates, r):
-            score, sums = score_plate(combo, targets)
-            scored.append({"items": combo, "sums": sums, "score": score})
+            # assign 1, 2, or 3 servings each
+            for servs in product([1, 2, 3], repeat=r):
+                plate = list(zip(combo, servs))
+                sc, sums = score_plate(plate, targets)
+                scored.append({"plate": plate, "score": sc, "sums": sums})
     scored.sort(key=lambda x: x['score'])
     top_options = scored[:10]
 
-    # Ask GPT to pick the most tasty among them
+    # Ask GPT to pick one tasty option
     schema = {"items": [{"name": "...", "servings": 1}],
               "totals": {k: 0 for k in targets}}
+    options = [
+        {"items": [{"name": itm['name'], "servings": serv} for itm, serv in opt['plate']],
+         "totals": opt['sums']}
+        for opt in top_options
+    ]
     prompt = [
         "You are a meal-planning assistant.",
-        "From the following list of plate options (each with items and true macro totals), choose the one that looks most cohesive and tasty.",
-        "Do NOT invent new items or modify names; pick one of the options exactly.",
-        json.dumps([{"items":opt['items'], "totals": opt['sums']} for opt in top_options], indent=2),
+        "Choose the most cohesive and tasty plate from these options, each with items and exact macros.",
+        json.dumps(options, indent=2),
         "Return only JSON in this exact schema:",
         json.dumps(schema, indent=2)
     ]
@@ -224,11 +210,11 @@ def plan_plate():
     )
     try:
         choice = json.loads(chat.choices[0].message.content)
-    except Exception:
+    except:
         return jsonify(error="Invalid JSON from GPT"), 500
 
-    # Return GPT's selection (names, servings) with accurate totals
     return jsonify(choice), 200
+
 
 if __name__ == "__main__":
     # Local development server

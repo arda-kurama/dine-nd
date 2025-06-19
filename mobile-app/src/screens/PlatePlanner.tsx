@@ -320,7 +320,6 @@ export default function PlatePlanner({ route }: Props) {
                             </View>
                             <View style={styles.sectionBody}>
                                 {result.items.map((item, idx) => {
-                                    // If the name has pipes, take the last segment
                                     const nameParts = item.name.split("|");
                                     const dishName =
                                         nameParts[nameParts.length - 1].trim();
@@ -329,11 +328,11 @@ export default function PlatePlanner({ route }: Props) {
                                             key={idx}
                                             style={styles.comboText}
                                         >
-                                            {`${dishName} -> ${
+                                            {`${dishName} (${
                                                 item.servings
                                             } serving${
                                                 item.servings > 1 ? "s" : ""
-                                            }`}
+                                            })`}
                                         </Text>
                                     );
                                 })}

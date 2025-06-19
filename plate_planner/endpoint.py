@@ -44,7 +44,7 @@ def get_pinecone_index():
 _MENU_CACHE = None
 _MENU_CACHE_TIME = 0
 _MENU_TTL = 3600  # seconds
-MENU_URL = os.getenv("MENU_URL")
+MENU_URL = os.getenv("MENU_URL", "https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
 
 def get_menu():
     """Fetch and cache the consolidated menu JSON with TTL."""
@@ -121,29 +121,28 @@ def optimize_plate(menu_items, targets, weights):
                  for (i,s),v in x.items() if v.solution_value()>0.5 ]
     return brute_force_plate(menu_items, targets, weights)
 
-
 def gpt_refine(plate, targets, hall, meal):
-    schema = {
-        'items':[{'name':'...','servings':0,'servingSize':''}],
-        'totals':{k:0 for k in targets}
-    }
-    prompt = [
-        'You are a nutrition assistant.',
-        f'Hall: {hall}, Meal: {meal}',
-        f'Macro targets: {json.dumps(targets)}',
-        f'Initial plate: {json.dumps(plate)}',
-        'Return JSON matching schema:', json.dumps(schema)
-    ]
+    """Refine candidate plates by selecting the most cohesive and tasty one using GPT."""
+    # Build a list of candidate options wrapped as JSON strings
+    options = json.dumps(plate)
+    prompt = (
+        f"You are a meal planner. Given these candidate plates: {options}"
+        f"Macro targets: {json.dumps(targets)}"
+        f"Dining hall: {hall}, Meal: {meal}"
+        "Please select the single most cohesive and tasty plate that meets the macro targets, "
+        "and return it in JSON format as a list of items with fields name, servings, servingSize, and macros."
+    )
     oa = get_openai()
     chat = oa.chat.completions.create(
         model='gpt-4.1-nano',
-        messages=[{'role':'user','content':'\n'.join(prompt)}],
+        messages=[{'role':'user','content':prompt}],
         temperature=0.7
     )
     try:
         return json.loads(chat.choices[0].message.content)
-    except:
-        return {'items':plate, 'totals':{k:None for k in targets}}
+    except Exception:
+        # fallback to original plate list
+        return plate
 
 # --- Routes ---
 @app.route('/', methods=['GET'])
@@ -206,26 +205,25 @@ def plan_plate():
             }
         })
 
-    # Fallback regex
-    if not candidates:
-        for item in MENU:
-            for title,rx in SECTION_DEFS:
-                if title in sections and rx.search(item['name']):
-                    if not set(a.lower() for a in item.get('allergens',[])) & set(avoid):
-                        candidates.append({
-                            'name': item['name'],
-                            'serving_size': item.get('serving_size',''),
-                            'macros':{
-                                'calories': parse_num(item.get('calories',0)),
-                                'protein':  parse_num(item.get('protein',0)),
-                                'carbs':    parse_num(item.get('total_carbohydrate',0)),
-                                'fat':      parse_num(item.get('total_fat',0)),
-                            }
-                        })
-
+    # --- solve & refine ---
     plate = optimize_plate(candidates, targets, weights={'calories':1,'protein':1,'carbs':1,'fat':1})
     choice = gpt_refine(plate, targets, hall, meal)
-    return jsonify(choice),200
+
+    # Compute totals in the old format
+    totals = {k: 0 for k in targets}
+    for item in choice:
+        # find original macros for this item
+        for c in candidates:
+            if c['name'] == item.get('name') and c['serving_size'] == item.get('servingSize'):
+                for k in totals:
+                    totals[k] += c['macros'].get(k, 0) * item.get('servings', 1)
+                break
+
+    # Return exactly the old schema: { items: [...], totals: {...} }
+    return jsonify({
+        'items': choice,
+        'totals': totals
+    }), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.getenv('PORT',5000)), debug=True)

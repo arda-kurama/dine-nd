@@ -319,11 +319,24 @@ export default function PlatePlanner({ route }: Props) {
                                 </Text>
                             </View>
                             <View style={styles.sectionBody}>
-                                {result.items.map((item, idx) => (
-                                    <Text key={idx} style={styles.comboText}>
-                                        {item.name} {"->"} {item.servings}
-                                    </Text>
-                                ))}
+                                {result.items.map((item, idx) => {
+                                    // If the name has pipes, take the last segment
+                                    const nameParts = item.name.split("|");
+                                    const dishName =
+                                        nameParts[nameParts.length - 1].trim();
+                                    return (
+                                        <Text
+                                            key={idx}
+                                            style={styles.comboText}
+                                        >
+                                            {`${dishName} -> ${
+                                                item.servings
+                                            } serving${
+                                                item.servings > 1 ? "s" : ""
+                                            }`}
+                                        </Text>
+                                    );
+                                })}
                             </View>
                         </View>
                         <View style={styles.sectionCard}>

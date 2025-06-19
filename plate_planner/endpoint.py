@@ -1,20 +1,14 @@
-"""endpoint.py – DineND meal‑planning back‑end
-
-Flask API that powers the Plate‑Planner feature in the mobile app.
-––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+'''
+Flask API that powers the Plate-Planner feature in the mobile app.
 Key points
 ==========
 * Cached menu JSON with graceful fallback to stale copy.
-* Fractional servings (0.5–2.0), 2‑4 unique dishes, ±10 % macro tolerance.
-* Exhaustive plate enumeration → GPT taste‑ranker.
-* Global JSON error handler (400 / 422 / 503 / 500) – no raw tracebacks.
-* Case‑insensitive hall / meal / section matching.
+* Fractional servings (0.5-2.0), 2-4 unique dishes, ±10 % macro tolerance.
+* Exhaustive plate enumeration → GPT taste-ranker.
+* Global JSON error handler (400 / 422 / 503 / 500) - no raw tracebacks.
+* Case-insensitive hall / meal / section matching.
 * Same I/O schema as the legacy endpoint: `{ items, totals }`.
-
-Env vars: OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENV, PINECONE_INDEX_NAME,
-MENU_URL (optional), PORT (optional).
-"""
-from __future__ import annotations
+'''
 
 import json
 import logging
@@ -22,7 +16,6 @@ import os
 import time
 import re
 import urllib.error
-import datetime
 from functools import lru_cache
 from itertools import combinations, product
 from typing import Any, Dict, List
@@ -33,54 +26,38 @@ from werkzeug.exceptions import BadRequest
 from openai import OpenAI
 from pinecone import Pinecone
 
-# ─── config ──────────────────────────────────────────────────────────────────
+# Configuration
 MENU_URL            = os.getenv("MENU_URL", "https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "dine-nd-menu")
 GPT_MODEL           = os.getenv("GPT_MODEL", "gpt-4.1-nano")
-MENU_TTL_SECONDS    = 3600  # 1 h cache
+MENU_TTL_SECONDS    = 3600
 SERVING_OPTIONS     = [0.5, 1.0, 1.5, 2.0]
 MAX_GPT_PLATES      = 30
-TOLERANCE           = 0.10  # ±10 %
+TOLERANCE           = 0.10
 
-# Load the same section definitions used by the mobile app
+# Load section mapping definitions
 BASE_DIR = os.path.dirname(__file__)
 JSON_PATH = os.path.join(BASE_DIR, "..", "mobile-app", "src", "components", "section_defs.json")
 with open(JSON_PATH) as fp:
     raw_defs = json.load(fp)
 SECTION_DEFS = [(d["title"], re.compile(d["pattern"])) for d in raw_defs]
 
+# Logging setup
 logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
-# ─── custom errors ───────────────────────────────────────────────────────────
+# Custom exceptions
 class InfeasiblePlateError(Exception):
     """Raised when no plate satisfies all constraints."""
 
 class MenuFetchError(Exception):
     """Raised when live menu fetch fails and no cache exists."""
 
-# ─── tiny helpers ────────────────────────────────────────────────────────────
-
-def _ci_get(mapping: Dict[str, Any], key: str):
-    """Case‑insensitive .get() (one level)."""
-    if not mapping or not key:
-        return None
-    for k in mapping:
-        if k.lower() == key.lower():
-            return mapping[k]
-    return None
-
+# Utility functions
 def safe_json(data: Dict[str, Any], key: str, default: Any | None = None):
     if key not in data and default is None:
         raise BadRequest(f"Missing required field: {key}")
     return data.get(key, default)
-
-def canonical_section(category: str) -> str:
-    """Return the canonical cuisine title for a raw category name."""
-    for title, rx in SECTION_DEFS:
-        if rx.search(category):
-            return title
-    return category  # no match ⇒ fall back to the raw string
 
 def parse_num(x: Any) -> int:
     """
@@ -96,9 +73,8 @@ def parse_num(x: Any) -> int:
 
 def score_plate(plate, targets):
     """
-    plate: list of tuples  (item_dict, servings)
-    targets: dict[str, int] – macro goals
-    Returns  (squared_error, macro_sums)
+    Compute squared error between plate nutrition totals and target macros.
+    Returns (error_score, macro_sums)
     """
     totals = {k: 0 for k in targets}
     for itm, serv in plate:
@@ -107,7 +83,7 @@ def score_plate(plate, targets):
     err = sum((totals[k] - targets[k]) ** 2 for k in targets if targets[k])
     return err, totals
 
-# ─── cached menu fetch ──────────────────────────────────────────────────────
+# Cached menu fetch
 _MENU_CACHE: dict[str, Any] | None = None
 _MENU_CACHE_TIME: float = 0.0
 
@@ -128,7 +104,7 @@ def get_menu() -> dict[str, Any]:
             return _MENU_CACHE
         raise MenuFetchError("Dining menu temporarily unavailable. Try again later.") from e
 
-# ─── external clients (memoised) ────────────────────────────────────────────
+# Memoized external clients
 @lru_cache(maxsize=1)
 def pc_index():
     api_key = os.environ.get("PINECONE_API_KEY")
@@ -145,29 +121,36 @@ def _openai_client():
         raise RuntimeError("OPENAI_API_KEY is missing from environment")
     return OpenAI(api_key=api_key)
 
-# ─── GPT taste‑ranker ───────────────────────────────────────────────────────
-
-def gpt_choose_plate(plates: List[dict], hall: str, meal: str) -> dict:
+# GPT-Based plate selector
+def gpt_choose_plate(plates: List[dict]) -> dict:
     """
-    Choose the best plate from a list of plate options.
-    Returns the selected plate in the format expected by the frontend.
+    Ask GPT to choose the most cohesive and tasty plate from a list.
+    Returns selected plate JSON.
     """
     if not plates:
         raise InfeasiblePlateError("No feasible plates to rank")
     plates = plates[:MAX_GPT_PLATES]
-    
-    # Use the same prompt structure as the working old_endpoint.py
+
+    # Define output schema 
     schema = {
         "items": [{"name": "...", "servings": "...", "servingSize": "..."}],
         "totals": {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
     }
-    
+
+    # Build prompt 
     prompt_parts = [
-        "You are a meal-planning assistant.",
-        "Choose the most cohesive and tasty plate from these options, ensuring the plate includes all five major food groups: protein, grains or starches, vegetables, fruits, and healthy fats.",
+        "You are a meal-planning assistant for a college dining hall.",
+        "Choose the most cohesive and tasty plate from these EXACT options provided below.",
+        "CRITICAL: You must ONLY use the exact item names provided in the options. Do NOT add explanatory text, suggestions, or modify item names in any way.",
+        "Select ONE complete plate from the options that best balances taste and nutrition.",
+        "",
+        "Available plates:",
         json.dumps(plates, indent=2),
-        "Return only JSON in this exact schema:",
-        json.dumps(schema, indent=2)
+        "",
+        "Return ONLY valid JSON in this exact schema with NO additional text or explanations:",
+        json.dumps(schema, indent=2),
+        "",
+        "Use only the exact item names from the plates above. Do not modify or add to them."
     ]
     
     client = _openai_client()
@@ -175,17 +158,17 @@ def gpt_choose_plate(plates: List[dict], hall: str, meal: str) -> dict:
         resp = client.chat.completions.create(
             model=GPT_MODEL,
             messages=[
-                {"role": "system", "content": "You are a nutrition-planning assistant."},
+                {"role": "system", "content": "You are a precise JSON-only nutrition assistant. Return only valid JSON with exact item names from provided options."},
                 {"role": "user", "content": "\n".join(prompt_parts)},
             ],
-            temperature=0.4,
+            temperature=0.1,
         )
         return json.loads(resp.choices[0].message.content.strip())
     except Exception as e:
         logging.warning("GPT JSON parse failed (%s) – defaulting to first plate", e)
         return plates[0]
 
-# ─── error‑handling ─────────────────────────────────────────────────────────
+# Global error handler
 @app.errorhandler(Exception)
 def handle_any(err):
     logging.exception("Unhandled error")
@@ -193,19 +176,18 @@ def handle_any(err):
         return jsonify(error=str(err)), 400
     if isinstance(err, (MenuFetchError, requests.RequestException, urllib.error.URLError)):
         return jsonify(error="Dining menu temporarily unavailable. Try again later."), 503
-    # Updated exception handling for openai and pinecone
     if isinstance(err, Exception) and ('openai' in str(type(err)).lower() or 'pinecone' in str(type(err)).lower()):
         return jsonify(error="Upstream service error, please retry."), 503
     if isinstance(err, InfeasiblePlateError):
         return jsonify(error=str(err)), 422
     return jsonify(error="Internal server error"), 500
 
-# ─── healthcheck ────────────────────────────────────────────────────────────
+# Healthcheck endpoint
 @app.route("/")
 def root():
     return "OK", 200
 
-# ─── sections picker ────────────────────────────────────────────────────────
+# Section picker endpoint
 @app.route("/sections")
 def sections():
     hall = request.args.get("hall", "")
@@ -229,16 +211,16 @@ def sections():
     except MenuFetchError:
         return jsonify(sections=[]), 200
 
-# ─── main plate‑planner ─────────────────────────────────────────────────────
+# Plate planner endpoint
 @app.route("/plan-plate", methods=["POST"])
 def plan_plate():
     """
-    Generate a recommended plate hitting macro targets.
-    Uses the same logic as old_endpoint.py for compatibility.
+    Main plate generation endpoint. Uses Pinecone + GPT to return optimal plate.
     """
     start_time = time.time()
     data = request.get_json(force=True)
 
+    # Extract fields from user input
     hall = safe_json(data, "hall")
     meal = safe_json(data, "meal")
     targets = {
@@ -250,7 +232,7 @@ def plan_plate():
     sections = [s.strip() for s in data.get("sections", [])]
     avoid    = [a.lower() for a in data.get("avoidAllergies", [])]
 
-    # ── Build embedding query text ──────────────────────────────────────────
+    # Build embedding input 
     parts = [f"{meal} at {hall}"]
     for k, lbl in [("protein", "g protein"), ("carbs", "g carbs"),
                    ("fat", "g fat"), ("calories", "kcal")]:
@@ -258,7 +240,7 @@ def plan_plate():
             parts.append(f"{targets[k]}{lbl}")
     query_text = ", ".join(parts)
 
-    # ── Embed & Pinecone search ─────────────────────────────────────────────
+    # Pinecone vector search 
     vec = _openai_client().embeddings.create(
         model="text-embedding-3-small",
         input=query_text
@@ -274,6 +256,7 @@ def plan_plate():
         vector=vec, top_k=25, filter=filt, include_metadata=True
     ).get("matches", [])[:20]
 
+    # Format candidate dishes
     candidates = []
     for m in matches:
         meta = getattr(m, "metadata", m.get("metadata", {}))
@@ -287,11 +270,11 @@ def plan_plate():
             "fat":      parse_num(meta.get("total_fat", 0)),
         })
 
-    # ── Exhaustive combo search (3-4 items, 1-2 servings) - same as old_endpoint.py ───────────────────
+    # Brute-force through all plate combos
     scored: List[dict] = []
-    for r in (2, 3, 4):  # Use 3-4 items like old_endpoint.py, not 2-4
+    for r in (2, 3, 4):
         for combo in combinations(candidates, r):
-            for servs in product(SERVING_OPTIONS, repeat=r):  # Use 1-2 servings like old_endpoint.py
+            for servs in product(SERVING_OPTIONS, repeat=r):
                 if time.time() - start_time > 8:  # hard time-out
                     break
                 plate = list(zip(combo, servs))
@@ -307,7 +290,7 @@ def plan_plate():
     scored.sort(key=lambda x: x["score"])  # Sort by "score" key
     top_opts = scored[:10]
 
-    # ── Ask GPT to pick best plate ──────────────────────────────────────────
+    # Ask GPT to select most appealing plate
     opts_payload = [
         {"items": [{"name": itm["name"], "servings": s, "servingSize": itm["servingSize"]}
                    for itm, s in opt["plate"]],
@@ -318,6 +301,6 @@ def plan_plate():
 
     return jsonify(choice), 200
 
+# Local development server
 if __name__ == "__main__":
-    # Local development server
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)

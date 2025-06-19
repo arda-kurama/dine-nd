@@ -297,7 +297,7 @@ def plan_plate():
          "totals": opt["sums"]}
         for opt in top_opts
     ]
-    choice = gpt_choose_plate(opts_payload, hall, meal)
+    choice = gpt_choose_plate(opts_payload)
 
     return jsonify(choice), 200
 

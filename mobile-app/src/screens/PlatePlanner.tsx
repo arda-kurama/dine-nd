@@ -145,8 +145,14 @@ export default function PlatePlanner({ route }: Props) {
                 }
             );
             if (!response.ok) {
-                const text = await response.text();
-                throw new Error(`Error ${response.status}: ${text}`);
+                let errMsg = `Unexpected error (HTTP ${response.status})`;
+                try {
+                    const json = await response.json();
+                    if (json?.error) errMsg = json.error;
+                } catch {
+                    // fallback already set
+                }
+                throw new Error(errMsg);
             }
             const json: ApiResponse = await response.json();
             setResult(json);

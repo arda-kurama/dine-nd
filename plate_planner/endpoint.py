@@ -189,6 +189,8 @@ def plan_plate():
         
         # Lock item names to metadata
         "Do NOT modify the 'name' field. Use the exact string provided—no changes, no notes, no parentheses, no rewording.",
+        "Calculate each macro total by summing the 'calories', 'protein', 'carbs', and 'fat' fields of each item in the JSON array exactly. Do not estimate—use only the provided numeric fields.",
+        "Make sure you do all arithmitic carefully, correctly, and accurately.",
 
         # Reccomend well-balanced meals
         "Build each plate to be both nutritionally balanced and enjoyable to eat.",
@@ -237,10 +239,37 @@ def plan_plate():
             {"role": "user", "content": "\n".join(prompt_lines)},
         ],
     )
-    result_json = chat.choices[0].message.content.strip()
 
-    # Return GPT-s JSON directly
-    return app.response_class(result_json, status=200, mimetype="application/json")
+    # 6) Parse GPT’s JSON plan
+    result_text = chat.choices[0].message.content.strip()
+    plan = json.loads(result_text)
+
+    # 7) Build a lookup of true nutrition per dish (from our filtered matches)
+    nutrition_map = {
+        # Strip off the hall|meal|section prefix, keep only the dish name
+        m["id"].split("|")[-1].strip(): {
+            "calories": m.get("calories", 0),
+            "protein":  m.get("protein",  0),
+            "carbs":    m.get("carbs",    0),
+            "fat":      m.get("fat",      0),
+        }
+        for m in matches
+    }
+
+    # 8) Recompute totals exactly
+    true_totals = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
+    for item in plan.get("items", []):
+        name = item["name"]
+        servings = item.get("servings", 1)
+        nut = nutrition_map.get(name, {})
+        for macro in true_totals:
+            true_totals[macro] += nut.get(macro, 0) * servings
+
+    # 9) Overwrite the potentially GPT‐hallucinated totals with our exact sums
+    plan["totals"] = true_totals
+
+    # 10) Return the corrected plan
+    return jsonify(plan), 200
 
 if __name__ == "__main__":
     # Local development server

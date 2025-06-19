@@ -280,7 +280,9 @@ def plan_plate():
     # 9) Overwrite the potentially GPT‐hallucinated totals with our exact sums
     plan["totals"] = true_totals
 
-    # 10) Return the corrected plan
+    # 10) For debugging: include the raw Pinecone matches
+    debug_match = matches[0] if matches else None
+    plan["debug_match"] = debug_match
     return jsonify(plan), 200
 
 if __name__ == "__main__":

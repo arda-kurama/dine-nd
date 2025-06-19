@@ -5,7 +5,7 @@ Flask API that powers the Plate‑Planner feature in the mobile app.
 Key points
 ==========
 * Cached menu JSON with graceful fallback to stale copy.
-* Fractional servings (0.5–2.0), 2‑4 unique dishes, ±10 % macro tolerance.
+* Fractional servings (0.5–2.0), 2‑4 unique dishes, ±10 % macro tolerance.
 * Exhaustive plate enumeration → GPT taste‑ranker.
 * Global JSON error handler (400 / 422 / 503 / 500) – no raw tracebacks.
 * Case‑insensitive hall / meal / section matching.
@@ -16,23 +16,31 @@ MENU_URL (optional), PORT (optional).
 """
 from __future__ import annotations
 
-import json, logging, os, time, re, urllib.error
+import json
+import logging
+import os
+import time
+import re
+import urllib.error
+import datetime
 from functools import lru_cache
-from itertools import combinations
+from itertools import combinations, product
 from typing import Any, Dict, List
 
-import openai, pinecone, requests
+import requests
 from flask import Flask, jsonify, request
 from werkzeug.exceptions import BadRequest
+from openai import OpenAI
+from pinecone import Pinecone
 
 # ─── config ──────────────────────────────────────────────────────────────────
 MENU_URL            = os.getenv("MENU_URL", "https://arda-kurama.github.io/dine-nd/consolidated_menu.json")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "dine-nd-menu")
-GPT_MODEL           = os.getenv("GPT_MODEL", "gpt-4o-mini")
-MENU_TTL_SECONDS    = 3600  # 1 h cache
+GPT_MODEL           = os.getenv("GPT_MODEL", "gpt-4.1-nano")
+MENU_TTL_SECONDS    = 3600  # 1 h cache
 SERVING_OPTIONS     = [0.5, 1.0, 1.5, 2.0]
 MAX_GPT_PLATES      = 30
-TOLERANCE           = 0.10  # ±10 %
+TOLERANCE           = 0.10  # ±10 %
 
 # Load the same section definitions used by the mobile app
 BASE_DIR = os.path.dirname(__file__)
@@ -72,6 +80,31 @@ def canonical_section(category: str) -> str:
             return title
     return category  # no match ⇒ fall back to the raw string
 
+def parse_num(x: Any) -> int:
+    """
+    Convert nutrition strings ('78g', '120 kcal', etc.) or numbers to int.
+    Falls back to 0 if it cannot parse.
+    """
+    if isinstance(x, (int, float)):
+        return int(x)
+    if isinstance(x, str):
+        m = re.search(r"\d+", x)
+        return int(m.group()) if m else 0
+    return 0
+
+def score_plate(plate, targets):
+    """
+    plate: list of tuples  (item_dict, servings)
+    targets: dict[str, int] – macro goals
+    Returns  (squared_error, macro_sums)
+    """
+    totals = {k: 0 for k in targets}
+    for itm, serv in plate:
+        for k in totals:
+            totals[k] += itm.get(k, 0) * serv
+    err = sum((totals[k] - targets[k]) ** 2 for k in targets if targets[k])
+    return err, totals
+
 # ─── cached menu fetch ──────────────────────────────────────────────────────
 _MENU_CACHE: dict[str, Any] | None = None
 _MENU_CACHE_TIME: float = 0.0
@@ -96,12 +129,15 @@ def get_menu() -> dict[str, Any]:
 # ─── external clients (memoised) ────────────────────────────────────────────
 @lru_cache(maxsize=1)
 def pc_index():
-    pinecone.init(api_key=os.environ.get("PINECONE_API_KEY"), environment=os.getenv("PINECONE_ENV", "us-east1-gcp"))
-    return pinecone.Index(PINECONE_INDEX_NAME)
+    pc = Pinecone(
+        api_key=os.environ["PINECONE_API_KEY"],
+        environment=os.environ["PINECONE_ENV"]
+    )
+    return pc.Index(PINECONE_INDEX_NAME)
 
 @lru_cache(maxsize=1)
 def _openai_client():
-    return openai.OpenAI()
+    return OpenAI()
 
 # ─── GPT taste‑ranker ───────────────────────────────────────────────────────
 
@@ -124,37 +160,9 @@ def gpt_choose_plate(plates: List[List[dict]], hall: str, meal: str) -> List[dic
             temperature=0.4,
         )
         return json.loads(resp.choices[0].message.content.strip())
-    except (openai.OpenAIError, json.JSONDecodeError) as e:
+    except Exception as e:
         logging.warning("GPT JSON parse failed (%s) – defaulting to first plate", e)
         return plates[0]
-
-# ─── brute‑force enumeration ────────────────────────────────────────────────
-
-def generate_feasible_plates(items: List[dict], targets: Dict[str, float]) -> List[List[dict]]:
-    enriched: List[dict] = []
-    for idx, itm in enumerate(items):
-        for s in SERVING_OPTIONS:
-            enriched.append({
-                **itm,
-                "servings": s,
-                "_uid": idx,
-                "macros_adj": {k: v * s for k, v in itm["macros"].items()},
-            })
-
-    feasible: List[List[dict]] = []
-    for r in range(2, 5):
-        for combo in combinations(enriched, r):
-            if len({c["_uid"] for c in combo}) < r:
-                continue  # duplicate dish
-            totals = {k: sum(c["macros_adj"].get(k, 0.0) for c in combo) for k in targets}
-            if all((1 - TOLERANCE) * targets[k] <= totals[k] <= (1 + TOLERANCE) * targets[k] for k in targets):
-                feasible.append([
-                    {"name": c["name"], "servings": c["servings"], "servingSize": c["serving_size"]}
-                    for c in combo
-                ])
-                if len(feasible) >= MAX_GPT_PLATES:
-                    return feasible
-    return feasible
 
 # ─── error‑handling ─────────────────────────────────────────────────────────
 @app.errorhandler(Exception)
@@ -164,7 +172,8 @@ def handle_any(err):
         return jsonify(error=str(err)), 400
     if isinstance(err, (MenuFetchError, requests.RequestException, urllib.error.URLError)):
         return jsonify(error="Dining menu temporarily unavailable. Try again later."), 503
-    if isinstance(err, (openai.OpenAIError, pinecone.core.client.exceptions.ApiException)):
+    # Updated exception handling for openai and pinecone
+    if isinstance(err, Exception) and ('openai' in str(type(err)).lower() or 'pinecone' in str(type(err)).lower()):
         return jsonify(error="Upstream service error, please retry."), 503
     if isinstance(err, InfeasiblePlateError):
         return jsonify(error=str(err)), 422
@@ -182,18 +191,19 @@ def sections():
     meal = request.args.get("meal", "")
     try:
         menu = get_menu()
+        # Use the dining_halls structure from the menu
+        hall_dict = _ci_get(menu.get("dining_halls", {}), hall) or {}
+        meal_dict = _ci_get(hall_dict, meal) or {}
+        
+        titles = [
+            canonical_section(cat)
+            for cat in meal_dict.get("categories", {}).keys()
+        ]
+        # dedupe while preserving order
+        sections_list = list(dict.fromkeys(titles))
+        return jsonify(sections=sections_list)
     except MenuFetchError:
         return jsonify(sections=[]), 200
-    hall_dict = _ci_get(menu, hall) or {}
-    meal_dict = _ci_get(hall_dict, meal) or {}
-
-    titles = [
-        canonical_section(cat)
-        for cat in meal_dict.keys()
-    ]
-    # dedupe while preserving order
-    sections_list = list(dict.fromkeys(titles))
-    return jsonify(sections=sections_list)
 
 # ─── main plate‑planner ─────────────────────────────────────────────────────
 @app.route("/plan-plate", methods=["POST"])
@@ -203,68 +213,83 @@ def plan_plate():
     hall = safe_json(data, "hall")
     meal = safe_json(data, "meal")
     targets = {
-        "calories": safe_json(data, "calorieTarget", 0.0),
-        "protein":  safe_json(data, "proteinTarget", 0.0),
-        "carbs":    safe_json(data, "carbTarget", 0.0),
-        "fat":      safe_json(data, "fatTarget", 0.0),
+        "calories": safe_json(data, "calorieTarget", 0),
+        "protein":  safe_json(data, "proteinTarget", 0),
+        "carbs":    safe_json(data, "carbTarget", 0),
+        "fat":      safe_json(data, "fatTarget", 0),
     }
-    sections = [s.strip().lower() for s in data.get("sections", [])]  # optional cuisine filter
-    avoid    = [a.lower() for a in data.get("avoidAllergies", [])]    # optional allergy filter
+    sections = [s.strip() for s in data.get("sections", [])]
+    avoid    = [a.lower() for a in data.get("avoidAllergies", [])]
 
-    # ── pull & validate menu slice ───────────────────────────────────────────
-    menu = get_menu()
-    hall_dict = _ci_get(menu, hall)
-    if hall_dict is None:
-        raise BadRequest(f"Unknown dining hall: {hall}")
-    meal_dict = _ci_get(hall_dict, meal)
-    if meal_dict is None:
-        raise BadRequest(f"Unknown meal: {meal}")
+    # ── Build embedding query text ──────────────────────────────────────────
+    parts = [f"{meal} at {hall}"]
+    for k, lbl in [("protein", "g protein"), ("carbs", "g carbs"),
+                   ("fat", "g fat"), ("calories", "kcal")]:
+        if targets[k]:
+            parts.append(f"{targets[k]}{lbl}")
+    query_text = ", ".join(parts)
 
-    # Flatten menu items: { section: [ {name, macros, serving_size, allergens}, … ] }
-    items: List[dict] = []
-    for sec_name, dishes in meal_dict.items():
-        canon = canonical_section(sec_name)
-        if sections and canon.lower() not in sections:
-            continue
-        for d in dishes:
-            # skip if any avoided allergen appears in this dish’s allergen list
-            if avoid and any(a in (d.get("allergens") or "").lower() for a in avoid):
-                continue
-            items.append(
-                {
-                    "name": d["name"],
-                    "macros": {
-                        "calories": d.get("calories", 0.0),
-                        "protein":  d.get("protein", 0.0),
-                        "carbs":    d.get("carbs", 0.0),
-                        "fat":      d.get("fat", 0.0),
-                    },
-                    "serving_size": d.get("serving_size", ""),
-                }
-            )
+    # ── Embed & Pinecone search ─────────────────────────────────────────────
+    vec = _openai_client().embeddings.create(
+        model="text-embedding-3-small",
+        input=query_text
+    ).data[0].embedding
 
-    if not items:
-        raise InfeasiblePlateError("No dishes match your section / allergy filters.")
+    filt: dict[str, Any] = {"hall": hall, "meal": meal}
+    if sections:
+        filt["section"] = {"$in": sections}
+    if avoid:
+        filt["allergens"] = {"$nin": avoid}
 
-    # ── build & rank plates ─────────────────────────────────────────────────
-    plates = generate_feasible_plates(items, targets)
-    if not plates:
-        raise InfeasiblePlateError("Could not find any plate within ±10 % of targets.")
+    matches = pc_index().query(
+        vector=vec, top_k=25, filter=filt, include_metadata=True
+    ).get("matches", [])[:20]
 
-    choice = gpt_choose_plate(plates, hall, meal)
+    candidates = []
+    for m in matches:
+        meta = getattr(m, "metadata", m.get("metadata", {}))
+        dish = m.id.split("|")[-1].strip()
+        candidates.append({
+            "name": dish,
+            "servingSize": meta.get("serving_size", ""),
+            "calories": parse_num(meta.get("calories", 0)),
+            "protein":  parse_num(meta.get("protein", 0)),
+            "carbs":    parse_num(meta.get("total_carbohydrate", 0)),
+            "fat":      parse_num(meta.get("total_fat", 0)),
+        })
 
-    # compute totals for response
-    totals = {k: 0.0 for k in targets}
-    name_to_item = {(i["name"], i["serving_size"]): i for i in items}
-    for c in choice:
-        base = name_to_item.get((c["name"], c["servingSize"]), None)
-        if base:
-            for k in totals:
-                totals[k] += base["macros"][k] * c["servings"]
+    # ── Exhaustive combo search (2-4 items, 1-2 servings) ───────────────────
+    start = time.time()
+    scored: List[dict] = []
+    for r in (2, 3, 4):
+        for combo in combinations(candidates, r):
+            for servs in product([1, 2], repeat=r):
+                if time.time() - start > 8:  # hard time-out
+                    break
+                plate = list(zip(combo, servs))
+                err, sums = score_plate(plate, targets)
+                scored.append({"plate": plate, "error": err, "sums": sums})
+            if time.time() - start > 8:
+                break
+        if time.time() - start > 8:
+            break
+    if not scored:
+        raise InfeasiblePlateError("Could not compute plate in time")
 
-    return jsonify({"items": choice, "totals": totals}), 200
+    scored.sort(key=lambda x: x["error"])
+    top_opts = scored[:10]
+
+    # ── Ask GPT to pick best plate ──────────────────────────────────────────
+    opts_payload = [
+        {"items": [{"name": itm["name"], "servings": s, "servingSize": itm["servingSize"]}
+                   for itm, s in opt["plate"]],
+         "totals": opt["sums"]}
+        for opt in top_opts
+    ]
+    choice = gpt_choose_plate(opts_payload, hall, meal)
+
+    return jsonify(choice), 200
 
 if __name__ == "__main__":
     # Local development server
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
-

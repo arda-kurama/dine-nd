@@ -75,7 +75,7 @@ def parse_num(x):
 def brute_force_plate(menu_items, targets, weights, max_servings=2, max_dishes=4):
     best_score = float('inf')
     best = []
-    for r in range(1, max_dishes+1):
+    for r in range(2, max_dishes+1):
         for idxs in combinations(range(len(menu_items)), r):
             for servs in product(range(1, max_servings+1), repeat=r):
                 totals = {k:0.0 for k in targets}
@@ -94,18 +94,35 @@ def optimize_plate(menu_items, targets, weights):
     solver = pywraplp.Solver.CreateSolver(os.getenv('MIP_SOLVER','CBC_MIXED_INTEGER_PROGRAMMING'))
     if not solver:
         return brute_force_plate(menu_items, targets, weights)
+    
+    # Allow 0.5, 1.0, 1.5, 2.0 servings
+    max_servings = 2
+    serving_steps = int(max_servings * 2)
+    serving_options = [i/2 for i in range(1, serving_steps+1)]
 
     x = {}
     for i in range(len(menu_items)):
-        for s in (1,2):
+        for s in serving_options:
             x[(i,s)] = solver.IntVar(0,1,f'x_{i}_{s}')
+    
+    # Pick at most ONE serving size per item
+    for i in range(len(menu_items)):
+        solver.Add(sum(x[(i, s)] for s in serving_options) <= 1)
+    
+    total_items = sum(x[(i, s)] for i in range(len(menu_items)) for s in serving_options)
+    solver.Add(total_items >= 2)
+    solver.Add(total_items <= 4)
+
     total = {k:solver.NumVar(0,solver.infinity(),f'total_{k}') for k in targets}
     error = {k:solver.NumVar(0,solver.infinity(),f'err_{k}') for k in targets}
 
-    for k in targets:
+    for k, target in targets.items():
+        # Allow total[k] to be within ±10% of the target:
+        solver.Add(total[k] >= 0.9 * target)
+        solver.Add(total[k] <= 1.1 * target)
         solver.Add(
             sum(menu_items[i]['macros'].get(k,0)*s*x[(i,s)]
-                for i in range(len(menu_items)) for s in (1,2)) == total[k]
+                for i in range(len(menu_items)) for s in serving_options) == total[k]
         )
         solver.Add(error[k] >= total[k]-targets[k])
         solver.Add(error[k] >= targets[k]-total[k])

@@ -244,24 +244,36 @@ def plan_plate():
     result_text = chat.choices[0].message.content.strip()
     plan = json.loads(result_text)
 
-    # 7) Build a lookup of true nutrition per dish (from our filtered matches)
-    nutrition_map = {
-        # Strip off the hall|meal|section prefix, keep only the dish name
-        m["id"].split("|")[-1].strip(): {
+    # 7) Build a lookup of true nutrition by BOTH id and dishName
+    nutrition_map: dict[str, dict[str, int]] = {}
+    for m in matches:
+        full_id = m.get("id", "")
+        dish = full_id.split("|")[-1].strip()
+        nut = {
             "calories": m.get("calories", 0),
             "protein":  m.get("protein",  0),
             "carbs":    m.get("carbs",    0),
             "fat":      m.get("fat",      0),
         }
-        for m in matches
-    }
+        # map by full ID
+        nutrition_map[full_id] = nut
+        # and also by plain dish name
+        nutrition_map[dish]   = nut
 
     # 8) Recompute totals exactly
     true_totals = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
     for item in plan.get("items", []):
-        name = item["name"]
+        name = item.get("name", "")
         servings = item.get("servings", 1)
-        nut = nutrition_map.get(name, {})
+        # first try full ID, then dish name
+        nut = nutrition_map.get(name)
+        if nut is None and "|" in name:
+            # fallback: strip to dish only
+            dish = name.split("|")[-1].trim()
+            nut = nutrition_map.get(dish, {})
+        elif nut is None:
+            nut = {}
+        # sum true values
         for macro in true_totals:
             true_totals[macro] += nut.get(macro, 0) * servings
 

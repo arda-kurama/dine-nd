@@ -149,7 +149,7 @@ def plan_plate():
 
     resp = index.query(
         vector=user_vec,
-        top_k=75,
+        top_k=50,
         filter=pinecone_filter,
     )
 
@@ -161,10 +161,6 @@ def plan_plate():
 
         # Skip if any avoided allergy is present
         if any(a in item_allergens for a in avoid):
-            continue
-
-        # Skip if not in selected section
-        if sections and meta.get("section") not in sections:
             continue
 
         # Collect the match data

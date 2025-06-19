@@ -119,6 +119,9 @@ def plan_plate():
     avoid: list[str] = data.get("avoidAllergies", [])
     sections = data.get("sections", [])
 
+    # lowercase everything for consistent substring matching
+    avoid_lower = [a.lower() for a in avoid]
+
     # 1) Build the query string
     query_parts = [f"{meal} at {hall}"]
     if protein:
@@ -143,7 +146,9 @@ def plan_plate():
     "meal": meal,
     }
 
-    # If a section is selected, include it in the filter
+    # If a section or allergen is selected, include it in the filter
+    if avoid_lower:
+        pinecone_filter["allergens"] = {"$nin": avoid_lower}
     if sections:
         pinecone_filter["section"] = {"$in": sections}
 
@@ -157,6 +162,8 @@ def plan_plate():
     matches: list[dict] = []
     for m in resp.get("matches", []):
         meta = getattr(m, "metadata", {}) or {}
+
+        # Normalize scraped allergens
         item_allergens = [a.lower() for a in meta.get("allergens", [])]
 
         # Skip if any avoided allergy is present

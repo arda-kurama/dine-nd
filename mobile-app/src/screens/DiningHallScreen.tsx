@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     SafeAreaView,
     View,
@@ -7,7 +7,11 @@ import {
     ScrollView,
     ActivityIndicator,
     StyleSheet,
+    TextInput,
+    FlatList,
 } from "react-native";
+import Modal from "react-native-modal";
+import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import type {
@@ -16,7 +20,13 @@ import type {
     RootStackParamList,
 } from "../components/types";
 import { CONSOLIDATED_URL, SECTION_DEFINITIONS } from "../components/constants";
-import { colors, spacing, typography } from "../components/themes";
+import {
+    colors,
+    spacing,
+    typography,
+    radii,
+    shadows,
+} from "../components/themes";
 
 // Define navigation prop type specific to this screen
 type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
@@ -67,6 +77,11 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const [currentMeal, setCurrentMeal] = useState("");
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
+    // State vars for my plate
+    const [overlayVisible, setOverlayVisible] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedItems, setSelectedItems] = useState<MenuItem[]>([]);
+
     // Fetch consolidated menu data
     useEffect(() => {
         setLoading(true);
@@ -101,8 +116,66 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }, [diningHalls, currentMeal, hallId]);
 
-    // Handle loading & error states
-    if (loading)
+    // Compute the flat list of all available items for the current meal
+    const allItems = useMemo(() => {
+        if (!diningHalls || !hallId || !currentMeal) return [];
+        const categories = diningHalls[hallId]?.[currentMeal]?.categories || {};
+        return Object.values(categories).flat();
+    }, [diningHalls, hallId, currentMeal]);
+
+    // Filter items based on search query
+    const filteredItems = useMemo(() => {
+        return allItems.filter((item) =>
+            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery, allItems]);
+
+    // Helper for number parsing
+    const parseNumber = (x: any) =>
+        typeof x === "number"
+            ? x
+            : typeof x === "string"
+            ? parseFloat(x.trim())
+            : 0;
+
+    // Helper to create a flat list of only unique items
+    const uniqueItems = useMemo(() => {
+        const seen = new Set();
+        return filteredItems.filter((item) => {
+            const key = item.name.trim().toLowerCase();
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+    }, [filteredItems]);
+
+    // Helper to sort selected items to top of list
+    const sortedItems = useMemo(() => {
+        return [...uniqueItems].sort((a, b) => {
+            const aSelected = selectedItems.some((x) => x.name === a.name);
+            const bSelected = selectedItems.some((x) => x.name === b.name);
+            return Number(bSelected) - Number(aSelected);
+        });
+    }, [uniqueItems, selectedItems]);
+
+    // Calculate macros
+    const totalMacros = useMemo(() => {
+        return selectedItems.reduce(
+            (totals, item) => ({
+                calories:
+                    totals.calories + parseNumber(item.nutrition.calories),
+                protein: totals.protein + parseNumber(item.nutrition.protein),
+                carbs:
+                    totals.carbs +
+                    parseNumber(item.nutrition.total_carbohydrate),
+                fat: totals.fat + parseNumber(item.nutrition.total_fat),
+            }),
+            { calories: 0, protein: 0, carbs: 0, fat: 0 }
+        );
+    }, [selectedItems]);
+
+    // Handle loading state
+    if (loading) {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.loadingContainer}>
@@ -111,15 +184,39 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 </View>
             </SafeAreaView>
         );
-    if (loadError)
+    }
+
+    // Handle error state
+    if (loadError) {
         return (
             <SafeAreaView style={styles.container}>
                 <Text style={styles.errorText}>{loadError}</Text>
             </SafeAreaView>
         );
+    }
 
-    // Early return: no meals available at this hall today
-    const hallObj = diningHalls![hallId]!;
+    // Handle null diningHalls
+    if (!diningHalls) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.errorText}>
+                    No dining hall data available
+                </Text>
+            </SafeAreaView>
+        );
+    }
+
+    // Handle invalid hallId
+    const hallObj = diningHalls[hallId];
+    if (!hallObj) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.errorText}>No data for "{hallId}"</Text>
+            </SafeAreaView>
+        );
+    }
+
+    // Handle case where no meals are available
     const mealKeys = Object.keys(hallObj);
     const anyMealOpen = mealKeys.some((meal) => hallObj[meal]?.available);
     if (!anyMealOpen) {
@@ -238,6 +335,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                     navigation={navigation}
                                     hallId={hallId}
                                     meal={currentMeal}
+                                    selectedItems={selectedItems}
+                                    setSelectedItems={setSelectedItems}
                                 />
                             ))}
                         </View>
@@ -263,11 +362,82 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                 navigation={navigation}
                                 hallId={hallId}
                                 meal={currentMeal}
+                                selectedItems={selectedItems}
+                                setSelectedItems={setSelectedItems}
                             />
                         ))}
                     </View>
                 )}
             </ScrollView>
+            {/* Floating Plate Button */}
+            <TouchableOpacity
+                style={styles.floatingButton}
+                onPress={() => setOverlayVisible(true)}
+            >
+                <Ionicons name="restaurant" size={40} color="#fff" />
+            </TouchableOpacity>
+
+            {/* Modal Overlay */}
+            <Modal
+                isVisible={overlayVisible}
+                onBackdropPress={() => setOverlayVisible(false)}
+                style={styles.modalStyle}
+            >
+                <View style={styles.macroHeader}>
+                    <Text style={styles.macroHeading}>My Plate</Text>
+                    <Text style={styles.macroLine}>
+                        Calories: {totalMacros.calories} kcal
+                    </Text>
+                    <Text style={styles.macroLine}>
+                        Protein: {totalMacros.protein} g
+                    </Text>
+                    <Text style={styles.macroLine}>
+                        Carbs: {totalMacros.carbs} g
+                    </Text>
+                    <Text style={styles.macroLine}>
+                        Fat: {totalMacros.fat} g
+                    </Text>
+                </View>
+                <View style={styles.overlay}>
+                    <TextInput
+                        style={styles.searchBar}
+                        placeholder="Search meal items..."
+                        placeholderTextColor={colors.textSecondary}
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                    />
+                    <FlatList
+                        data={sortedItems}
+                        keyExtractor={(item, index) => `${item.name}-${index}`}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                style={styles.itemRow}
+                                onPress={() =>
+                                    setSelectedItems((prev) =>
+                                        prev.includes(item)
+                                            ? prev.filter(
+                                                  (i) => i.name !== item.name
+                                              )
+                                            : [...prev, item]
+                                    )
+                                }
+                            >
+                                <Text
+                                    style={{
+                                        ...typography.body,
+                                        color: selectedItems.includes(item)
+                                            ? colors.accent
+                                            : colors.textPrimary,
+                                    }}
+                                >
+                                    {item.name}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                        contentContainerStyle={{ paddingBottom: spacing.lg }}
+                    />
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -281,6 +451,8 @@ function CategoryBlock({
     navigation,
     hallId,
     meal,
+    selectedItems,
+    setSelectedItems,
 }: {
     category: string;
     items: MenuItem[];
@@ -289,6 +461,8 @@ function CategoryBlock({
     navigation: any;
     hallId: string;
     meal: string;
+    selectedItems: MenuItem[];
+    setSelectedItems: React.Dispatch<React.SetStateAction<MenuItem[]>>;
 }) {
     return (
         <View>
@@ -305,22 +479,81 @@ function CategoryBlock({
                     {items.length === 0 ? (
                         <Text style={styles.noItemsText}>(No items)</Text>
                     ) : (
-                        items.map((item, i) => (
-                            <TouchableOpacity
-                                key={`${category}-${i}`}
-                                style={styles.itemRow}
-                                onPress={() =>
-                                    navigation.navigate("ItemDetail", {
-                                        hallId,
-                                        mealPeriod: meal,
-                                        categoryId: category,
-                                        itemDetail: item,
-                                    })
-                                }
-                            >
-                                <Text style={styles.itemText}>{item.name}</Text>
-                            </TouchableOpacity>
-                        ))
+                        items.map((item, i) => {
+                            const isSelected = selectedItems.some(
+                                (x) => x.name === item.name
+                            );
+                            return (
+                                <View
+                                    key={`${category}-${i}`}
+                                    style={[
+                                        styles.itemRow,
+                                        isSelected && {
+                                            backgroundColor:
+                                                colors.accent + "22",
+                                        },
+                                    ]}
+                                >
+                                    {/* Left side: item name → navigates to ItemDetail */}
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            navigation.navigate("ItemDetail", {
+                                                hallId,
+                                                mealPeriod: meal,
+                                                categoryId: category,
+                                                itemDetail: item,
+                                            })
+                                        }
+                                        style={{ flex: 1 }}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.itemText,
+                                                isSelected && {
+                                                    color: colors.accent,
+                                                },
+                                            ]}
+                                        >
+                                            {item.name}
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    {/* Right side: + button → toggle selection */}
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            setSelectedItems((prev) =>
+                                                isSelected
+                                                    ? prev.filter(
+                                                          (x) =>
+                                                              x.name !==
+                                                              item.name
+                                                      )
+                                                    : [...prev, item]
+                                            )
+                                        }
+                                        hitSlop={{
+                                            top: 16,
+                                            bottom: 16,
+                                            left: 16,
+                                            right: 16,
+                                        }}
+                                    >
+                                        <Text
+                                            style={{
+                                                ...typography.button,
+                                                fontWeight: "700",
+                                                color: isSelected
+                                                    ? colors.accent
+                                                    : colors.textSecondary,
+                                                paddingLeft: spacing.md,
+                                            }}
+                                        >
+                                            {isSelected ? "–" : "+"}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            );
+                        })
                     )}
                 </View>
             )}
@@ -452,6 +685,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.md,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderColor: colors.surface,
+        flexDirection: "row",
+        alignItems: "center",
     },
     itemText: {
         ...typography.body,
@@ -480,5 +715,56 @@ const styles = StyleSheet.create({
         color: colors.error,
         textAlign: "center",
         padding: spacing.md,
+    },
+    floatingButton: {
+        position: "absolute",
+        bottom: spacing.lg,
+        right: spacing.lg,
+        backgroundColor: colors.accent,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        justifyContent: "center",
+        alignItems: "center",
+        ...shadows.heavy,
+        zIndex: 1000,
+    },
+    modalStyle: {
+        justifyContent: "flex-end",
+        margin: 0,
+    },
+    overlay: {
+        backgroundColor: colors.background,
+        padding: spacing.md,
+        height: "55%",
+        borderTopLeftRadius: radii.md,
+        borderTopRightRadius: radii.md,
+    },
+    searchBar: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.accent,
+        borderRadius: radii.sm,
+        padding: spacing.sm,
+        marginBottom: spacing.md,
+        color: colors.textPrimary,
+    },
+    macroHeader: {
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        borderTopLeftRadius: radii.md,
+        borderTopRightRadius: radii.md,
+    },
+    macroHeading: {
+        ...typography.h2,
+        color: colors.accent,
+        marginBottom: spacing.xs,
+        textAlign: "center",
+    },
+    macroLine: {
+        ...typography.body,
+        color: colors.background,
+        textAlign: "center",
+        marginBottom: spacing.xs,
     },
 });

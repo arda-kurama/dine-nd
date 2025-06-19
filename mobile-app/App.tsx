@@ -2,6 +2,7 @@ import { Asset } from "expo-asset";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { RootSiblingParent } from "react-native-root-siblings";
 import AppNavigator from "./src/components";
 
 SplashScreen.preventAutoHideAsync();
@@ -31,7 +32,9 @@ export default function App() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <AppNavigator />
+            <RootSiblingParent>
+                <AppNavigator />
+            </RootSiblingParent>
         </GestureHandlerRootView>
     );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
     SafeAreaView,
     View,
@@ -7,11 +7,10 @@ import {
     ScrollView,
     ActivityIndicator,
     StyleSheet,
-    TextInput,
-    FlatList,
+    Animated,
 } from "react-native";
-import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
+import Toast from "react-native-root-toast";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import type {
@@ -78,9 +77,9 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
     // State vars for my plate
-    const [overlayVisible, setOverlayVisible] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
     const [selectedItems, setSelectedItems] = useState<MenuItem[]>([]);
+    const [panelExpanded, setPanelExpanded] = useState(false);
+    const panelHeight = useRef(new Animated.Value(80)).current; // collapsed height
 
     // Fetch consolidated menu data
     useEffect(() => {
@@ -116,47 +115,27 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }, [diningHalls, currentMeal, hallId]);
 
-    // Compute the flat list of all available items for the current meal
-    const allItems = useMemo(() => {
-        if (!diningHalls || !hallId || !currentMeal) return [];
-        const categories = diningHalls[hallId]?.[currentMeal]?.categories || {};
-        return Object.values(categories).flat();
-    }, [diningHalls, hallId, currentMeal]);
-
-    // Filter items based on search query
-    const filteredItems = useMemo(() => {
-        return allItems.filter((item) =>
-            item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [searchQuery, allItems]);
-
     // Helper for number parsing
-    const parseNumber = (x: any) =>
-        typeof x === "number"
-            ? x
-            : typeof x === "string"
-            ? parseFloat(x.trim())
-            : 0;
+    const parseNumber = (x: any) => {
+        if (typeof x === "number") return x;
+        if (typeof x === "string") {
+            const trimmed = x.trim();
+            if (trimmed.startsWith("<")) return 0.5; // or 0.25 or 0 depending on how conservative you want to be
+            const parsed = parseFloat(trimmed);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+        return 0;
+    };
 
-    // Helper to create a flat list of only unique items
-    const uniqueItems = useMemo(() => {
-        const seen = new Set();
-        return filteredItems.filter((item) => {
-            const key = item.name.trim().toLowerCase();
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-        });
-    }, [filteredItems]);
-
-    // Helper to sort selected items to top of list
-    const sortedItems = useMemo(() => {
-        return [...uniqueItems].sort((a, b) => {
-            const aSelected = selectedItems.some((x) => x.name === a.name);
-            const bSelected = selectedItems.some((x) => x.name === b.name);
-            return Number(bSelected) - Number(aSelected);
-        });
-    }, [uniqueItems, selectedItems]);
+    // Helper to toggel MyPlate panel
+    const togglePanel = () => {
+        Animated.timing(panelHeight, {
+            toValue: panelExpanded ? 80 : 300,
+            duration: 300,
+            useNativeDriver: false,
+        }).start();
+        setPanelExpanded((p) => !p);
+    };
 
     // Calculate macros
     const totalMacros = useMemo(() => {
@@ -369,75 +348,77 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     </View>
                 )}
             </ScrollView>
-            {/* Floating Plate Button */}
-            <TouchableOpacity
-                style={styles.floatingButton}
-                onPress={() => setOverlayVisible(true)}
+            <Animated.View
+                style={[styles.panelContainer, { height: panelHeight }]}
             >
-                <Ionicons name="restaurant" size={40} color="#fff" />
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.panelHeader}
+                    onPress={togglePanel}
+                    activeOpacity={0.8}
+                >
+                    <Text style={styles.panelToggleText}>
+                        {panelExpanded ? "Hide My Plate ▲" : "Show My Plate ▼"}
+                    </Text>
+                    <Text style={styles.macroSummaryText}>
+                        Calories: {totalMacros.calories} kcal | Protein:{" "}
+                        {totalMacros.protein}g | Carbs: {totalMacros.carbs}g |
+                        Fat: {totalMacros.fat}g
+                    </Text>
+                </TouchableOpacity>
+                {panelExpanded && (
+                    <ScrollView style={styles.panelBody}>
+                        {selectedItems.length === 0 ? (
+                            <Text style={styles.noItemsText}>
+                                Your plate is empty. Tap the "+" to add food
+                                here!
+                            </Text>
+                        ) : (
+                            selectedItems.map((item) => (
+                                <View style={styles.itemRow}>
+                                    <Text
+                                        style={[
+                                            styles.myPlateText,
+                                            { flex: 1 },
+                                        ]}
+                                    >
+                                        {item.name}
+                                    </Text>
 
-            {/* Modal Overlay */}
-            <Modal
-                isVisible={overlayVisible}
-                onBackdropPress={() => setOverlayVisible(false)}
-                style={styles.modalStyle}
-            >
-                <View style={styles.macroHeader}>
-                    <Text style={styles.macroHeading}>My Plate</Text>
-                    <Text style={styles.macroLine}>
-                        Calories: {totalMacros.calories} kcal
-                    </Text>
-                    <Text style={styles.macroLine}>
-                        Protein: {totalMacros.protein} g
-                    </Text>
-                    <Text style={styles.macroLine}>
-                        Carbs: {totalMacros.carbs} g
-                    </Text>
-                    <Text style={styles.macroLine}>
-                        Fat: {totalMacros.fat} g
-                    </Text>
-                </View>
-                <View style={styles.overlay}>
-                    <TextInput
-                        style={styles.searchBar}
-                        placeholder="Search meal items..."
-                        placeholderTextColor={colors.textSecondary}
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                    <FlatList
-                        data={sortedItems}
-                        keyExtractor={(item, index) => `${item.name}-${index}`}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                                style={styles.itemRow}
-                                onPress={() =>
-                                    setSelectedItems((prev) =>
-                                        prev.includes(item)
-                                            ? prev.filter(
-                                                  (i) => i.name !== item.name
-                                              )
-                                            : [...prev, item]
-                                    )
-                                }
-                            >
-                                <Text
-                                    style={{
-                                        ...typography.body,
-                                        color: selectedItems.includes(item)
-                                            ? colors.accent
-                                            : colors.textPrimary,
-                                    }}
-                                >
-                                    {item.name}
-                                </Text>
-                            </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            setSelectedItems((prev) =>
+                                                prev.filter(
+                                                    (i) => i.name !== item.name
+                                                )
+                                            )
+                                        }
+                                        hitSlop={{
+                                            top: 10,
+                                            bottom: 10,
+                                            left: 10,
+                                            right: 10,
+                                        }}
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <Text style={styles.itemRemoveText}>
+                                            Remove
+                                        </Text>
+                                        <Ionicons
+                                            name="close"
+                                            size={20}
+                                            color={colors.error}
+                                            style={{ marginLeft: 6 }}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            ))
                         )}
-                        contentContainerStyle={{ paddingBottom: spacing.lg }}
-                    />
-                </View>
-            </Modal>
+                    </ScrollView>
+                )}
+            </Animated.View>
         </SafeAreaView>
     );
 }
@@ -520,17 +501,47 @@ function CategoryBlock({
 
                                     {/* Right side: + button → toggle selection */}
                                     <TouchableOpacity
-                                        onPress={() =>
-                                            setSelectedItems((prev) =>
-                                                isSelected
+                                        onPress={() => {
+                                            setSelectedItems((prev) => {
+                                                const newSelection = isSelected
                                                     ? prev.filter(
                                                           (x) =>
                                                               x.name !==
                                                               item.name
                                                       )
-                                                    : [...prev, item]
-                                            )
-                                        }
+                                                    : [...prev, item];
+
+                                                if (!isSelected) {
+                                                    Toast.show(
+                                                        `${item.name} added to your plate`,
+                                                        {
+                                                            duration:
+                                                                Toast.durations
+                                                                    .SHORT,
+                                                            position:
+                                                                Toast.positions
+                                                                    .TOP,
+                                                            shadow: true,
+                                                            animation: true,
+                                                            hideOnPress: true,
+                                                            backgroundColor:
+                                                                colors.primary,
+                                                            textColor:
+                                                                colors.accent,
+                                                            opacity: 0.95,
+                                                            containerStyle: {
+                                                                borderRadius: 8,
+                                                                paddingHorizontal: 16,
+                                                                paddingVertical: 12,
+                                                                marginTop: 40,
+                                                            },
+                                                        }
+                                                    );
+                                                }
+
+                                                return newSelection;
+                                            });
+                                        }}
                                         hitSlop={{
                                             top: 16,
                                             bottom: 16,
@@ -548,7 +559,19 @@ function CategoryBlock({
                                                 paddingLeft: spacing.md,
                                             }}
                                         >
-                                            {isSelected ? "–" : "+"}
+                                            <Ionicons
+                                                name={
+                                                    isSelected
+                                                        ? "remove-circle-outline"
+                                                        : "add-circle-outline"
+                                                }
+                                                size={24}
+                                                color={
+                                                    isSelected
+                                                        ? colors.error
+                                                        : colors.accent
+                                                }
+                                            />
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -686,11 +709,11 @@ const styles = StyleSheet.create({
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderColor: colors.surface,
         flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
     },
     itemText: {
         ...typography.body,
-        color: colors.textPrimary,
     },
     noItemsText: {
         ...typography.body,
@@ -716,55 +739,40 @@ const styles = StyleSheet.create({
         textAlign: "center",
         padding: spacing.md,
     },
-    floatingButton: {
-        position: "absolute",
-        bottom: spacing.lg,
-        right: spacing.lg,
-        backgroundColor: colors.accent,
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        ...shadows.heavy,
-        zIndex: 1000,
-    },
-    modalStyle: {
-        justifyContent: "flex-end",
-        margin: 0,
-    },
-    overlay: {
-        backgroundColor: colors.background,
-        padding: spacing.md,
-        height: "55%",
-        borderTopLeftRadius: radii.md,
-        borderTopRightRadius: radii.md,
-    },
-    searchBar: {
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: colors.accent,
-        borderRadius: radii.sm,
-        padding: spacing.sm,
-        marginBottom: spacing.md,
-        color: colors.textPrimary,
-    },
-    macroHeader: {
+    panelContainer: {
         backgroundColor: colors.primary,
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.md,
-        borderTopLeftRadius: radii.md,
-        borderTopRightRadius: radii.md,
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        borderTopLeftRadius: radii.lg,
+        borderTopRightRadius: radii.lg,
+        overflow: "hidden",
+        ...shadows.heavy,
     },
-    macroHeading: {
-        ...typography.h2,
+    panelHeader: {
+        backgroundColor: colors.primary,
+        padding: spacing.sm,
+    },
+    panelToggleText: {
+        ...typography.button,
         color: colors.accent,
-        marginBottom: spacing.xs,
         textAlign: "center",
     },
-    macroLine: {
+    macroSummaryText: {
         ...typography.body,
         color: colors.background,
         textAlign: "center",
-        marginBottom: spacing.xs,
+        marginTop: spacing.xs,
+    },
+    panelBody: {
+        padding: spacing.sm,
+    },
+    itemRemoveText: {
+        ...typography.button,
+        color: colors.error,
+    },
+    myPlateText: {
+        color: colors.background,
     },
 });

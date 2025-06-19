@@ -86,7 +86,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
 
                     # Normalize allergens into a list of strings
                     if isinstance(raw_allergens, str):
-                        allergens = [a.strip() for a in raw_allergens.split(",") if a.strip()]
+                        allergens = [a.strip().lower() for a in raw_allergens.split(",") if a.strip()]
                     else:
                         allergens = []
 

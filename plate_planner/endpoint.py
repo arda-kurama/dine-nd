@@ -157,10 +157,10 @@ def plan_plate():
     matches: list[dict] = []
     for m in resp.get("matches", []):
         meta = getattr(m, "metadata", {}) or {}
-        item_allergens = meta.get("allergens", [])
-
+        item_allergens = [a.lower() for a in meta.get("allergens", [])]
+        
         # Skip if any avoided allergy is present
-        if any(a in item_allergens for a in avoid):
+        if any(a.lower() in item_allergens for a in avoid):
             continue
 
         # Collect the match data

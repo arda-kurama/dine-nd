@@ -1,5 +1,5 @@
 import { Dimensions } from "react-native";
-import defs from "./section_defs.json";
+import defs from "../../../section_defs.json";
 
 export const GITHUB_PAGES_BASE = "https://arda-kurama.github.io/dine-nd";
 export const SUMMARY_URL = `${GITHUB_PAGES_BASE}/menu_summary.json`;

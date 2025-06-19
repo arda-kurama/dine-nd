@@ -32,7 +32,12 @@ def get_menu():
     with urlopen(MENU_URL) as r:
         return json.load(r)
 
-with open("../mobile-app/src/components/section_defs.json") as fp:
+# Compute repo-root from this script's folder (for CI/CD)
+BASE_DIR = os.path.dirname(__file__)
+ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
+
+# Load section_defs.json from <repo-root>/section_defs.json
+with open(os.path.join(ROOT_DIR, "section_defs.json"), "r") as fp:
     raw_defs = json.load(fp)
 SECTION_DEFS = [(d["title"], re.compile(d["pattern"])) for d in raw_defs]
 

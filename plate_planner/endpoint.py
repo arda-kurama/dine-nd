@@ -16,7 +16,7 @@ MENU_URL (optional), PORT (optional).
 """
 from __future__ import annotations
 
-import json, logging, os, time, urllib.error
+import json, logging, os, time, re, urllib.error
 from functools import lru_cache
 from itertools import combinations
 from typing import Any, Dict, List
@@ -33,6 +33,13 @@ MENU_TTL_SECONDS    = 3600  # 1 h cache
 SERVING_OPTIONS     = [0.5, 1.0, 1.5, 2.0]
 MAX_GPT_PLATES      = 30
 TOLERANCE           = 0.10  # ±10 %
+
+# Load the same section definitions used by the mobile app
+BASE_DIR = os.path.dirname(__file__)
+JSON_PATH = os.path.join(BASE_DIR, "..", "mobile-app", "src", "components", "section_defs.json")
+with open(JSON_PATH) as fp:
+    raw_defs = json.load(fp)
+SECTION_DEFS = [(d["title"], re.compile(d["pattern"])) for d in raw_defs]
 
 logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
@@ -57,6 +64,13 @@ def safe_json(data: Dict[str, Any], key: str, default: Any | None = None):
     if key not in data and default is None:
         raise BadRequest(f"Missing required field: {key}")
     return data.get(key, default)
+
+def canonical_section(category: str) -> str:
+    """Return the canonical cuisine title for a raw category name."""
+    for title, rx in SECTION_DEFS:
+        if rx.search(category):
+            return title
+    return category  # no match ⇒ fall back to the raw string
 
 # ─── cached menu fetch ──────────────────────────────────────────────────────
 _MENU_CACHE: dict[str, Any] | None = None
@@ -172,7 +186,14 @@ def sections():
         return jsonify(sections=[]), 200
     hall_dict = _ci_get(menu, hall) or {}
     meal_dict = _ci_get(hall_dict, meal) or {}
-    return jsonify(sections=list(meal_dict.keys()))
+
+    titles = [
+        canonical_section(cat)
+        for cat in meal_dict.keys()
+    ]
+    # dedupe while preserving order
+    sections_list = list(dict.fromkeys(titles))
+    return jsonify(sections=sections_list)
 
 # ─── main plate‑planner ─────────────────────────────────────────────────────
 @app.route("/plan-plate", methods=["POST"])
@@ -202,7 +223,8 @@ def plan_plate():
     # Flatten menu items: { section: [ {name, macros, serving_size, allergens}, … ] }
     items: List[dict] = []
     for sec_name, dishes in meal_dict.items():
-        if sections and sec_name.lower() not in sections:
+        canon = canonical_section(sec_name)
+        if sections and canon.lower() not in sections:
             continue
         for d in dishes:
             # skip if any avoided allergen appears in this dish’s allergen list

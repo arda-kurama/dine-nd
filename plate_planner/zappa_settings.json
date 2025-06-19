@@ -15,6 +15,8 @@
         "events": [],
         "binary_support": false,
         "cors": false,
+        "slim_handler": true,
+        "keep_warm": false,
         "environment_variables": {
             "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
             "PINECONE_API_KEY": "{{ env.PINECONE_API_KEY }}",

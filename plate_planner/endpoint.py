@@ -164,6 +164,7 @@ def plan_plate():
         vector=user_vec,
         top_k=50,
         filter=pinecone_filter,
+        include_metadata=True,
     )
 
     # 4) Filter out unwanted items

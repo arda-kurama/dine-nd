@@ -114,6 +114,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                                 **nutrition,
                                 "allergens": allergens,
                                 "section": section,
+                                "serving_size": dish.get("serving_size", ""),
                             },
                         }
                     )

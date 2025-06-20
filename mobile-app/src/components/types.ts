@@ -56,7 +56,7 @@ export type ConsolidatedMenu = {
 
 // Expected parameters for all screens
 export type RootStackParamList = {
-    Halls: undefined;
+    Halls: { customBack?: boolean };
     DiningHall: {
         hallId: string;
         hallName: string;

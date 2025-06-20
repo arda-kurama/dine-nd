@@ -33,6 +33,8 @@ export type MenuItem = {
     [key: string]: any;
 };
 
+export type PlateItem = MenuItem & { servings: number };
+
 export type ConsolidatedMenu = {
     last_updated: string;
     date: string;

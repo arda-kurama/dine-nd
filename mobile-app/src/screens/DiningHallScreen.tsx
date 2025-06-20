@@ -8,6 +8,10 @@ import {
     ActivityIndicator,
     StyleSheet,
     Animated,
+    TextInput,
+    KeyboardAvoidingView,
+    Platform,
+    Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-root-toast";
@@ -17,6 +21,7 @@ import type {
     MenuItem,
     ConsolidatedMenu,
     RootStackParamList,
+    PlateItem,
 } from "../components/types";
 import { CONSOLIDATED_URL, SECTION_DEFINITIONS } from "../components/constants";
 import {
@@ -77,9 +82,34 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
     // State vars for my plate
-    const [selectedItems, setSelectedItems] = useState<MenuItem[]>([]);
+    const [selectedItems, setSelectedItems] = useState<PlateItem[]>([]);
     const [panelExpanded, setPanelExpanded] = useState(false);
-    const panelHeight = useRef(new Animated.Value(80)).current; // collapsed height
+    const panelHeight = useRef(new Animated.Value(90)).current; // collapsed height
+    const keyboardHeight = useRef(new Animated.Value(0)).current;
+
+    // Animate keyboard animation
+    useEffect(() => {
+        const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
+            Animated.timing(keyboardHeight, {
+                toValue: e.endCoordinates.height,
+                duration: e.duration || 250,
+                useNativeDriver: false,
+            }).start();
+        });
+
+        const hideSub = Keyboard.addListener("keyboardWillHide", (e) => {
+            Animated.timing(keyboardHeight, {
+                toValue: 0,
+                duration: e.duration || 250,
+                useNativeDriver: false,
+            }).start();
+        });
+
+        return () => {
+            showSub.remove();
+            hideSub.remove();
+        };
+    }, []);
 
     // Fetch consolidated menu data
     useEffect(() => {
@@ -138,20 +168,26 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     };
 
     // Calculate macros
-    const totalMacros = useMemo(() => {
-        return selectedItems.reduce(
-            (totals, item) => ({
+    const totalMacros = selectedItems.reduce(
+        (totals, item) => {
+            const s =
+                typeof item.servings === "number"
+                    ? item.servings
+                    : parseFloat(item.servings) || 0;
+
+            return {
                 calories:
-                    totals.calories + parseNumber(item.nutrition.calories),
-                protein: totals.protein + parseNumber(item.nutrition.protein),
+                    totals.calories + s * parseNumber(item.nutrition.calories),
+                protein:
+                    totals.protein + s * parseNumber(item.nutrition.protein),
                 carbs:
                     totals.carbs +
-                    parseNumber(item.nutrition.total_carbohydrate),
-                fat: totals.fat + parseNumber(item.nutrition.total_fat),
-            }),
-            { calories: 0, protein: 0, carbs: 0, fat: 0 }
-        );
-    }, [selectedItems]);
+                    s * parseNumber(item.nutrition.total_carbohydrate),
+                fat: totals.fat + s * parseNumber(item.nutrition.total_fat),
+            };
+        },
+        { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    );
 
     // Handle loading state
     if (loading) {
@@ -349,7 +385,22 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 )}
             </ScrollView>
             <Animated.View
-                style={[styles.panelContainer, { height: panelHeight }]}
+                style={[
+                    styles.panelContainer,
+                    {
+                        height: panelHeight,
+                        transform: [
+                            {
+                                translateY: Animated.add(
+                                    panelExpanded
+                                        ? Animated.multiply(keyboardHeight, -1)
+                                        : new Animated.Value(0),
+                                    new Animated.Value(0) // optional vertical offset
+                                ),
+                            },
+                        ],
+                    },
+                ]}
             >
                 <TouchableOpacity
                     style={styles.panelHeader}
@@ -357,7 +408,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     activeOpacity={0.8}
                 >
                     <Text style={styles.panelToggleText}>
-                        {panelExpanded ? "Hide My Plate ▲" : "Show My Plate ▼"}
+                        {panelExpanded ? "Hide My Plate ▼" : "Show My Plate ▲"}
                     </Text>
                     <Text style={styles.macroSummaryText}>
                         Calories: {totalMacros.calories} kcal | Protein:{" "}
@@ -366,7 +417,10 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     </Text>
                 </TouchableOpacity>
                 {panelExpanded && (
-                    <ScrollView style={styles.panelBody}>
+                    <ScrollView
+                        style={styles.panelBody}
+                        keyboardShouldPersistTaps="handled"
+                    >
                         {selectedItems.length === 0 ? (
                             <Text style={styles.noItemsText}>
                                 Your plate is empty. Tap the "+" to add food
@@ -374,16 +428,92 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                             </Text>
                         ) : (
                             selectedItems.map((item) => (
-                                <View style={styles.itemRow}>
-                                    <Text
-                                        style={[
-                                            styles.myPlateText,
-                                            { flex: 1 },
-                                        ]}
+                                <View key={item.name} style={styles.itemRow}>
+                                    {/* Left side: Servings + Item Name */}
+                                    <View
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            flex: 1,
+                                        }}
                                     >
-                                        {item.name}
-                                    </Text>
+                                        <TextInput
+                                            style={{
+                                                width: 40,
+                                                height: 30,
+                                                backgroundColor:
+                                                    colors.background,
+                                                color: colors.textPrimary,
+                                                textAlign: "center",
+                                                borderRadius: 6,
+                                                padding: 4,
+                                                marginRight: 8,
+                                            }}
+                                            keyboardType="numeric"
+                                            value={item.servings.toString()}
+                                            onChangeText={(text) => {
+                                                if (text === "") {
+                                                    // Allow blank state (so user can delete and retype)
+                                                    setSelectedItems((prev) =>
+                                                        prev.map((i) =>
+                                                            i.name === item.name
+                                                                ? {
+                                                                      ...i,
+                                                                      servings:
+                                                                          "" as any,
+                                                                  }
+                                                                : i
+                                                        )
+                                                    );
+                                                } else {
+                                                    const newVal =
+                                                        parseFloat(text);
+                                                    if (
+                                                        !isNaN(newVal) &&
+                                                        newVal > 0
+                                                    ) {
+                                                        setSelectedItems(
+                                                            (prev) =>
+                                                                prev.map((i) =>
+                                                                    i.name ===
+                                                                    item.name
+                                                                        ? {
+                                                                              ...i,
+                                                                              servings:
+                                                                                  newVal,
+                                                                          }
+                                                                        : i
+                                                                )
+                                                        );
+                                                    }
+                                                }
+                                            }}
+                                            onBlur={() => {
+                                                // On leaving the input, default empty to 1
+                                                setSelectedItems((prev) =>
+                                                    prev.map((i) =>
+                                                        i.name === item.name
+                                                            ? {
+                                                                  ...i,
+                                                                  servings:
+                                                                      !i.servings ||
+                                                                      isNaN(
+                                                                          i.servings as any
+                                                                      )
+                                                                          ? 1
+                                                                          : i.servings,
+                                                              }
+                                                            : i
+                                                    )
+                                                );
+                                            }}
+                                        />
+                                        <Text style={styles.myPlateText}>
+                                            {item.name}
+                                        </Text>
+                                    </View>
 
+                                    {/* Right side: Remove button */}
                                     <TouchableOpacity
                                         onPress={() =>
                                             setSelectedItems((prev) =>
@@ -442,8 +572,8 @@ function CategoryBlock({
     navigation: any;
     hallId: string;
     meal: string;
-    selectedItems: MenuItem[];
-    setSelectedItems: React.Dispatch<React.SetStateAction<MenuItem[]>>;
+    selectedItems: PlateItem[];
+    setSelectedItems: React.Dispatch<React.SetStateAction<PlateItem[]>>;
 }) {
     return (
         <View>
@@ -509,7 +639,13 @@ function CategoryBlock({
                                                               x.name !==
                                                               item.name
                                                       )
-                                                    : [...prev, item];
+                                                    : [
+                                                          ...prev,
+                                                          {
+                                                              ...item,
+                                                              servings: 1,
+                                                          },
+                                                      ];
 
                                                 if (!isSelected) {
                                                     Toast.show(
@@ -741,8 +877,8 @@ const styles = StyleSheet.create({
     },
     panelContainer: {
         backgroundColor: colors.primary,
-        position: "absolute",
         bottom: 0,
+        position: "absolute",
         left: 0,
         right: 0,
         borderTopLeftRadius: radii.lg,

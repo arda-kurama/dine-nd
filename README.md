@@ -6,6 +6,7 @@
 [![AWS Lambda](https://img.shields.io/badge/AWS%20Lambda-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/lambda/)
 [![Pinecone](https://img.shields.io/badge/Pinecone-017ACD?style=flat-square&logo=pinecone&logoColor=white)](https://www.pinecone.io/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)](https://openai.com/)
+
 [![Deploy to AWS](https://github.com/arda-kurama/dine-nd/actions/workflows/aws-deploy.yml/badge.svg)](https://github.com/arda-kurama/dine-nd/actions/workflows/aws-deploy.yml)
 [![Daily Embed](https://github.com/arda-kurama/dine-nd/actions/workflows/daily-embed.yml/badge.svg)](https://github.com/arda-kurama/dine-nd/actions/workflows/daily-embed.yml)
 [![Update Menu](https://github.com/arda-kurama/dine-nd/actions/workflows/update-menu.yml/badge.svg)](https://github.com/arda-kurama/dine-nd/actions/workflows/update-menu.yml)

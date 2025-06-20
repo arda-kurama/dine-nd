@@ -25,6 +25,7 @@ import {
     radii,
     shadows,
     typography,
+    sharedStyles,
 } from "../components/themes";
 
 // Define navigation prop type specific to this screen
@@ -70,7 +71,7 @@ export default function HallList({ navigation }: Props) {
     if (error || !summary) {
         return (
             <SafeAreaView style={styles.center}>
-                <Text style={styles.errorText}>{error}</Text>
+                <Text style={sharedStyles.errorText}>{error}</Text>
             </SafeAreaView>
         );
     }
@@ -80,7 +81,7 @@ export default function HallList({ navigation }: Props) {
 
     // Render the list of dining halls
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={sharedStyles.screenSurface}>
             <FlatList
                 data={halls}
                 keyExtractor={(name) => name}
@@ -140,21 +141,11 @@ export default function HallList({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.background,
-    },
     center: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: colors.background,
-    },
-    errorText: {
-        ...typography.body,
-        color: colors.error,
-        textAlign: "center",
-        padding: spacing.md,
     },
     cardWrapper: {
         marginVertical: spacing.xs,

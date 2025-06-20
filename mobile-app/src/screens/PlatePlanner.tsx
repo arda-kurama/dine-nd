@@ -18,13 +18,7 @@ import { Picker } from "@react-native-picker/picker";
 
 import { ALLERGENS } from "../components/constants";
 import type { RootStackParamList } from "../components/types";
-import {
-    colors,
-    spacing,
-    typography,
-    radii,
-    shadows,
-} from "../components/themes";
+import { colors, spacing, sharedStyles } from "../components/themes";
 
 // Define props type for this screen
 type Props = NativeStackScreenProps<RootStackParamList, "PlatePlanner">;
@@ -178,30 +172,29 @@ export default function PlatePlanner({ route }: Props) {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.headerCard}>
-                <Text style={styles.headerTitle}>{hallName}</Text>
-                <Text style={styles.headerSubtitle}>{mealPeriod}</Text>
+        <SafeAreaView style={sharedStyles.screenSurface}>
+            <View style={sharedStyles.cardHeader}>
+                <Text style={sharedStyles.titleSurface}>{hallName}</Text>
+                <Text style={sharedStyles.subtitleAccent}>{mealPeriod}</Text>
             </View>
             <ScrollView
-                style={styles.scrollView}
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Section Selector */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionHeaderText}>
+                <View style={sharedStyles.sectionCard}>
+                    <View style={sharedStyles.sectionHeader}>
+                        <Text style={sharedStyles.sectionHeaderText}>
                             Select Cuisine
                         </Text>
                     </View>
-                    <View style={styles.sectionBody}>
+                    <View style={sharedStyles.sectionBody}>
                         {Platform.OS === "ios" ? (
                             <TouchableOpacity
                                 onPress={showSectionPicker}
                                 style={styles.pickerButton}
                             >
-                                <Text style={styles.pickerButtonText}>
+                                <Text style={sharedStyles.buttonTextDark}>
                                     {selectedSection || "Click Me"}
                                 </Text>
                             </TouchableOpacity>
@@ -230,18 +223,20 @@ export default function PlatePlanner({ route }: Props) {
                     </View>
                 </View>
                 {/* Macro Targets */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionHeaderText}>
+                <View style={sharedStyles.sectionCard}>
+                    <View style={sharedStyles.sectionHeader}>
+                        <Text style={sharedStyles.sectionHeaderText}>
                             Set Macro Targets
                         </Text>
                     </View>
-                    <View style={styles.sectionBody}>
+                    <View style={sharedStyles.sectionBody}>
                         {macroFields.map(([label, value, setter]) => (
-                            <View key={label} style={styles.inputRow}>
-                                <Text style={styles.inputLabel}>{label}</Text>
+                            <View key={label} style={sharedStyles.rowBetween}>
+                                <Text style={sharedStyles.buttonTextDark}>
+                                    {label}
+                                </Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={sharedStyles.input}
                                     keyboardType="numeric"
                                     placeholder="--"
                                     placeholderTextColor={colors.textSecondary}
@@ -254,13 +249,13 @@ export default function PlatePlanner({ route }: Props) {
                 </View>
 
                 {/* Avoid Allergens */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionHeaderText}>
+                <View style={sharedStyles.sectionCard}>
+                    <View style={sharedStyles.sectionHeader}>
+                        <Text style={sharedStyles.sectionHeaderText}>
                             Avoid Allergens
                         </Text>
                     </View>
-                    <View style={styles.sectionBody}>
+                    <View style={sharedStyles.sectionBody}>
                         <View style={styles.allergyOptions}>
                             {ALLERGENS.map((allergy) => {
                                 const isOn = avoidedAllergies.includes(allergy);
@@ -292,7 +287,9 @@ export default function PlatePlanner({ route }: Props) {
                                             }
                                             style={styles.switch}
                                         />
-                                        <Text style={styles.switchLabel}>
+                                        <Text
+                                            style={sharedStyles.buttonTextDark}
+                                        >
                                             {allergy}
                                         </Text>
                                     </View>
@@ -304,61 +301,94 @@ export default function PlatePlanner({ route }: Props) {
 
                 {/* Plan Button & Error */}
                 <TouchableOpacity
-                    style={styles.button}
+                    style={sharedStyles.button}
                     onPress={onPlanPlatePress}
                     disabled={loading}
                 >
                     {loading ? (
                         <ActivityIndicator color={colors.primary} />
                     ) : (
-                        <Text style={styles.buttonText}>Plan Plate</Text>
+                        <Text style={sharedStyles.buttonTextLight}>
+                            Plan Plate
+                        </Text>
                     )}
                 </TouchableOpacity>
-                {error && <Text style={styles.errorText}>{error}</Text>}
+                {error && <Text style={sharedStyles.errorText}>{error}</Text>}
 
                 {/* Results */}
                 {result && (
                     <>
-                        <View style={styles.sectionCard}>
-                            <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionHeaderText}>
+                        <View style={sharedStyles.sectionCard}>
+                            <View style={sharedStyles.sectionHeader}>
+                                <Text style={sharedStyles.sectionHeaderText}>
                                     Your Plate
                                 </Text>
                             </View>
-                            <View style={styles.sectionBody}>
+                            <View style={sharedStyles.sectionBody}>
                                 {result.items.map((item, idx) => {
                                     const dishName = item.name;
 
                                     return (
-                                        <Text
-                                            key={idx}
-                                            style={styles.comboText}
+                                        <View
+                                            key={`${dishName}-${idx}`}
+                                            style={sharedStyles.rowBetween}
                                         >
-                                            {`${dishName}: ${item.servings}x ${item.servingSize}`}
-                                        </Text>
+                                            <Text
+                                                style={
+                                                    sharedStyles.buttonTextDark
+                                                }
+                                            >
+                                                {dishName}
+                                            </Text>
+                                            <Text>
+                                                {item.servings}x{" "}
+                                                {item.servingSize}
+                                            </Text>
+                                        </View>
                                     );
                                 })}
                             </View>
                         </View>
-                        <View style={styles.sectionCard}>
-                            <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionHeaderText}>
+
+                        <View style={sharedStyles.sectionCard}>
+                            <View style={sharedStyles.sectionHeader}>
+                                <Text style={sharedStyles.sectionHeaderText}>
                                     Total Macros
                                 </Text>
                             </View>
-                            <View style={styles.sectionBody}>
-                                <Text style={styles.totalsText}>
-                                    Calories: {result.totals.calories} kcal
-                                </Text>
-                                <Text style={styles.totalsText}>
-                                    Protein: {result.totals.protein} g
-                                </Text>
-                                <Text style={styles.totalsText}>
-                                    Carbs: {result.totals.carbs} g
-                                </Text>
-                                <Text style={styles.totalsText}>
-                                    Fat: {result.totals.fat} g
-                                </Text>
+                            <View style={sharedStyles.sectionBody}>
+                                <View style={sharedStyles.rowBetween}>
+                                    <Text style={sharedStyles.buttonTextDark}>
+                                        Calories:
+                                    </Text>
+                                    <Text style={sharedStyles.text}>
+                                        {result.totals.calories} kcal
+                                    </Text>
+                                </View>
+                                <View style={sharedStyles.rowBetween}>
+                                    <Text style={sharedStyles.buttonTextDark}>
+                                        Protein:
+                                    </Text>
+                                    <Text style={sharedStyles.text}>
+                                        {result.totals.protein} g
+                                    </Text>
+                                </View>
+                                <View style={sharedStyles.rowBetween}>
+                                    <Text style={sharedStyles.buttonTextDark}>
+                                        Carbs:
+                                    </Text>
+                                    <Text style={sharedStyles.text}>
+                                        {result.totals.carbs} g
+                                    </Text>
+                                </View>
+                                <View style={sharedStyles.rowBetween}>
+                                    <Text style={sharedStyles.buttonTextDark}>
+                                        Fat:
+                                    </Text>
+                                    <Text style={sharedStyles.text}>
+                                        {result.totals.fat} g
+                                    </Text>
+                                </View>
                             </View>
                         </View>
                     </>
@@ -369,48 +399,7 @@ export default function PlatePlanner({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.surface },
-    headerCard: {
-        backgroundColor: colors.primary,
-        paddingVertical: spacing.md,
-        paddingHorizontal: spacing.md,
-        marginBottom: spacing.md,
-        ...shadows.card,
-    },
-    headerTitle: {
-        ...typography.h1,
-        color: colors.surface,
-    },
-    headerSubtitle: {
-        ...typography.body,
-        color: colors.accent,
-        marginTop: spacing.xs,
-    },
-    scrollView: { flex: 1 },
     contentContainer: { paddingBottom: spacing.lg },
-    sectionCard: {
-        backgroundColor: colors.background,
-        borderRadius: radii.md,
-        marginBottom: spacing.md,
-        marginHorizontal: spacing.md,
-        ...shadows.card,
-    },
-    sectionHeader: {
-        backgroundColor: colors.primary,
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.md,
-        borderTopLeftRadius: radii.md,
-        borderTopRightRadius: radii.md,
-    },
-    sectionHeaderText: {
-        ...typography.h2,
-        color: colors.accent,
-    },
-    sectionBody: {
-        padding: spacing.md,
-    },
-
-    // Picker
     picker: {
         height: spacing.lg * 2,
         color: colors.textPrimary,
@@ -419,28 +408,6 @@ const styles = StyleSheet.create({
     pickerButton: {
         paddingVertical: spacing.xs,
     },
-    pickerButtonText: {
-        ...typography.button,
-    },
-
-    // Input rows
-    inputRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: spacing.sm,
-    },
-    inputLabel: { flex: 1, ...typography.button, color: colors.textPrimary },
-    input: {
-        flex: 1,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: colors.accent,
-        borderRadius: radii.sm,
-        paddingHorizontal: spacing.sm,
-        paddingVertical: spacing.xs,
-        color: colors.textPrimary,
-    },
-
-    // Allergy options
     allergyOptions: { flexDirection: "row", flexWrap: "wrap" },
     switchContainer: {
         width: "50%",
@@ -449,38 +416,4 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.xs,
     },
     switch: { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] },
-    switchLabel: {
-        ...typography.body,
-        color: colors.textPrimary,
-        marginLeft: spacing.xs,
-    },
-
-    // Buttons & errors
-    button: {
-        backgroundColor: colors.accent,
-        padding: spacing.sm,
-        borderRadius: radii.sm,
-        alignItems: "center",
-        marginBottom: spacing.md,
-        marginHorizontal: spacing.md,
-    },
-    buttonText: { ...typography.button, color: colors.surface },
-    errorText: {
-        ...typography.body,
-        color: colors.error,
-        textAlign: "center",
-        marginBottom: spacing.md,
-    },
-
-    // Result cards
-    comboText: {
-        ...typography.body,
-        color: colors.textPrimary,
-        paddingVertical: spacing.xs,
-    },
-    totalsText: {
-        ...typography.body,
-        color: colors.textPrimary,
-        marginVertical: spacing.xs,
-    },
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     SafeAreaView,
     View,
@@ -9,8 +9,6 @@ import {
     StyleSheet,
     Animated,
     TextInput,
-    KeyboardAvoidingView,
-    Platform,
     Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -30,6 +28,7 @@ import {
     typography,
     radii,
     shadows,
+    sharedStyles,
 } from "../components/themes";
 
 // Define navigation prop type specific to this screen
@@ -192,7 +191,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     // Handle loading state
     if (loading) {
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={sharedStyles.screenSurface}>
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={colors.accent} />
                     <Text style={styles.loadingText}>Loading menu…</Text>
@@ -204,8 +203,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     // Handle error state
     if (loadError) {
         return (
-            <SafeAreaView style={styles.container}>
-                <Text style={styles.errorText}>{loadError}</Text>
+            <SafeAreaView style={sharedStyles.screenSurface}>
+                <Text style={sharedStyles.errorText}>{loadError}</Text>
             </SafeAreaView>
         );
     }
@@ -213,8 +212,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     // Handle null diningHalls
     if (!diningHalls) {
         return (
-            <SafeAreaView style={styles.container}>
-                <Text style={styles.errorText}>
+            <SafeAreaView style={sharedStyles.screenSurface}>
+                <Text style={sharedStyles.errorText}>
                     No dining hall data available
                 </Text>
             </SafeAreaView>
@@ -225,8 +224,10 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const hallObj = diningHalls[hallId];
     if (!hallObj) {
         return (
-            <SafeAreaView style={styles.container}>
-                <Text style={styles.errorText}>No data for "{hallId}"</Text>
+            <SafeAreaView style={sharedStyles.screenSurface}>
+                <Text style={sharedStyles.errorText}>
+                    No data for "{hallId}"
+                </Text>
             </SafeAreaView>
         );
     }
@@ -236,7 +237,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const anyMealOpen = mealKeys.some((meal) => hallObj[meal]?.available);
     if (!anyMealOpen) {
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={sharedStyles.screenSurface}>
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.hallName}>{hallName}</Text>
@@ -247,7 +248,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     <Text style={styles.closedTitle}>
                         {hallName} is closed today.
                     </Text>
-                    <Text style={styles.closedSubtitle}>
+                    <Text style={sharedStyles.textSecondary}>
                         Check back tomorrow or try another dining hall.
                     </Text>
                 </View>
@@ -269,7 +270,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
     // Render screen
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={sharedStyles.screenSurface}>
             {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.hallName}>{hallName}</Text>
@@ -284,7 +285,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     }
                     activeOpacity={0.7}
                 >
-                    <Text style={styles.platePlannerButtonText}>
+                    <Text style={sharedStyles.buttonTextLight}>
                         Plan My Plate
                     </Text>
                 </TouchableOpacity>
@@ -306,7 +307,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                         >
                             <Text
                                 style={[
-                                    styles.mealSwitcherTxt,
+                                    sharedStyles.text,
                                     meal === currentMeal
                                         ? styles.mealSwitcherTxtActive
                                         : styles.mealSwitcherTxtUnselected,
@@ -321,8 +322,10 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
             {/* Sections */}
             <ScrollView
-                style={styles.body}
-                contentContainerStyle={{ paddingBottom: spacing.lg }}
+                contentContainerStyle={{
+                    paddingTop: spacing.sm,
+                    paddingBottom: spacing.xxl + 8,
+                }}
             >
                 {SECTION_DEFINITIONS.map((def) => {
                     const cats = sectionMap[def.title];
@@ -438,22 +441,19 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                         }}
                                     >
                                         <TextInput
-                                            style={{
-                                                width: 40,
-                                                height: 30,
-                                                backgroundColor:
-                                                    colors.background,
-                                                color: colors.textPrimary,
-                                                textAlign: "center",
-                                                borderRadius: 6,
-                                                padding: 4,
-                                                marginRight: 8,
-                                            }}
+                                            style={[
+                                                sharedStyles.input,
+                                                {
+                                                    width: 40,
+                                                    height: 30,
+                                                    textAlign: "center",
+                                                    marginRight: 8,
+                                                },
+                                            ]}
                                             keyboardType="numeric"
                                             value={item.servings.toString()}
                                             onChangeText={(text) => {
                                                 if (text === "") {
-                                                    // Allow blank state (so user can delete and retype)
                                                     setSelectedItems((prev) =>
                                                         prev.map((i) =>
                                                             i.name === item.name
@@ -489,7 +489,6 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                 }
                                             }}
                                             onBlur={() => {
-                                                // On leaving the input, default empty to 1
                                                 setSelectedItems((prev) =>
                                                     prev.map((i) =>
                                                         i.name === item.name
@@ -508,7 +507,15 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                 );
                                             }}
                                         />
-                                        <Text style={styles.myPlateText}>
+                                        <Text
+                                            style={[
+                                                sharedStyles.textBackground,
+                                                {
+                                                    flexShrink: 1,
+                                                    flexWrap: "wrap",
+                                                },
+                                            ]}
+                                        >
                                             {item.name}
                                         </Text>
                                     </View>
@@ -531,6 +538,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                         style={{
                                             flexDirection: "row",
                                             alignItems: "center",
+                                            marginLeft: spacing.sm,
                                         }}
                                     >
                                         <Text style={styles.itemRemoveText}>
@@ -582,7 +590,7 @@ function CategoryBlock({
                 onPress={onToggle}
                 activeOpacity={0.7}
             >
-                <Text style={styles.categoryTitle}>{category}</Text>
+                <Text style={sharedStyles.buttonTextDark}>{category}</Text>
                 <Text style={styles.arrow}>{expanded ? "▲" : "▼"}</Text>
             </TouchableOpacity>
             {expanded && (
@@ -615,11 +623,16 @@ function CategoryBlock({
                                                 itemDetail: item,
                                             })
                                         }
+                                        hitSlop={{
+                                            top: 16,
+                                            bottom: 16,
+                                            left: 16,
+                                            right: 16,
+                                        }}
                                         style={{ flex: 1 }}
                                     >
                                         <Text
                                             style={[
-                                                styles.itemText,
                                                 isSelected && {
                                                     color: colors.accent,
                                                 },
@@ -721,10 +734,6 @@ function CategoryBlock({
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.surface,
-    },
     header: {
         flexDirection: "row",
         flexWrap: "wrap",
@@ -747,11 +756,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.md,
         borderRadius: spacing.xs,
     },
-    platePlannerButtonText: {
-        ...typography.button,
-        color: colors.background,
-    },
-
     closedContainer: {
         flex: 1,
         justifyContent: "flex-start",
@@ -765,12 +769,6 @@ const styles = StyleSheet.create({
         marginBottom: spacing.sm,
         textAlign: "center",
     },
-    closedSubtitle: {
-        ...typography.body,
-        color: colors.textSecondary,
-        textAlign: "center",
-    },
-
     pillWrapper: {
         backgroundColor: colors.primary,
         padding: spacing.sm,
@@ -789,12 +787,7 @@ const styles = StyleSheet.create({
     mealSwitcherBtnActive: {
         backgroundColor: colors.accent,
     },
-    mealSwitcherTxt: {
-        ...typography.body,
-        color: colors.surface,
-    },
     mealSwitcherTxtActive: {
-        ...typography.body,
         color: colors.surface,
         fontWeight: "700",
     },
@@ -805,10 +798,6 @@ const styles = StyleSheet.create({
         ...typography.body,
         color: colors.background,
     },
-
-    body: {
-        flex: 1,
-    },
     sectionContainer: {
         padding: spacing.sm,
     },
@@ -817,7 +806,6 @@ const styles = StyleSheet.create({
         marginBottom: spacing.sm,
         paddingHorizontal: spacing.md,
     },
-
     categoryHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -826,15 +814,10 @@ const styles = StyleSheet.create({
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderColor: colors.surface,
     },
-    categoryTitle: {
-        ...typography.button,
-        color: colors.textPrimary,
-    },
     arrow: {
         ...typography.body,
         color: colors.textSecondary,
     },
-
     itemsContainer: {
         paddingLeft: spacing.md,
         backgroundColor: colors.surface,
@@ -848,16 +831,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    itemText: {
-        ...typography.body,
-    },
     noItemsText: {
         ...typography.body,
         fontStyle: "italic",
         color: colors.textSecondary,
         padding: spacing.md,
     },
-
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
@@ -868,12 +847,6 @@ const styles = StyleSheet.create({
         ...typography.body,
         color: colors.background,
         marginTop: spacing.sm,
-    },
-    errorText: {
-        ...typography.body,
-        color: colors.error,
-        textAlign: "center",
-        padding: spacing.md,
     },
     panelContainer: {
         backgroundColor: colors.primary,
@@ -907,8 +880,5 @@ const styles = StyleSheet.create({
     itemRemoveText: {
         ...typography.button,
         color: colors.error,
-    },
-    myPlateText: {
-        color: colors.background,
     },
 });

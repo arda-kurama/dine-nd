@@ -5,10 +5,9 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../components/types";
 import {
     colors,
-    spacing,
     typography,
-    radii,
-    shadows,
+    sharedStyles,
+    spacing,
 } from "../components/themes";
 
 // Define the props for this screen
@@ -81,8 +80,8 @@ export default function ItemDetail({ route }: Props) {
     ) => {
         const suffix = daily.trim() ? ` (${daily})` : "";
         return (
-            <View style={styles.tableRow} key={`${label}-${idx}`}>
-                <Text style={styles.tableCellLabel}>{label}</Text>
+            <View style={sharedStyles.rowBetween} key={`${label}-${idx}`}>
+                <Text style={sharedStyles.buttonTextDark}>{label}</Text>
                 <Text style={styles.tableCellValue}>
                     {value}
                     {suffix}
@@ -92,37 +91,37 @@ export default function ItemDetail({ route }: Props) {
     };
 
     const renderTextSection = (title: string, body: string) => (
-        <View style={styles.sectionCard} key={title}>
-            <View style={styles.sectionHeader}>
+        <View style={sharedStyles.sectionCard} key={title}>
+            <View style={sharedStyles.sectionHeader}>
                 <Text style={styles.sectionHeaderText}>{title}</Text>
             </View>
-            <View style={styles.sectionBody}>
+            <View style={sharedStyles.sectionBody}>
                 <Text style={styles.paragraph}>{body}</Text>
             </View>
         </View>
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={sharedStyles.screenSurface}>
             {/* Header Card */}
-            <View style={styles.headerCard}>
-                <Text style={styles.itemName}>{name}</Text>
+            <View style={sharedStyles.cardHeader}>
+                <Text style={sharedStyles.titleSurface}>{name}</Text>
                 <Text
-                    style={styles.itemServing}
+                    style={sharedStyles.subtitleAccent}
                 >{`Serving Size: ${serving_size}`}</Text>
             </View>
             <ScrollView
-                contentContainerStyle={styles.content}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: spacing.md }}
             >
                 {/* Nutrition Facts as a single card */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
+                <View style={sharedStyles.sectionCard}>
+                    <View style={sharedStyles.sectionHeader}>
                         <Text style={styles.sectionHeaderText}>
                             Nutrition Facts
                         </Text>
                     </View>
-                    <View style={styles.sectionBody}>
+                    <View style={sharedStyles.sectionBody}>
                         {nutrientDefs.map((n, i) =>
                             renderNutrientRow(n.label, n.value, n.daily, i)
                         )}
@@ -138,46 +137,8 @@ export default function ItemDetail({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.surface },
-    content: { padding: spacing.md },
-
-    headerCard: {
-        backgroundColor: colors.primary,
-        paddingVertical: spacing.lg,
-        paddingHorizontal: spacing.md,
-        ...shadows.card,
-    },
-    itemName: {
-        ...typography.h1,
-        color: colors.surface,
-        marginBottom: spacing.xs,
-    },
-    itemServing: { ...typography.body, color: colors.accent },
-
-    sectionCard: {
-        backgroundColor: colors.background,
-        borderRadius: radii.md,
-        marginBottom: spacing.md,
-        ...shadows.card,
-    },
-    sectionHeader: {
-        backgroundColor: colors.primary,
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.md,
-        borderTopLeftRadius: radii.md,
-        borderTopRightRadius: radii.md,
-    },
     sectionHeaderText: { ...typography.h2, color: colors.accent },
-    sectionBody: { padding: spacing.md },
-
-    tableRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingVertical: spacing.sm,
-    },
-    tableCellLabel: { ...typography.body, color: colors.textPrimary },
     tableCellValue: { ...typography.body, color: colors.textPrimary },
-
     paragraph: {
         ...typography.body,
         color: colors.textPrimary,

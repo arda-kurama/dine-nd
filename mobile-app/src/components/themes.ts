@@ -1,4 +1,4 @@
-import { TextStyle, ViewStyle } from "react-native";
+import { StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 export const colors = {
     primary: "#0C2340", // ND blue
@@ -57,3 +57,102 @@ export const typography: {
     body: { fontSize: 14, fontWeight: "400" },
     button: { fontSize: 16, fontWeight: "600" },
 };
+
+export const sharedStyles = StyleSheet.create({
+    screenSurface: {
+        flex: 1,
+        backgroundColor: colors.surface,
+    },
+    input: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.accent,
+        borderRadius: radii.sm,
+        paddingHorizontal: spacing.sm,
+        paddingVertical: spacing.xs,
+        color: colors.textPrimary,
+        backgroundColor: colors.surface,
+        width: 64,
+        textAlign: "center",
+    },
+    button: {
+        backgroundColor: colors.accent,
+        padding: spacing.sm,
+        borderRadius: radii.sm,
+        alignItems: "center",
+        margin: spacing.md,
+    },
+    titleSurface: {
+        ...typography.h1,
+        color: colors.surface,
+    },
+    subtitleAccent: {
+        ...typography.body,
+        color: colors.accent,
+    },
+    text: {
+        ...typography.body,
+        color: colors.textPrimary,
+    },
+    textBackground: {
+        ...typography.body,
+        color: colors.background,
+    },
+    textSecondary: {
+        ...typography.body,
+        color: colors.textSecondary,
+    },
+    errorText: {
+        ...typography.body,
+        color: colors.error,
+        textAlign: "center",
+        padding: spacing.md,
+    },
+    buttonTextLight: {
+        ...typography.button,
+        color: colors.surface,
+    },
+    buttonTextDark: {
+        ...typography.button,
+        color: colors.textPrimary,
+    },
+    shadowCard: {
+        ...shadows.card,
+        borderRadius: radii.md,
+    },
+    cardHeader: {
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.lg,
+        paddingHorizontal: spacing.md,
+        ...shadows.card,
+    },
+    sectionCard: {
+        backgroundColor: colors.background,
+        borderRadius: radii.md,
+        marginTop: spacing.md,
+        marginHorizontal: spacing.md,
+        ...shadows.card,
+    },
+    sectionHeader: {
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        borderTopLeftRadius: radii.md,
+        borderTopRightRadius: radii.md,
+    },
+    sectionHeaderText: {
+        ...typography.h2,
+        color: colors.accent,
+    },
+    sectionBody: {
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+    },
+    rowBetween: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.accent,
+        paddingVertical: spacing.sm,
+    },
+});

@@ -21,7 +21,11 @@ import type {
     RootStackParamList,
     PlateItem,
 } from "../components/types";
-import { CONSOLIDATED_URL, SECTION_DEFINITIONS } from "../components/constants";
+import {
+    CONSOLIDATED_URL,
+    SECTION_DEFINITIONS,
+    MEAL_ORDER,
+} from "../components/constants";
 import {
     colors,
     spacing,
@@ -50,18 +54,10 @@ function pickCurrentMeal(
             : hr < 16.5
             ? "Late Lunch"
             : "Dinner";
-    const order = [
-        "Breakfast",
-        "Continental",
-        "Brunch",
-        "Lunch",
-        "Late Lunch",
-        "Dinner",
-    ];
-    const start = order.indexOf(tentative);
-    if (start === -1) return order[0];
-    for (let i = 0; i < order.length; i++) {
-        const meal = order[(start + i) % order.length];
+    const start = MEAL_ORDER.indexOf(tentative);
+    if (start === -1) return MEAL_ORDER[0];
+    for (let i = 0; i < MEAL_ORDER.length; i++) {
+        const meal = MEAL_ORDER[(start + i) % MEAL_ORDER.length];
         if (hallObj[meal]?.available) return meal;
     }
     return tentative;
@@ -233,7 +229,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     }
 
     // Handle case where no meals are available
-    const mealKeys = Object.keys(hallObj);
+    const rawMealKeys = Object.keys(hallObj);
+    const mealKeys = MEAL_ORDER.filter((m) => rawMealKeys.includes(m));
     const anyMealOpen = mealKeys.some((meal) => hallObj[meal]?.available);
     if (!anyMealOpen) {
         return (

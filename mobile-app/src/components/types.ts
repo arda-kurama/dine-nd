@@ -72,6 +72,7 @@ export type RootStackParamList = {
         categoryId: string;
         itemDetail: MenuItem;
     };
+    Info: undefined;
 };
 
 // Epected type of master hall schedule

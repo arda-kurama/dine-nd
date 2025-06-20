@@ -89,6 +89,7 @@ dine-nd/
 │   │   └── screens/
 │   │       ├── DiningHallScreen.tsx
 │   │       ├── HallList.tsx
+│   │       ├── InfoScreen.tsx
 │   │       ├── ItemDetail.tsx
 │   │       └── PlatePlanner.tsx
 │   └── App.tsx

@@ -68,3 +68,12 @@ export type RootStackParamList = {
         itemDetail: MenuItem;
     };
 };
+
+export type MealWindow = { start: number; end: number }; // 24h decimal
+export type Day = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
+
+export type HallSchedule = {
+    [day in Day]?: {
+        [meal: string]: MealWindow;
+    };
+};

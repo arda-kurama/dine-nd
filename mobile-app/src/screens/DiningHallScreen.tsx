@@ -20,11 +20,13 @@ import type {
     ConsolidatedMenu,
     RootStackParamList,
     PlateItem,
+    Day,
 } from "../components/types";
 import {
     CONSOLIDATED_URL,
     SECTION_DEFINITIONS,
     MEAL_ORDER,
+    HALL_SCHEDULES,
 } from "../components/constants";
 import {
     colors,
@@ -39,28 +41,43 @@ import {
 type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
 
 // Choose default meal that opens based on current time
-function pickCurrentMeal(
+export function pickCurrentMeal(
     hallObj: Record<
         string,
-        { available: boolean; categories: Record<string, MenuItem[]> }
-    >
+        { available: boolean; categories: Record<string, any> }
+    >,
+    hallName: string
 ): string {
-    const hr = new Date().getHours();
-    let tentative =
-        hr < 11
-            ? "Breakfast"
-            : hr < 14
-            ? "Lunch"
-            : hr < 16.5
-            ? "Late Lunch"
-            : "Dinner";
-    const start = MEAL_ORDER.indexOf(tentative);
-    if (start === -1) return MEAL_ORDER[0];
-    for (let i = 0; i < MEAL_ORDER.length; i++) {
-        const meal = MEAL_ORDER[(start + i) % MEAL_ORDER.length];
+    const now = new Date();
+    const hr = now.getHours() + now.getMinutes() / 60;
+    const day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
+        now.getDay()
+    ] as Day;
+
+    const schedule = HALL_SCHEDULES[hallName]?.[day];
+    if (!schedule) {
+        // fallback: first available meal in order
+        for (const meal of MEAL_ORDER) {
+            if (hallObj[meal]?.available) return meal;
+        }
+        return "Lunch";
+    }
+
+    // Find all meals valid at this time
+    const candidates = Object.entries(schedule)
+        .filter(([_, window]) => hr >= window.start && hr < window.end)
+        .map(([meal]) => meal);
+
+    for (const meal of candidates) {
         if (hallObj[meal]?.available) return meal;
     }
-    return tentative;
+
+    // fallback: first available meal in preferred order
+    for (const meal of MEAL_ORDER) {
+        if (hallObj[meal]?.available) return meal;
+    }
+
+    return "Lunch";
 }
 
 // Screen component for showing the full dining hall menu
@@ -130,7 +147,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             setLoadError(`No data for "${hallId}"`);
             return;
         }
-        if (!currentMeal) setCurrentMeal(pickCurrentMeal(hallObj));
+        if (!currentMeal) setCurrentMeal(pickCurrentMeal(hallObj, hallName));
         const cats = Object.keys(hallObj[currentMeal]?.categories || {});
         setExpanded(
             cats.reduce(

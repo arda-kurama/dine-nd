@@ -1,7 +1,8 @@
 import React from "react";
-import { SafeAreaView, ScrollView, View, Text, StyleSheet } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { SafeAreaView, ScrollView, View, Text, StyleSheet } from "react-native";
 
+// Screen specific types and themes
 import type { RootStackParamList } from "../components/types";
 import {
     colors,
@@ -10,9 +11,10 @@ import {
     spacing,
 } from "../components/themes";
 
-// Define the props for this screen
+// Define navigation props for this screen
 type Props = NativeStackScreenProps<RootStackParamList, "ItemDetail">;
 
+// Main item detail screen
 export default function ItemDetail({ route }: Props) {
     // Pull item details from route parameters
     const { itemDetail } = route.params;
@@ -72,6 +74,7 @@ export default function ItemDetail({ route }: Props) {
         },
     ];
 
+    // Renders a row for a nutrient (label on left, value + %DV on right)
     const renderNutrientRow = (
         label: string,
         value: number | string,
@@ -90,6 +93,7 @@ export default function ItemDetail({ route }: Props) {
         );
     };
 
+    // Generic section rendering for text blocks like Ingredients/Allergens
     const renderTextSection = (title: string, body: string) => (
         <View style={sharedStyles.sectionCard} key={title}>
             <View style={sharedStyles.sectionHeader}>
@@ -101,20 +105,23 @@ export default function ItemDetail({ route }: Props) {
         </View>
     );
 
+    // Main screen render
     return (
         <SafeAreaView style={sharedStyles.screenSurface}>
-            {/* Header Card */}
+            {/* Header card: item name and serving size */}
             <View style={sharedStyles.cardHeader}>
                 <Text style={sharedStyles.titleSurface}>{name}</Text>
                 <Text
                     style={sharedStyles.subtitleAccent}
                 >{`Serving Size: ${serving_size}`}</Text>
             </View>
+
+            {/* Scrollable body content */}
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: spacing.md }}
             >
-                {/* Nutrition Facts as a single card */}
+                {/* Nutrition Facts section */}
                 <View style={sharedStyles.sectionCard}>
                     <View style={sharedStyles.sectionHeader}>
                         <Text style={styles.sectionHeaderText}>
@@ -137,11 +144,14 @@ export default function ItemDetail({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
+    // Text styles
     sectionHeaderText: { ...typography.h2, color: colors.accent },
-    tableCellValue: { ...typography.body, color: colors.textPrimary },
     paragraph: {
         ...typography.body,
         color: colors.textPrimary,
         lineHeight: typography.body.fontSize! * 1.5,
     },
+
+    // Table styles
+    tableCellValue: { ...typography.body, color: colors.textPrimary },
 });

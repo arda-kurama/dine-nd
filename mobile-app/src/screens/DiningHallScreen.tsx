@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
     SafeAreaView,
     View,
@@ -11,10 +12,12 @@ import {
     TextInput,
     Keyboard,
 } from "react-native";
+
+// Icon set and toast message utility
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-root-toast";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
+// Screen specific types, constants, and themes
 import type {
     MenuItem,
     ConsolidatedMenu,
@@ -40,7 +43,7 @@ import {
 // Define navigation prop type specific to this screen
 type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
 
-// Choose default meal that opens based on current time
+// Determines which meal (e.g., Breakfast, Lunch) is active based on time of day
 export function pickCurrentMeal(
     hallObj: Record<
         string,
@@ -56,7 +59,7 @@ export function pickCurrentMeal(
 
     const schedule = HALL_SCHEDULES[hallName]?.[day];
     if (!schedule) {
-        // fallback: first available meal in order
+        // Fallback: first available meal in order
         for (const meal of MEAL_ORDER) {
             if (hallObj[meal]?.available) return meal;
         }
@@ -72,16 +75,18 @@ export function pickCurrentMeal(
         if (hallObj[meal]?.available) return meal;
     }
 
-    // fallback: first available meal in preferred order
+    // Fallback: first available meal in preferred order
     for (const meal of MEAL_ORDER) {
         if (hallObj[meal]?.available) return meal;
     }
 
+    // Fallback: Lunch
     return "Lunch";
 }
 
-// Screen component for showing the full dining hall menu
+// Main dining hall screen
 export default function DiningHallScreen({ route, navigation }: Props) {
+    // Route params
     const { hallId, hallName } = route.params;
 
     // State variables for managing menu data, loading state, and errors
@@ -96,10 +101,12 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     // State vars for my plate
     const [selectedItems, setSelectedItems] = useState<PlateItem[]>([]);
     const [panelExpanded, setPanelExpanded] = useState(false);
+
+    // Animated references for panel height and keyboard
     const panelHeight = useRef(new Animated.Value(90)).current; // collapsed height
     const keyboardHeight = useRef(new Animated.Value(0)).current;
 
-    // Animate keyboard animation
+    // Adjust panel position based on keyboard visibility
     useEffect(() => {
         const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
             Animated.timing(keyboardHeight, {
@@ -123,7 +130,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         };
     }, []);
 
-    // Fetch consolidated menu data
+    // Fetch consolidate_menu.json data for this hall
     useEffect(() => {
         setLoading(true);
         fetch(`${CONSOLIDATED_URL}?hall=${hallId}`)
@@ -139,7 +146,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             .finally(() => setLoading(false));
     }, [hallId]);
 
-    // Select the default meal and initialize expanded categories
+    // Select default meal and initialize expanded categories
     useEffect(() => {
         if (!diningHalls) return;
         const hallObj = diningHalls[hallId];
@@ -157,19 +164,19 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }, [diningHalls, currentMeal, hallId]);
 
-    // Helper for number parsing
+    // Parses nutrition number strings (e.g., "<5")
     const parseNumber = (x: any) => {
         if (typeof x === "number") return x;
         if (typeof x === "string") {
             const trimmed = x.trim();
-            if (trimmed.startsWith("<")) return 0.5; // or 0.25 or 0 depending on how conservative you want to be
+            if (trimmed.startsWith("<")) return 0.5;
             const parsed = parseFloat(trimmed);
             return isNaN(parsed) ? 0 : parsed;
         }
         return 0;
     };
 
-    // Helper to toggel MyPlate panel
+    // Toggles the MyPlate panel
     const togglePanel = () => {
         Animated.timing(panelHeight, {
             toValue: panelExpanded ? 80 : 300,
@@ -179,7 +186,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         setPanelExpanded((p) => !p);
     };
 
-    // Calculate macros
+    // Calculate total macros based on selected items and servings
     const totalMacros = selectedItems.reduce(
         (totals, item) => {
             const s =
@@ -198,10 +205,10 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 fat: totals.fat + s * parseNumber(item.nutrition.total_fat),
             };
         },
-        { calories: 0, protein: 0, carbs: 0, fat: 0 }
+        { calories: 0, protein: 0, carbs: 0, fat: 0 } // initial accumulator
     );
 
-    // Handle loading state
+    // Show loading spinner if data is being fetched
     if (loading) {
         return (
             <SafeAreaView style={sharedStyles.screenSurface}>
@@ -213,7 +220,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    // Handle error state
+    // Display error if loading failed
     if (loadError) {
         return (
             <SafeAreaView style={sharedStyles.screenSurface}>
@@ -222,7 +229,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    // Handle null diningHalls
+    // Fallback if no dining hall data exists
     if (!diningHalls) {
         return (
             <SafeAreaView style={sharedStyles.screenSurface}>
@@ -233,7 +240,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    // Handle invalid hallId
+    // Handle case where provided hallId is invalid
     const hallObj = diningHalls[hallId];
     if (!hallObj) {
         return (
@@ -245,19 +252,18 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    // Handle case where no meals are available
+    // Get valid meals in preferred order
     const rawMealKeys = Object.keys(hallObj);
     const mealKeys = MEAL_ORDER.filter((m) => rawMealKeys.includes(m));
     const anyMealOpen = mealKeys.some((meal) => hallObj[meal]?.available);
+
+    // If no meals are open today, show "closed" message
     if (!anyMealOpen) {
         return (
             <SafeAreaView style={sharedStyles.screenSurface}>
-                {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.hallName}>{hallName}</Text>
                 </View>
-
-                {/* Closed-Today Message */}
                 <View style={styles.closedContainer}>
                     <Text style={styles.closedTitle}>
                         {hallName} is closed today.
@@ -270,22 +276,23 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
     }
 
-    // Normal case: render all sections
+    // Gather all categories for the current meal
     const allCategories = Object.keys(hallObj[currentMeal]?.categories || {});
 
-    // Organize categories into sections based on definitions or mark it as "Other"
+    // Organize categories into pre-defined sections, otherwise classify as "Other"
     const sectionMap: Record<string, string[]> = {};
     SECTION_DEFINITIONS.forEach((d) => (sectionMap[d.title] = []));
     const other: string[] = [];
+
     allCategories.forEach((cat) => {
         const def = SECTION_DEFINITIONS.find((d) => d.match(cat));
         def ? sectionMap[def.title].push(cat) : other.push(cat);
     });
 
-    // Render screen
+    // Render Dining Hall Screen
     return (
         <SafeAreaView style={sharedStyles.screenSurface}>
-            {/* Header */}
+            {/* Header with Hall name and "Plan My Plate" button */}
             <View style={styles.header}>
                 <Text style={styles.hallName}>{hallName}</Text>
                 <TouchableOpacity
@@ -305,7 +312,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 </TouchableOpacity>
             </View>
 
-            {/* Meal switcher */}
+            {/* Meal period selector (Breakfast / Lunch / Dinner) */}
             <View style={styles.pillWrapper}>
                 <View style={styles.mealSwitcherContainer}>
                     {mealKeys.map((meal) => (
@@ -334,13 +341,14 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 </View>
             </View>
 
-            {/* Sections */}
+            {/* Scrollable list of categorized food sections */}
             <ScrollView
                 contentContainerStyle={{
                     paddingTop: spacing.sm,
                     paddingBottom: spacing.xxl + 8,
                 }}
             >
+                {/* Predefined sections */}
                 {SECTION_DEFINITIONS.map((def) => {
                     const cats = sectionMap[def.title];
                     if (!cats.length) return null;
@@ -374,6 +382,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                         </View>
                     );
                 })}
+
+                {/* "Other" section for uncategorized items */}
                 {other.length > 0 && (
                     <View style={styles.sectionContainer}>
                         <Text style={styles.sectionHeader}>Other</Text>
@@ -401,6 +411,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     </View>
                 )}
             </ScrollView>
+
+            {/* MyPlate panel at bottom for selected items + macros summary */}
             <Animated.View
                 style={[
                     styles.panelContainer,
@@ -419,6 +431,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     },
                 ]}
             >
+                {/* Panel header with toggle and macro summary */}
                 <TouchableOpacity
                     style={styles.panelHeader}
                     onPress={togglePanel}
@@ -433,6 +446,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                         Fat: {totalMacros.fat}g
                     </Text>
                 </TouchableOpacity>
+
+                {/* Panel body: list of selected items with serving controls */}
                 {panelExpanded && (
                     <ScrollView
                         style={styles.panelBody}
@@ -575,17 +590,17 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     );
 }
 
-// Component for rendering a category block with items
+// Component for rendering a category block of food items
 function CategoryBlock({
-    category,
-    items,
-    expanded,
-    onToggle,
-    navigation,
-    hallId,
-    meal,
-    selectedItems,
-    setSelectedItems,
+    category, // category name (e.g., "Homestyle")
+    items, // array of MenuItem objects
+    expanded, // whether this block is currently expanded or collapsed
+    onToggle, // function to toggle expanded state
+    navigation, // navigation object for screen routing
+    hallId, // current dining hall ID
+    meal, // current meal period (e.g., "Lunch")
+    selectedItems, // array of currently selected plate items
+    setSelectedItems, // setter to update selected plate items
 }: {
     category: string;
     items: MenuItem[];
@@ -599,20 +614,28 @@ function CategoryBlock({
 }) {
     return (
         <View>
+            {/* Tappable category header row (toggles expansion) */}
             <TouchableOpacity
                 style={styles.categoryHeader}
                 onPress={onToggle}
                 activeOpacity={0.7}
             >
+                {/* Category title on left */}
                 <Text style={sharedStyles.buttonTextDark}>{category}</Text>
+                {/* Expand/collapse arrow on right */}
                 <Text style={styles.arrow}>{expanded ? "▲" : "▼"}</Text>
             </TouchableOpacity>
+
+            {/* If expanded, show list of items */}
             {expanded && (
                 <View style={styles.itemsContainer}>
+                    {/* Handle empty categories */}
                     {items.length === 0 ? (
                         <Text style={styles.noItemsText}>(No items)</Text>
                     ) : (
+                        // Render each item
                         items.map((item, i) => {
+                            // Check if item is already selected
                             const isSelected = selectedItems.some(
                                 (x) => x.name === item.name
                             );
@@ -621,13 +644,14 @@ function CategoryBlock({
                                     key={`${category}-${i}`}
                                     style={[
                                         styles.itemRow,
+                                        // Highlight background if selected
                                         isSelected && {
                                             backgroundColor:
                                                 colors.accent + "22",
                                         },
                                     ]}
                                 >
-                                    {/* Left side: item name → navigates to ItemDetail */}
+                                    {/* LEFT: Item name (tap to view details) */}
                                     <TouchableOpacity
                                         onPress={() =>
                                             navigation.navigate("ItemDetail", {
@@ -656,10 +680,11 @@ function CategoryBlock({
                                         </Text>
                                     </TouchableOpacity>
 
-                                    {/* Right side: + button → toggle selection */}
+                                    {/* RIGHT: + / − button to toggle selection */}
                                     <TouchableOpacity
                                         onPress={() => {
                                             setSelectedItems((prev) => {
+                                                // If already selected, remove it
                                                 const newSelection = isSelected
                                                     ? prev.filter(
                                                           (x) =>
@@ -670,10 +695,11 @@ function CategoryBlock({
                                                           ...prev,
                                                           {
                                                               ...item,
-                                                              servings: 1,
+                                                              servings: 1, // default to 1 serving
                                                           },
                                                       ];
 
+                                                // Show a toast if adding item
                                                 if (!isSelected) {
                                                     Toast.show(
                                                         `${item.name} added to your plate`,
@@ -748,6 +774,7 @@ function CategoryBlock({
 }
 
 const styles = StyleSheet.create({
+    // Header styles
     header: {
         flexDirection: "row",
         flexWrap: "wrap",
@@ -770,6 +797,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.md,
         borderRadius: spacing.xs,
     },
+
+    // Closed dining hall message styles
     closedContainer: {
         flex: 1,
         justifyContent: "flex-start",
@@ -783,6 +812,8 @@ const styles = StyleSheet.create({
         marginBottom: spacing.sm,
         textAlign: "center",
     },
+
+    // Meal switcher styles
     pillWrapper: {
         backgroundColor: colors.primary,
         padding: spacing.sm,
@@ -812,6 +843,8 @@ const styles = StyleSheet.create({
         ...typography.body,
         color: colors.background,
     },
+
+    // Section / category styles
     sectionContainer: {
         padding: spacing.sm,
     },
@@ -836,6 +869,8 @@ const styles = StyleSheet.create({
         paddingLeft: spacing.md,
         backgroundColor: colors.surface,
     },
+
+    // Item row styles
     itemRow: {
         paddingVertical: spacing.sm,
         paddingHorizontal: spacing.md,
@@ -851,6 +886,8 @@ const styles = StyleSheet.create({
         color: colors.textSecondary,
         padding: spacing.md,
     },
+
+    // Loading indicator
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
@@ -862,6 +899,8 @@ const styles = StyleSheet.create({
         color: colors.background,
         marginTop: spacing.sm,
     },
+
+    // MyPlate panel styles
     panelContainer: {
         backgroundColor: colors.primary,
         bottom: 0,

@@ -1,9 +1,11 @@
+// Expected type for menu_summary.json
 export interface MenuSummary {
     last_updated: string;
     date: string;
     dining_halls: Record<string, number>;
 }
 
+// Expected type for item in consolidated_menu.json
 export type MenuItem = {
     name: string;
     serving_size: string;
@@ -33,8 +35,10 @@ export type MenuItem = {
     [key: string]: any;
 };
 
+// Special type used in DiningHallScreen.tsx
 export type PlateItem = MenuItem & { servings: number };
 
+// Expected type of entire consolidated_menu.json
 export type ConsolidatedMenu = {
     last_updated: string;
     date: string;
@@ -50,6 +54,7 @@ export type ConsolidatedMenu = {
     };
 };
 
+// Expected parameters for all screens
 export type RootStackParamList = {
     Halls: undefined;
     DiningHall: {
@@ -69,9 +74,9 @@ export type RootStackParamList = {
     };
 };
 
+// Epected type of master hall schedule
 export type MealWindow = { start: number; end: number }; // 24h decimal
 export type Day = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
-
 export type HallSchedule = {
     [day in Day]?: {
         [meal: string]: MealWindow;

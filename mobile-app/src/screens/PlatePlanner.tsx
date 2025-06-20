@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
     SafeAreaView,
     ScrollView,
@@ -13,32 +14,16 @@ import {
     Platform,
     ActionSheetIOS,
 } from "react-native";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Picker } from "@react-native-picker/picker";
 
-import { ALLERGENS } from "../components/constants";
+// Screen specific types, constants, and themes
 import type { RootStackParamList } from "../components/types";
+import { ALLERGENS } from "../components/constants";
+import { ApiResponse } from "../components/constants";
 import { colors, spacing, sharedStyles } from "../components/themes";
 
-// Define props type for this screen
+// Define navigation prop type for this screen
 type Props = NativeStackScreenProps<RootStackParamList, "PlatePlanner">;
-
-// Response shape from the planning API
-interface ApiItem {
-    category: string;
-    name: string;
-    servings: number;
-    servingSize: string;
-}
-interface ApiResponse {
-    items: ApiItem[];
-    totals: {
-        calories: number;
-        protein: number;
-        carbs: number;
-        fat: number;
-    };
-}
 
 export default function PlatePlanner({ route }: Props) {
     const { hallId, hallName, mealPeriod } = route.params;
@@ -67,7 +52,7 @@ export default function PlatePlanner({ route }: Props) {
         ["Fat", fatTarget, setFatTarget],
     ];
 
-    // Fetch available sections for this hall+meal
+    // Fetch available sections for this hall + meal combination
     useEffect(() => {
         async function loadSections() {
             try {
@@ -79,6 +64,8 @@ export default function PlatePlanner({ route }: Props) {
                 if (!res.ok) throw new Error();
                 const { sections } = await res.json();
                 setAvailableSections(sections);
+
+                // Clear current selection if invalid
                 if (!sections.includes(selectedSection)) {
                     setSelectedSection("");
                 }
@@ -89,12 +76,15 @@ export default function PlatePlanner({ route }: Props) {
         loadSections();
     }, [hallId, mealPeriod]);
 
+    // Logic for Plan Plate button
     async function onPlanPlatePress() {
+        // Parse input values or leave undefined
         const cals = calorieTarget ? parseInt(calorieTarget, 10) : undefined;
         const prot = proteinTarget ? parseInt(proteinTarget, 10) : undefined;
         const carbs = carbTarget ? parseInt(carbTarget, 10) : undefined;
         const fat = fatTarget ? parseInt(fatTarget, 10) : undefined;
 
+        // Type validation
         if (
             (cals !== undefined && isNaN(cals)) ||
             (prot !== undefined && isNaN(prot)) ||
@@ -119,6 +109,7 @@ export default function PlatePlanner({ route }: Props) {
         setError(null);
         setResult(null);
 
+        // Send request to backend
         try {
             const payload = {
                 hall: hallName,
@@ -138,16 +129,20 @@ export default function PlatePlanner({ route }: Props) {
                     body: JSON.stringify(payload),
                 }
             );
+
+            // Handle error responses
             if (!response.ok) {
                 let errMsg = `Unexpected error (HTTP ${response.status})`;
                 try {
                     const json = await response.json();
                     if (json?.error) errMsg = json.error;
                 } catch {
-                    // fallback already set
+                    // Fallback already set
                 }
                 throw new Error(errMsg);
             }
+
+            // Success: save results
             const json: ApiResponse = await response.json();
             setResult(json);
         } catch (e: any) {
@@ -157,6 +152,7 @@ export default function PlatePlanner({ route }: Props) {
         }
     }
 
+    // Section picker for IOS (uses ActionSheet)
     const showSectionPicker = () => {
         ActionSheetIOS.showActionSheetWithOptions(
             {
@@ -171,8 +167,10 @@ export default function PlatePlanner({ route }: Props) {
         );
     };
 
+    // Main plate planner screen
     return (
         <SafeAreaView style={sharedStyles.screenSurface}>
+            {/* Header */}
             <View style={sharedStyles.cardHeader}>
                 <Text style={sharedStyles.titleSurface}>{hallName}</Text>
                 <Text style={sharedStyles.subtitleAccent}>{mealPeriod}</Text>
@@ -222,7 +220,7 @@ export default function PlatePlanner({ route }: Props) {
                         )}
                     </View>
                 </View>
-                {/* Macro Targets */}
+                {/* Macro Target Inputs */}
                 <View style={sharedStyles.sectionCard}>
                     <View style={sharedStyles.sectionHeader}>
                         <Text style={sharedStyles.sectionHeaderText}>
@@ -248,7 +246,7 @@ export default function PlatePlanner({ route }: Props) {
                     </View>
                 </View>
 
-                {/* Avoid Allergens */}
+                {/* Allergen Selector */}
                 <View style={sharedStyles.sectionCard}>
                     <View style={sharedStyles.sectionHeader}>
                         <Text style={sharedStyles.sectionHeaderText}>
@@ -299,7 +297,7 @@ export default function PlatePlanner({ route }: Props) {
                     </View>
                 </View>
 
-                {/* Plan Button & Error */}
+                {/* Plan Plate Button & Errors */}
                 <TouchableOpacity
                     style={sharedStyles.button}
                     onPress={onPlanPlatePress}
@@ -400,6 +398,8 @@ export default function PlatePlanner({ route }: Props) {
 
 const styles = StyleSheet.create({
     contentContainer: { paddingBottom: spacing.lg },
+
+    // Section picker styles
     picker: {
         height: spacing.lg * 2,
         color: colors.textPrimary,
@@ -408,6 +408,8 @@ const styles = StyleSheet.create({
     pickerButton: {
         paddingVertical: spacing.xs,
     },
+
+    // Allergy switch styles
     allergyOptions: { flexDirection: "row", flexWrap: "wrap" },
     switchContainer: {
         width: "50%",

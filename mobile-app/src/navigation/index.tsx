@@ -2,9 +2,9 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import type { RootStackParamList } from "./types";
 import { StyleSheet, View, Text, Image } from "react-native";
-import { colors, spacing, typography } from "./themes";
+import type { RootStackParamList } from "../components/types";
+import { colors, spacing, typography } from "../components/themes";
 
 import HallList from "../screens/HallList";
 import DiningHallScreen from "../screens/DiningHallScreen";

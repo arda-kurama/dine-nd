@@ -1,16 +1,18 @@
 import { StyleSheet, TextStyle, ViewStyle } from "react-native";
 
+// Default colors
 export const colors = {
     primary: "#0C2340", // ND blue
     accent: "#C99700", // ND gold
     success: "#00843D", // ND green
-    background: "#FFFFFF",
-    surface: "#F8F8F8",
-    textPrimary: "#0C234B",
-    textSecondary: "#666666",
-    error: "#E53935",
+    background: "#FFFFFF", // White
+    surface: "#F8F8F8", // Light Cream
+    textPrimary: "#0C234B", // Dark Blue
+    textSecondary: "#666666", // Gray
+    error: "#E53935", // Red
 };
 
+// Standardized spacing options
 export const spacing = {
     xs: 4,
     sm: 8,
@@ -26,6 +28,7 @@ export const radii = {
     lg: 12,
 };
 
+// Standardized shadows
 export const shadows: {
     card: ViewStyle;
     heavy?: ViewStyle;
@@ -46,6 +49,7 @@ export const shadows: {
     },
 };
 
+// Standardize text sizes
 export const typography: {
     h1: TextStyle;
     h2: TextStyle;
@@ -58,6 +62,7 @@ export const typography: {
     button: { fontSize: 16, fontWeight: "600" },
 };
 
+// Standardized styles
 export const sharedStyles = StyleSheet.create({
     screenSurface: {
         flex: 1,

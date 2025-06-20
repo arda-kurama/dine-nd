@@ -2,11 +2,22 @@ import { Dimensions } from "react-native";
 import sectionDefs from "./section_defs.json";
 import { HallSchedule, MealWindow } from "./types";
 
+// Base URL for GitHub Pages hosting menu data
 export const GITHUB_PAGES_BASE = "https://arda-kurama.github.io/dine-nd";
+
+// URL to the summarized menu JSON
 export const SUMMARY_URL = `${GITHUB_PAGES_BASE}/menu_summary.json`;
+
+// URL to the consolidated full menu JSON
 export const CONSOLIDATED_URL = `${GITHUB_PAGES_BASE}/consolidated_menu.json`;
+
+// Default image placeholder URI
 export const DEFAULT_IMAGE = { uri: "" };
+
+// Get device width and height for responsive layout
 export const { width, height } = Dimensions.get("window");
+
+// Define height of meal cards as a percentage of screen height
 export const CARD_HEIGHT = height * 0.125;
 
 // Map dining halls to their associated images
@@ -25,12 +36,13 @@ export const hallImages: Record<string, { uri: string }> = {
     },
 };
 
-// Group categories into sections by matching names using regexes
+// Canonical category definitions with matching rules for backend/frontend consistency
 export const SECTION_DEFINITIONS = sectionDefs.map(({ title, pattern }) => ({
     title,
     match: (n: string) => new RegExp(pattern).test(n),
 }));
 
+// Hardedcoded list of allergens
 export const ALLERGENS = [
     "Eggs",
     "Fish",
@@ -44,6 +56,7 @@ export const ALLERGENS = [
     "Wheat",
 ];
 
+// Hardcoded master meal order
 export const MEAL_ORDER = [
     "Breakfast",
     "Continental",
@@ -115,6 +128,7 @@ const holyCrossSun: Record<string, MealWindow> = {
     Dinner: { start: 16.75, end: 19.5 },
 };
 
+// Master schedule for all dining halls
 export const HALL_SCHEDULES: Record<string, HallSchedule> = {
     "South Dining Hall": {
         Mon: southNorthWeekday,
@@ -153,3 +167,22 @@ export const HALL_SCHEDULES: Record<string, HallSchedule> = {
         Sun: holyCrossSun,
     },
 };
+
+// Expected type for a response item from the plate planner API
+export interface ApiItem {
+    category: string;
+    name: string;
+    servings: number;
+    servingSize: string;
+}
+
+// Expected type for the full response from the plate planner API
+export interface ApiResponse {
+    items: ApiItem[];
+    totals: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+}

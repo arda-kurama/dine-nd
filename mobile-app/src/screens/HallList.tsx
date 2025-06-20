@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
     View,
     Text,
@@ -9,8 +10,8 @@ import {
     Image,
     SafeAreaView,
 } from "react-native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+// Screen specific types, constants, and themes
 import type { RootStackParamList, MenuSummary } from "../components/types";
 import {
     SUMMARY_URL,
@@ -34,7 +35,7 @@ type HallListNavProp = NativeStackNavigationProp<RootStackParamList, "Halls">;
 // Define the props for this component
 type Props = { navigation: HallListNavProp };
 
-// Main component for displaying the list of dining halls
+// Main screen for displaying the list of dining halls
 export default function HallList({ navigation }: Props) {
     // State for menu summary data, loading status, and error handling
     const [summary, setSummary] = useState<MenuSummary | null>(null);
@@ -141,6 +142,7 @@ export default function HallList({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
+    // Styles for all containers
     center: {
         flex: 1,
         justifyContent: "center",
@@ -155,19 +157,20 @@ const styles = StyleSheet.create({
         ...shadows.card,
         width: width - spacing.xl,
     },
-    hallImage: {
-        width: width,
-        height: CARD_HEIGHT,
-    },
     captionContainer: {
         backgroundColor: colors.accent,
         paddingVertical: spacing.sm,
         paddingHorizontal: spacing.md,
     },
-    hallTitle: {
-        ...typography.h2,
-        color: colors.background,
+
+    // Images
+    hallImage: {
+        width: width,
+        height: CARD_HEIGHT,
     },
+
+    // Status indicator styles
+
     statusRow: {
         flexDirection: "row",
         alignItems: "center",
@@ -178,6 +181,12 @@ const styles = StyleSheet.create({
         height: spacing.sm,
         borderRadius: radii.sm,
         marginRight: spacing.xs,
+    },
+
+    // Text styles
+    hallTitle: {
+        ...typography.h2,
+        color: colors.background,
     },
     mealCountText: {
         ...typography.body,

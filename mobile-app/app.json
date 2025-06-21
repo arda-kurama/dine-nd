@@ -1,42 +1,46 @@
 {
-  "expo": {
-    "name": "mobile-app",
-    "slug": "mobile-app",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "bundleIdentifier": "com.ardakurama.dinend",
-      "supportsTablet": true,
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
-    },
-    "android": {
-      "package": "com.ardakurama.dinend",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-asset"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "4036a81e-9535-46ea-9a9c-0e5e11b98c5d"
-      }
+    "expo": {
+        "name": "DineND",
+        "slug": "dine-nd",
+        "version": "1.0.2",
+        "runtimeVersion": "1.0.2",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "newArchEnabled": true,
+        "updates": {
+            "fallbackToCacheTimeout": 0
+        },
+        "splash": {
+            "image": "./assets/splash-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#0C2340"
+        },
+        "ios": {
+            "bundleIdentifier": "com.ardakurama.dinend",
+            "supportsTablet": true,
+            "infoPlist": {
+                "ITSAppUsesNonExemptEncryption": false
+            }
+        },
+        "android": {
+            "versionCode": 4,
+            "package": "com.ardakurama.dinend",
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#0C2340"
+            },
+            "edgeToEdgeEnabled": true
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": ["expo-asset"],
+        "owner": "arda-kurama",
+        "extra": {
+            "eas": {
+                "projectId": "dbbb905d-498d-44ed-ade2-680ec0f30fb8"
+            }
+        }
     }
-  }
 }

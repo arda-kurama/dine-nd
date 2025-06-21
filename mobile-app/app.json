@@ -2,8 +2,8 @@
     "expo": {
         "name": "DineND",
         "slug": "dine-nd",
-        "version": "1.0.2",
-        "runtimeVersion": "1.0.2",
+        "version": "1.0.4",
+        "runtimeVersion": "1.0.4",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
@@ -24,11 +24,11 @@
             }
         },
         "android": {
-            "versionCode": 5,
             "package": "com.ardakurama.dinend",
+            "icon": "./assets/adaptive-icon.png",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#0C2340"
+                "backgroundImage": "./assets/navy-background.png"
             },
             "edgeToEdgeEnabled": true
         },

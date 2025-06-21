@@ -167,22 +167,3 @@ export const HALL_SCHEDULES: Record<string, HallSchedule> = {
         Sun: holyCrossSun,
     },
 };
-
-// Expected type for a response item from the plate planner API
-export interface ApiItem {
-    category: string;
-    name: string;
-    servings: number;
-    servingSize: string;
-}
-
-// Expected type for the full response from the plate planner API
-export interface ApiResponse {
-    items: ApiItem[];
-    totals: {
-        calories: number;
-        protein: number;
-        carbs: number;
-        fat: number;
-    };
-}

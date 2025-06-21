@@ -18,8 +18,8 @@ import { Picker } from "@react-native-picker/picker";
 
 // Screen specific types, constants, and themes
 import type { RootStackParamList } from "../components/types";
+import { ApiResponse } from "../components/types";
 import { ALLERGENS } from "../components/constants";
-import { ApiResponse } from "../components/constants";
 import { colors, spacing, sharedStyles } from "../components/themes";
 
 // Define navigation prop type for this screen
@@ -235,11 +235,24 @@ export default function PlatePlanner({ route }: Props) {
                                 </Text>
                                 <TextInput
                                     style={sharedStyles.input}
-                                    keyboardType="numeric"
+                                    // Number-pad is the pure integer keypad on iOS; numeric on Android
+                                    keyboardType={Platform.select({
+                                        ios: "number-pad",
+                                        android: "numeric",
+                                        web: "numeric",
+                                    })}
                                     placeholder="--"
                                     placeholderTextColor={colors.textSecondary}
                                     value={value}
-                                    onChangeText={setter}
+                                    onChangeText={(text) => {
+                                        // Strip out ANY non-digit:
+                                        const digitsOnly = text.replace(
+                                            /[^0-9]/g,
+                                            ""
+                                        );
+                                        setter(digitsOnly);
+                                    }}
+                                    maxLength={4}
                                 />
                             </View>
                         ))}
@@ -323,28 +336,19 @@ export default function PlatePlanner({ route }: Props) {
                                 </Text>
                             </View>
                             <View style={sharedStyles.sectionBody}>
-                                {result.items.map((item, idx) => {
-                                    const dishName = item.name;
-
-                                    return (
-                                        <View
-                                            key={`${dishName}-${idx}`}
-                                            style={sharedStyles.rowBetween}
-                                        >
-                                            <Text
-                                                style={
-                                                    sharedStyles.buttonTextDark
-                                                }
-                                            >
-                                                {dishName}
-                                            </Text>
-                                            <Text>
-                                                {item.servings}x{" "}
-                                                {item.servingSize}
-                                            </Text>
-                                        </View>
-                                    );
-                                })}
+                                {result.items.map((item, idx) => (
+                                    <View
+                                        key={`${item.name}-${idx}`}
+                                        style={styles.resultRow}
+                                    >
+                                        <Text style={styles.dishName}>
+                                            {item.name}
+                                        </Text>
+                                        <Text style={styles.servings}>
+                                            {item.servings}x {item.servingSize}
+                                        </Text>
+                                    </View>
+                                ))}
                             </View>
                         </View>
 
@@ -418,4 +422,21 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.xs,
     },
     switch: { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] },
+
+    resultRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        flexWrap: "wrap",
+        marginBottom: spacing.xs,
+    },
+    dishName: {
+        ...sharedStyles.buttonTextDark,
+        flex: 1,
+        marginRight: spacing.sm,
+        flexWrap: "wrap",
+    },
+    servings: {
+        flexShrink: 0,
+    },
 });

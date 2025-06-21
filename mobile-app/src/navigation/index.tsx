@@ -8,7 +8,14 @@ import {
     useNavigation,
     createNavigationContainerRef,
 } from "@react-navigation/native";
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Text,
+    Image,
+    TouchableOpacity,
+    Platform,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // Screen specific types and themes
@@ -75,7 +82,14 @@ export default function AppNavigator() {
                                 onPress={() =>
                                     navigationRef.current?.navigate("Info")
                                 }
-                                style={styles.infoButton}
+                                style={{
+                                    ...styles.infoButton,
+                                    marginRight: Platform.select({
+                                        ios: 0,
+                                        android: spacing.md,
+                                        web: spacing.md,
+                                    }),
+                                }}
                                 hitSlop={{
                                     top: 10,
                                     bottom: 10,

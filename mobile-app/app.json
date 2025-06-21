@@ -25,7 +25,6 @@
         },
         "android": {
             "package": "com.ardakurama.dinend",
-            "icon": "./assets/adaptive-icon.png",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundImage": "./assets/navy-background.png"

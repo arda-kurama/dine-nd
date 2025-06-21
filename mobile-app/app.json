@@ -24,7 +24,7 @@
             }
         },
         "android": {
-            "versionCode": 4,
+            "versionCode": 5,
             "package": "com.ardakurama.dinend",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",

@@ -3,13 +3,14 @@
         "name": "DineND",
         "slug": "dine-nd",
         "version": "1.0.6",
-        "runtimeVersion": "1.0.6",
+        "runtimeVersion": "1.0.7",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
         "newArchEnabled": true,
         "updates": {
-            "fallbackToCacheTimeout": 0
+            "fallbackToCacheTimeout": 0,
+            "url": "https://u.expo.dev/dbbb905d-498d-44ed-ade2-680ec0f30fb8"
         },
         "splash": {
             "image": "./assets/splash-icon.png",

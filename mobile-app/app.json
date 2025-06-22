@@ -3,9 +3,7 @@
         "name": "DineND",
         "slug": "dine-nd",
         "version": "1.0.7",
-        "runtimeVersion": {
-            "policy": "appVersion"
-        },
+        "runtimeVersion": "1.0.7",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",

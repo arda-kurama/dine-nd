@@ -116,22 +116,26 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
     // Adjust panel position based on keyboard visibility
     useEffect(() => {
-        const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
-            Animated.timing(keyboardHeight, {
-                toValue: e.endCoordinates.height,
-                duration: e.duration || 250,
-                useNativeDriver: false,
-            }).start();
-        });
-
-        const hideSub = Keyboard.addListener("keyboardWillHide", (e) => {
-            Animated.timing(keyboardHeight, {
-                toValue: 0,
-                duration: e.duration || 250,
-                useNativeDriver: false,
-            }).start();
-        });
-
+        const showSub = Keyboard.addListener(
+            Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow",
+            (e) => {
+                Animated.timing(keyboardHeight, {
+                    toValue: e.endCoordinates.height,
+                    duration: e.duration || 250,
+                    useNativeDriver: false,
+                }).start();
+            }
+        );
+        const hideSub = Keyboard.addListener(
+            Platform.OS === "android" ? "keyboardDidHide" : "keyboardWillHide",
+            (e) => {
+                Animated.timing(keyboardHeight, {
+                    toValue: 0,
+                    duration: e.duration || 250, // now `e` is the event object
+                    useNativeDriver: false,
+                }).start();
+            }
+        );
         return () => {
             showSub.remove();
             hideSub.remove();
@@ -421,7 +425,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             {/* MyPlate panel at bottom for selected items + macros summary */}
             <KeyboardAvoidingView
                 behavior={Platform.OS === "android" ? "position" : undefined}
-                keyboardVerticalOffset={0}
+                keyboardVerticalOffset={insets.bottom}
                 style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}
             >
                 <Animated.View

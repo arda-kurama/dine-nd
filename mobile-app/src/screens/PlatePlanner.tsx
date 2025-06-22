@@ -339,7 +339,13 @@ export default function PlatePlanner({ route }: Props) {
                                 {result.items.map((item, idx) => (
                                     <View
                                         key={`${item.name}-${idx}`}
-                                        style={styles.resultRow}
+                                        style={[
+                                            sharedStyles.rowBetween,
+                                            {
+                                                alignItems: "flex-start", // top-aligns the row
+                                                flexWrap: "wrap", // lets children wrap instead of overflow
+                                            },
+                                        ]}
                                     >
                                         <Text style={styles.dishName}>
                                             {item.name}
@@ -423,13 +429,6 @@ const styles = StyleSheet.create({
     },
     switch: { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] },
 
-    resultRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        flexWrap: "wrap",
-        marginBottom: spacing.xs,
-    },
     dishName: {
         ...sharedStyles.buttonTextDark,
         flex: 1,

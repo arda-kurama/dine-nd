@@ -3,7 +3,9 @@
         "name": "DineND",
         "slug": "dine-nd",
         "version": "1.0.7",
-        "runtimeVersion": "1.0.7",
+        "runtimeVersion": {
+            "policy": "appVersion"
+        },
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
@@ -30,7 +32,8 @@
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundImage": "./assets/navy-background.png"
             },
-            "edgeToEdgeEnabled": true
+            "edgeToEdgeEnabled": true,
+            "softwareKeyboardLayoutMode": "resize"
         },
         "web": {
             "favicon": "./assets/favicon.png"

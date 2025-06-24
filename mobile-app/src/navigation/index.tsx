@@ -1,42 +1,46 @@
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-    NativeStackNavigationProp,
-    createNativeStackNavigator,
-} from "@react-navigation/native-stack";
-import {
-    NavigationContainer,
-    useNavigation,
-    createNavigationContainerRef,
-} from "@react-navigation/native";
-import {
+    Platform,
     View,
     StyleSheet,
     Text,
     Image,
     TouchableOpacity,
-    Platform,
+    StatusBar,
 } from "react-native";
+import {
+    NavigationContainer,
+    createNavigationContainerRef,
+    useNavigation,
+} from "@react-navigation/native";
+import {
+    createNativeStackNavigator,
+    NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
+
+// Icon set
 import { Ionicons } from "@expo/vector-icons";
 
-// Screen specific types and themes
-import type { RootStackParamList } from "../components/types";
+// Screen specific themes and types
 import { colors, spacing, typography } from "../components/themes";
+import type { RootStackParamList } from "../components/types";
 
-// Import all screens
+// Screen components
 import HallList from "../screens/HallList";
 import DiningHallScreen from "../screens/DiningHallScreen";
 import PlatePlanner from "../screens/PlatePlanner";
 import ItemDetail from "../screens/ItemDetail";
 import InfoScreen from "../screens/InfoScreen";
 
-// Load logo asset
+// Logo asset used in header
 const logo = require("../../assets/tab-icon.png");
 
-// Create a stack navigator with typed route names and parameters
+// Stack navigator and navigation ref
 const Stack = createNativeStackNavigator<RootStackParamList>();
-const navigationRef = createNavigationContainerRef<RootStackParamList>();
+export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
-// Custom tappable header component to render the DineND logo and text
+// Custom header title component used on iOS header
 function HeaderTitle() {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -61,53 +65,109 @@ function HeaderTitle() {
     );
 }
 
-// Root navigation container and stack configuration
+// Android back button used inside custom android header
+function AndroidBackButton() {
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    if (!navigation.canGoBack()) {
+        return null;
+    }
+    return (
+        <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+            <Ionicons name="arrow-back" size={24} color={colors.surface} />
+        </TouchableOpacity>
+    );
+}
+
+// Complete custom header for Android
+function AndroidFixedHeader({ navigation }: { navigation: any }) {
+    const insets = useSafeAreaInsets();
+    return (
+        <View style={[styles.fixedHeaderContainer, { paddingTop: insets.top }]}>
+            <StatusBar
+                barStyle="light-content"
+                backgroundColor={colors.primary}
+            />
+            {/* Left side: back button area */}
+            <View style={styles.headerSide}>
+                <AndroidBackButton />
+            </View>
+            {/* Center: logo and title, resets navigation to Halls */}
+            <TouchableOpacity
+                style={styles.centerContainer}
+                onPress={() =>
+                    navigation.reset({ index: 0, routes: [{ name: "Halls" }] })
+                }
+                activeOpacity={0.8}
+            >
+                <Image source={logo} style={styles.logo} resizeMode="contain" />
+                <Text style={styles.title}>DineND</Text>
+            </TouchableOpacity>
+            {/* Right side: info button */}
+            <View style={styles.headerSide}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Info")}
+                    style={styles.infoButton}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                    <Ionicons
+                        name="information-circle-outline"
+                        size={24}
+                        color={colors.surface}
+                    />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
+
+// iOS native header options for the stack navigator
+const iosScreenOptions = {
+    headerStyle: { backgroundColor: colors.primary },
+    headerTintColor: colors.surface,
+    headerBackTitle: "Back",
+    headerTitle: () => <HeaderTitle />,
+    headerRight: () => (
+        <TouchableOpacity
+            onPress={() => navigationRef.current?.navigate("Info")}
+            style={styles.infoButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+            <Ionicons
+                name="information-circle-outline"
+                size={24}
+                color="#FFF"
+            />
+        </TouchableOpacity>
+    ),
+    gestureEnabled: true,
+    contentStyle: { backgroundColor: colors.surface },
+};
+
+// Android custom header options for the stack navigator
+const androidScreenOptions = {
+    header: (props: any) => <AndroidFixedHeader {...props} />,
+    animation: "fade" as const,
+    detachPreviousScreen: true,
+    gestureEnabled: true,
+};
+
+// Main navigator components
 export default function AppNavigator() {
+    const screenOptions =
+        Platform.OS === "ios" ? iosScreenOptions : androidScreenOptions;
+
     return (
         <NavigationContainer ref={navigationRef}>
-            {/* Start on the HallList screen */}
             <Stack.Navigator
                 initialRouteName="Halls"
-                screenOptions={{
-                    headerStyle: { backgroundColor: colors.primary },
-                    headerTintColor: "#FFF",
-                    headerTitleAlign: "center",
-                    headerBackTitle: "Back",
-                    // Render Logo + DineND Title
-                    headerTitle: () => <HeaderTitle />,
-                    // Render info icon
-                    headerRight: () => (
-                        <View>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    navigationRef.current?.navigate("Info")
-                                }
-                                style={{
-                                    ...styles.infoButton,
-                                    marginRight: Platform.select({
-                                        ios: 0,
-                                        android: spacing.md,
-                                        web: spacing.md,
-                                    }),
-                                }}
-                                hitSlop={{
-                                    top: 10,
-                                    bottom: 10,
-                                    left: 10,
-                                    right: 10,
-                                }}
-                            >
-                                <Ionicons
-                                    name="information-circle-outline"
-                                    size={26}
-                                    color="#FFF"
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    ),
-                }}
+                screenOptions={screenOptions}
             >
-                {/* Define all navigable screens in app */}
                 <Stack.Screen name="Halls" component={HallList} />
                 <Stack.Screen name="DiningHall" component={DiningHallScreen} />
                 <Stack.Screen name="PlatePlanner" component={PlatePlanner} />
@@ -119,18 +179,45 @@ export default function AppNavigator() {
 }
 
 const styles = StyleSheet.create({
-    // Styles for header title and logo
     container: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: spacing.xs,
+        marginBottom: spacing.sm,
+    },
+    fixedHeaderContainer: {
+        backgroundColor: colors.primary,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: 56,
+        paddingHorizontal: spacing.md,
+        elevation: 4,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    headerSide: {
+        width: 60,
+        alignItems: "center",
+    },
+    centerContainer: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    backButton: {
+        padding: spacing.sm,
+        justifyContent: "center",
+        alignItems: "center",
     },
     infoButton: {
         height: 40,
         width: 40,
         justifyContent: "center",
-        alignItems: "flex-end",
+        alignItems: "center",
     },
     logo: {
         width: 48,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
     SafeAreaView,
@@ -52,6 +52,19 @@ export default function PlatePlanner({ route }: Props) {
         ["Fat", fatTarget, setFatTarget],
     ];
 
+    // Helper to show errors on any error message
+    const showError = useCallback((message: string, retry: () => void) => {
+        Alert.alert(
+            "Something went wrong",
+            `${message}. Please try again.`,
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Retry", onPress: retry },
+            ],
+            { cancelable: true }
+        );
+    }, []);
+
     // Fetch available sections for this hall + meal combination
     useEffect(() => {
         async function loadSections() {
@@ -70,11 +83,12 @@ export default function PlatePlanner({ route }: Props) {
                     setSelectedSection("");
                 }
             } catch {
+                showError("Failed to load cuisines", loadSections);
                 setAvailableSections([]);
             }
         }
         loadSections();
-    }, [hallId, mealPeriod]);
+    }, [hallId, mealPeriod, showError]);
 
     // Logic for Plan Plate button
     async function onPlanPlatePress() {
@@ -146,6 +160,10 @@ export default function PlatePlanner({ route }: Props) {
             const json: ApiResponse = await response.json();
             setResult(json);
         } catch (e: any) {
+            showError(
+                e.message || "Unexpected network error",
+                onPlanPlatePress
+            );
             setError(e.message);
         } finally {
             setLoading(false);
@@ -342,8 +360,7 @@ export default function PlatePlanner({ route }: Props) {
                                         style={[
                                             sharedStyles.rowBetween,
                                             {
-                                                alignItems: "flex-start", // top-aligns the row
-                                                flexWrap: "wrap", // lets children wrap instead of overflow
+                                                alignItems: "flex-start",
                                             },
                                         ]}
                                     >
@@ -427,8 +444,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: spacing.xs,
     },
-    switch: { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] },
 
+    switch: {
+        transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+        // Force the android and ios switches to the same size
+        ...(Platform.OS === "android" && {
+            height: 20, // Tune to match ios
+            width: 20 * (51 / 31), // Keep the correct aspect ratio (default Android is ~51×31 dp)
+        }),
+    },
     dishName: {
         ...sharedStyles.buttonTextDark,
         flex: 1,

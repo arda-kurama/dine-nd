@@ -13,7 +13,6 @@ import {
     TextInput,
     Keyboard,
     Platform,
-    KeyboardAvoidingView,
 } from "react-native";
 
 // Icon set and toast message utility
@@ -423,113 +422,114 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             </Animated.ScrollView>
 
             {/* MyPlate panel at bottom for selected items + macros summary */}
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "android" ? "position" : undefined}
-                keyboardVerticalOffset={insets.bottom}
-                style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}
+            <Animated.View
+                style={[
+                    styles.panelContainer,
+                    // panelHeight animation still applies on both platforms
+                    Platform.OS === "ios"
+                        ? {
+                              height: panelHeight,
+                              bottom: keyboardHeight,
+                          }
+                        : {
+                              height: panelHeight,
+                              // Android just needs height, no bottom offset
+                          },
+                ]}
             >
-                <Animated.View
-                    style={[
-                        styles.panelContainer,
-                        {
-                            height: panelHeight,
-                            transform: [
-                                {
-                                    translateY: Animated.add(
-                                        panelExpanded
-                                            ? Animated.multiply(
-                                                  keyboardHeight,
-                                                  -1
-                                              )
-                                            : new Animated.Value(0),
-                                        new Animated.Value(0) // optional vertical offset
-                                    ),
-                                },
-                            ],
-                        },
-                    ]}
+                {/* Panel header with toggle and macro summary */}
+                <TouchableOpacity
+                    style={styles.panelHeader}
+                    onPress={togglePanel}
+                    activeOpacity={0.8}
                 >
-                    {/* Panel header with toggle and macro summary */}
-                    <TouchableOpacity
-                        style={styles.panelHeader}
-                        onPress={togglePanel}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={styles.panelToggleText}>
-                            {panelExpanded
-                                ? "Hide My Plate ▼"
-                                : "Show My Plate ▲"}
-                        </Text>
-                        <Text style={styles.macroSummaryText}>
-                            Calories: {totalMacros.calories} kcal | Protein:{" "}
-                            {totalMacros.protein}g | Carbs: {totalMacros.carbs}g
-                            | Fat: {totalMacros.fat}g
-                        </Text>
-                    </TouchableOpacity>
+                    <Text style={styles.panelToggleText}>
+                        {panelExpanded ? "Hide My Plate ▼" : "Show My Plate ▲"}
+                    </Text>
+                    <Text style={styles.macroSummaryText}>
+                        Calories: {totalMacros.calories} kcal | Protein:{" "}
+                        {totalMacros.protein}g | Carbs: {totalMacros.carbs}g |
+                        Fat: {totalMacros.fat}g
+                    </Text>
+                </TouchableOpacity>
 
-                    {/* Panel body: list of selected items with serving controls */}
-                    {panelExpanded && (
-                        <ScrollView
-                            style={styles.panelBody}
-                            keyboardShouldPersistTaps="handled"
-                        >
-                            {selectedItems.length === 0 ? (
-                                <Text style={styles.noItemsText}>
-                                    Your plate is empty. Tap the "+" to add food
-                                    here!
-                                </Text>
-                            ) : (
-                                selectedItems.map((item) => (
-                                    <View
-                                        key={item.name}
-                                        style={styles.itemRow}
+                {/* Panel body: list of selected items with serving controls */}
+                {panelExpanded && (
+                    <ScrollView
+                        style={styles.panelBody}
+                        contentContainerStyle={{
+                            paddingBottom: spacing.xxl,
+                        }}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {selectedItems.length === 0 ? (
+                            <Text style={styles.noItemsText}>
+                                Your plate is empty. Tap the "+" to add food
+                                here!
+                            </Text>
+                        ) : (
+                            selectedItems.map((item) => (
+                                <View key={item.name} style={styles.itemRow}>
+                                    {/* Left side: Servings + Item Name */}
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            navigation.navigate("ItemDetail", {
+                                                hallId,
+                                                mealPeriod: currentMeal,
+                                                categoryId: item.categoryId,
+                                                itemDetail: item,
+                                            })
+                                        }
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            flex: 1,
+                                        }}
+                                        hitSlop={{
+                                            top: 4,
+                                            bottom: 4,
+                                            left: 4,
+                                            right: 4,
+                                        }}
                                     >
-                                        {/* Left side: Servings + Item Name */}
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                navigation.navigate(
-                                                    "ItemDetail",
-                                                    {
-                                                        hallId,
-                                                        mealPeriod: currentMeal,
-                                                        categoryId:
-                                                            item.categoryId,
-                                                        itemDetail: item,
-                                                    }
-                                                )
-                                            }
-                                            style={{
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                flex: 1,
-                                            }}
+                                        <TextInput
+                                            style={[
+                                                sharedStyles.input,
+                                                {
+                                                    width: 40,
+                                                    height: 30,
+                                                    textAlign: "center",
+                                                    marginRight: 8,
+                                                },
+                                            ]}
                                             hitSlop={{
-                                                top: 4,
-                                                bottom: 4,
-                                                left: 4,
-                                                right: 4,
+                                                top: 32,
+                                                bottom: 32,
+                                                left: 32,
+                                                right: 32,
                                             }}
-                                        >
-                                            <TextInput
-                                                style={[
-                                                    sharedStyles.input,
-                                                    {
-                                                        width: 40,
-                                                        height: 30,
-                                                        textAlign: "center",
-                                                        marginRight: 8,
-                                                    },
-                                                ]}
-                                                hitSlop={{
-                                                    top: 20,
-                                                    bottom: 20,
-                                                    left: 20,
-                                                    right: 20,
-                                                }}
-                                                keyboardType="numeric"
-                                                value={item.servings.toString()}
-                                                onChangeText={(text) => {
-                                                    if (text === "") {
+                                            keyboardType="numeric"
+                                            value={item.servings.toString()}
+                                            onChangeText={(text) => {
+                                                if (text === "") {
+                                                    setSelectedItems((prev) =>
+                                                        prev.map((i) =>
+                                                            i.name === item.name
+                                                                ? {
+                                                                      ...i,
+                                                                      servings:
+                                                                          "" as any,
+                                                                  }
+                                                                : i
+                                                        )
+                                                    );
+                                                } else {
+                                                    const newVal =
+                                                        parseFloat(text);
+                                                    if (
+                                                        !isNaN(newVal) &&
+                                                        newVal > 0
+                                                    ) {
                                                         setSelectedItems(
                                                             (prev) =>
                                                                 prev.map((i) =>
@@ -538,105 +538,82 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                                         ? {
                                                                               ...i,
                                                                               servings:
-                                                                                  "" as any,
+                                                                                  newVal,
                                                                           }
                                                                         : i
                                                                 )
                                                         );
-                                                    } else {
-                                                        const newVal =
-                                                            parseFloat(text);
-                                                        if (
-                                                            !isNaN(newVal) &&
-                                                            newVal > 0
-                                                        ) {
-                                                            setSelectedItems(
-                                                                (prev) =>
-                                                                    prev.map(
-                                                                        (i) =>
-                                                                            i.name ===
-                                                                            item.name
-                                                                                ? {
-                                                                                      ...i,
-                                                                                      servings:
-                                                                                          newVal,
-                                                                                  }
-                                                                                : i
-                                                                    )
-                                                            );
-                                                        }
                                                     }
-                                                }}
-                                                onBlur={() => {
-                                                    setSelectedItems((prev) =>
-                                                        prev.map((i) =>
-                                                            i.name === item.name
-                                                                ? {
-                                                                      ...i,
-                                                                      servings:
-                                                                          !i.servings ||
-                                                                          isNaN(
-                                                                              i.servings as any
-                                                                          )
-                                                                              ? 1
-                                                                              : i.servings,
-                                                                  }
-                                                                : i
-                                                        )
-                                                    );
-                                                }}
-                                            />
-                                            <Text
-                                                style={[
-                                                    sharedStyles.textBackground,
-                                                    {
-                                                        flexShrink: 1,
-                                                        flexWrap: "wrap",
-                                                    },
-                                                ]}
-                                            >
-                                                {item.name}
-                                            </Text>
-                                        </TouchableOpacity>
-                                        {/* Right side: Remove button */}
-                                        <TouchableOpacity
-                                            onPress={() =>
+                                                }
+                                            }}
+                                            onBlur={() => {
                                                 setSelectedItems((prev) =>
-                                                    prev.filter(
-                                                        (i) =>
-                                                            i.name !== item.name
+                                                    prev.map((i) =>
+                                                        i.name === item.name
+                                                            ? {
+                                                                  ...i,
+                                                                  servings:
+                                                                      !i.servings ||
+                                                                      isNaN(
+                                                                          i.servings as any
+                                                                      )
+                                                                          ? 1
+                                                                          : i.servings,
+                                                              }
+                                                            : i
                                                     )
-                                                )
-                                            }
-                                            hitSlop={{
-                                                top: 10,
-                                                bottom: 10,
-                                                left: 10,
-                                                right: 10,
+                                                );
                                             }}
-                                            style={{
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                marginLeft: spacing.sm,
-                                            }}
+                                        />
+                                        <Text
+                                            style={[
+                                                sharedStyles.textBackground,
+                                                {
+                                                    flexShrink: 1,
+                                                    flexWrap: "wrap",
+                                                },
+                                            ]}
                                         >
-                                            <Text style={styles.itemRemoveText}>
-                                                Remove
-                                            </Text>
-                                            <Ionicons
-                                                name="close"
-                                                size={20}
-                                                color={colors.error}
-                                                style={{ marginLeft: 6 }}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                ))
-                            )}
-                        </ScrollView>
-                    )}
-                </Animated.View>
-            </KeyboardAvoidingView>
+                                            {item.name}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    {/* Right side: Remove button */}
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            setSelectedItems((prev) =>
+                                                prev.filter(
+                                                    (i) => i.name !== item.name
+                                                )
+                                            )
+                                        }
+                                        hitSlop={{
+                                            top: 10,
+                                            bottom: 10,
+                                            left: 10,
+                                            right: 10,
+                                        }}
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            marginLeft: spacing.sm,
+                                        }}
+                                    >
+                                        <Text style={styles.itemRemoveText}>
+                                            Remove
+                                        </Text>
+                                        <Ionicons
+                                            name="close"
+                                            size={20}
+                                            color={colors.error}
+                                            style={{ marginLeft: 6 }}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            ))
+                        )}
+                    </ScrollView>
+                )}
+            </Animated.View>
         </SafeAreaView>
     );
 }

@@ -21,13 +21,14 @@
         },
         "ios": {
             "bundleIdentifier": "com.ardakurama.dinend",
-            "supportsTablet": true,
+            "supportsTablet": false,
             "infoPlist": {
                 "ITSAppUsesNonExemptEncryption": false
             }
         },
         "android": {
             "package": "com.ardakurama.dinend",
+            "supportsTablet": false,
             "backgroundColor": "#0C2340",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",

@@ -19,9 +19,10 @@ HALLS = [
     "South Dining Hall",
 ]
 
-WAIT_TIMEOUT_SECS = 5
+WAIT_TIMEOUT_SECS = 10
 DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
 URL = "https://netnutrition.cbord.com/nn-prod/ND"
+MAX_RETRIES = 2
 
 # Data structures for in memory processing
 FoodItem = namedtuple('FoodItem', ['name', 'serving_size', 'nutrition', 'daily_values', 'ingredients', 'allergens'])

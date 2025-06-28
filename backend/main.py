@@ -12,11 +12,34 @@ Exits with code 1 if no meals are found.
 import json
 import sys
 import os
+import time
+import random
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from .constants import DATE_STR
+from .constants import DATE_STR, MAX_RETRIES, MealData
 from .tasks import discover_tasks_resilient
 from .scraper import scrape_one_memory_optimized
 from .consolidate import consolidate_meal_data, create_lightweight_summary
+
+def scrape_with_retry(hall: str, meal: str, backoff: float = 1.0) -> MealData:
+    """
+    Calls scrape_one_memory_optimized, retrying up to max_retries times
+    if availability is False or an exception is raised.
+    """
+    last_result = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            result = scrape_one_memory_optimized(hall, meal)
+            last_result = result
+            # If succeeded or last attempt, return result
+            if result.available or attempt == MAX_RETRIES:
+                return result
+            print(f"⚠️  Attempt {attempt} for {hall}-{meal} returned no data; retrying…")
+        except Exception as e:
+            print(f"⚠️  Attempt {attempt} for {hall}-{meal} threw {type(e).__name__}: {e}")
+            last_result = MealData(hall=hall, meal=meal, available=False, categories={})
+        # Backoff before retrying
+        time.sleep(backoff * attempt * random.uniform(0.5, 1.5))
+    return last_result
 
 def main() -> None:
     """
@@ -52,11 +75,15 @@ def main() -> None:
 
     # Parallelize the scrape with memory optimization
     print(f"🔄 Starting parallel scraping of {len(discovered_tasks)} meals...")
+
+    # Limit concurrency to avoid resource exhaustion
+    max_workers = min(4, os.cpu_count() or 1, len(discovered_tasks))
+
     meal_data_results = []
-    with ProcessPoolExecutor(max_workers=min(os.cpu_count(), len(discovered_tasks))) as executor:
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
         # Submit all scraping jobs to separate processes; each returns a MealData instance
         futures = [
-            executor.submit(scrape_one_memory_optimized, hall, meal)
+            executor.submit(scrape_with_retry, hall, meal)
             for hall, meal in discovered_tasks
         ]
 

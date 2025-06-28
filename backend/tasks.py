@@ -37,7 +37,9 @@ def make_chrome() -> webdriver.Chrome:
     opts.add_argument("--disable-renderer-backgrounding")
     
     service = Service("/usr/bin/chromedriver")
-    return webdriver.Chrome(service=service, options=opts)
+    driver = webdriver.Chrome(service=service, options=opts)
+    driver.set_page_load_timeout(20)
+    return driver
 
 def get_meal_links_for_hall(hall: str) -> List[Tuple[str, str]]:
     """

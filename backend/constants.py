@@ -1,12 +1,10 @@
 """
-Core constants and data types used throughout the DineND scraping pipeline.
+Constants and data types used across the scraping pipeline.
 
-Defines:
-- HALLS: List of all target dining-hall names.
-- WAIT_TIMEOUT_SECS: Selenium driver wait timeout.
-- DATE_STR: Human-readable current date string.
-- URL: Base endpoint for the NetNutrition menu.
-- FoodItem, MealData: Namedtuple types for in-memory data handling.
+Includes:
+- Dining hall names and target URL
+- Timeouts and retry limits
+- Namedtuples for food item and meal data
 """
 
 from datetime import datetime

@@ -1,11 +1,11 @@
 """
-Browser setup and task discovery for DineND scraping.
+Task discovery and browser setup for DineND scraping.
 
-Contains:
-- make_chrome: Configure and return a headless Selenium Chrome WebDriver.
-- get_meal_links_for_hall: Fetch available meal names for a hall on DATE_STR.
-- discover_tasks_resilient: Iterate over all halls to build the full list of
-  (hall, meal) scraping tasks.
+Includes:
+- create_chrome_driver: Launches a headless Chrome driver with strict config.
+- fetch_meal_links: Pulls available meals for a specific hall on DATE_STR.
+- fetch_meal_links_with_retries: Retry wrapper for fetch_meal_links.
+- discover_all_meal_tasks: Returns all (hall, meal) tasks for the current day.
 """
 
 from selenium import webdriver
@@ -21,9 +21,9 @@ import time
 
 def create_chrome_driver() -> webdriver.Chrome:
     """
-    Return a headless Chrome WebDriver configured with:
-      --headless, --disable-gpu, --no-sandbox, --disable-extensions, plus
-      extra flags to disable background throttling. Uses /usr/bin/chromedriver.
+    Create and return a headless Chrome WebDriver preconfigured with performance-safe options:
+    - Disables GPU, extensions, throttling, and background rendering.
+    - Loads /usr/bin/chromedriver with a timeout of PAGE_LOAD_TIMEOUT_SECS.
     """
 
     opts = Options()
@@ -44,10 +44,10 @@ def create_chrome_driver() -> webdriver.Chrome:
 
 def fetch_meal_links(hall: str) -> List[Tuple[str, str]]:
     """
-    For a single `hall`, launch a headless Chrome session, navigate to the main URL,
-    click on the hall name, wait for today’s date cell (DATE_STR). If no date cell
-    exists, return an empty list. Otherwise, gather all meal names inside that cell
-    and return a list of tuples [(hall, meal_name), …]. Closes the browser on exit.
+    Scrape available meal names for a single `hall` on DATE_STR.
+
+    Returns a list of (hall, meal) pairs if meals are found, otherwise an empty list.
+    Handles browser navigation, waits, and element detection using Selenium.
     """
 
     driver = None
@@ -112,10 +112,12 @@ def fetch_meal_links(hall: str) -> List[Tuple[str, str]]:
 
 def fetch_meal_links_with_retries(hall: str) -> List[Tuple[str, str]]:
     """
-    Calls the original get_meal_links_for_hall up to MAX_RETRIES times
-    on TimeoutException, sleeping 1s between attempts.
-    Returns [] after the final failure.
+    Retry wrapper for fetch_meal_links.
+
+    Attempts up to MAX_RETRIES times with 1-second sleep between attempts.
+    Returns meal links from the first successful scrape or an empty list after all retries.
     """
+    
     for attempt in range(1, MAX_RETRIES+1):
         links = fetch_meal_links(hall)
         if links or attempt == MAX_RETRIES:
@@ -126,8 +128,9 @@ def fetch_meal_links_with_retries(hall: str) -> List[Tuple[str, str]]:
 
 def discover_all_meal_tasks() -> List[Tuple[str, str]]:
     """
-    Iterate over all halls in HALLS, call get_meal_links_for_hall(hall) for each,
-    and accumulate all (hall, meal) tuples into one list. Returns [] if none found.
+    Build and return a complete list of (hall, meal) scraping tasks for DATE_STR.
+
+    Iterates over all halls in HALLS and aggregates discovered meals into a flat list.
     """
 
     all_tasks = []

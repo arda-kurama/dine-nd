@@ -1,12 +1,11 @@
 """
-Command-line entry point to scrape, consolidate, and summarize DineND menus.
+Command-line entry point for scraping, consolidating, and exporting DineND data.
 
-Workflow:
-1. Discover available hall/meal pairs.
-2. Scrape each in parallel with memory optimization.
-3. Write out consolidated_menu.json and menu_summary.json.
-4. Print a completion report (counts, file sizes, errors).
-Exits with code 1 if no meals are found.
+Main responsibilities:
+1. Discover available (hall, meal) pairs for the day.
+2. Scrape meal data in parallel with retry logic.
+3. Consolidate and serialize results to JSON.
+4. Print a final scrape report to stdout.
 """
 
 import json

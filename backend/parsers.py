@@ -1,11 +1,9 @@
 """
-Utilities to parse nutrition-label HTML into structured Python data.
+HTML parsing utilities to extract structured nutrition data from NetNutrition labels.
 
-Provides:
-- extract_numeric_value: Extract an integer from strings like "123 kcal" or "45mg".
-- parse_nutrition_html: Given the raw HTML of a nutrition panel, return a dict
-  containing name, serving_size, detailed nutrition, daily values,
-  ingredients, and allergens.
+Includes:
+- extract_numeric_value: Pulls numeric values from strings.
+- parse_nutrition_html: Parses food item HTML into a standardized dictionary format.
 """
 
 import re
@@ -17,6 +15,7 @@ def extract_numeric_value(value_str: Any) -> int:
     From a string like "123 kcal" or "45mg", return the integer portion.
     If no digits are found, return 0.
     """
+    
     if isinstance(value_str, str):
         match = re.search(r'(\d+)', value_str)
         return int(match.group(1)) if match else 0

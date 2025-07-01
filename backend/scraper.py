@@ -1,12 +1,9 @@
 """
-Headless-browser scraper for a single dining-hall meal.
+Core scraping logic to extract nutrition info for a single meal.
 
-Defines scrape_one_memory_optimized(hall, meal) which:
-1. Launches a headless Chrome session.
-2. Navigates to the given hall’s menu on DATE_STR.
-3. Opens each item’s nutrition label and parses it.
-4. Groups FoodItems by category.
-5. Returns a MealData tuple (hall, meal, availability, categories).
+Includes:
+- scrape_meal: Full scrape logic for a single (hall, meal) using Selenium.
+- scrape_meal_with_retries: Wraps scrape_meal with retry logic and exponential backoff.
 """
 
 from selenium.webdriver.common.by import By
@@ -25,6 +22,7 @@ def scrape_meal_with_retries(hall: str, meal: str, backoff: float = 1.0) -> Meal
     Calls scrape_one_memory_optimized, retrying up to max_retries times
     if availability is False or an exception is raised.
     """
+    
     last_result = None
     for attempt in range(1, MAX_RETRIES + 1):
         try:

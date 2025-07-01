@@ -14,11 +14,34 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from collections import defaultdict
-from .constants import DATE_STR, URL, WAIT_TIMEOUT_SECS, MealData
+from .constants import DATE_STR, URL, WAIT_TIMEOUT_SECS, MAX_RETRIES, MealData
 from .parsers import parse_nutrition_html
-from .tasks import make_chrome
+from .tasks import create_chrome_driver
+import time
+import random
 
-def scrape_one_memory_optimized(hall: str, meal: str) -> MealData:
+def scrape_meal_with_retries(hall: str, meal: str, backoff: float = 1.0) -> MealData:
+    """
+    Calls scrape_one_memory_optimized, retrying up to max_retries times
+    if availability is False or an exception is raised.
+    """
+    last_result = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            result = scrape_meal(hall, meal)
+            last_result = result
+            # If succeeded or last attempt, return result
+            if result.available or attempt == MAX_RETRIES:
+                return result
+            print(f"⚠️  Attempt {attempt} for {hall}-{meal} returned no data; retrying…")
+        except Exception as e:
+            print(f"⚠️  Attempt {attempt} for {hall}-{meal} threw {type(e).__name__}: {e}")
+            last_result = MealData(hall=hall, meal=meal, available=False, categories={})
+        # Backoff before retrying
+        time.sleep(backoff * attempt * random.uniform(0.5, 1.5))
+    return last_result
+
+def scrape_meal(hall: str, meal: str) -> MealData:
     """
     Launch a headless Chrome session, navigate to the menu for `hall` on DATE_STR,
     click on the `meal` name. If the meal is not found, return:
@@ -30,7 +53,7 @@ def scrape_one_memory_optimized(hall: str, meal: str) -> MealData:
     
     driver = None
     try:        
-        driver = make_chrome()
+        driver = create_chrome_driver()
         wait = WebDriverWait(driver, WAIT_TIMEOUT_SECS)
 
         # Go to the main URL

@@ -16,9 +16,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, WebDriverException, TimeoutException
 from typing import List, Tuple
-from .constants import HALLS, DATE_STR, URL, WAIT_TIMEOUT_SECS
+from .constants import HALLS, DATE_STR, URL, WAIT_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS, MAX_RETRIES
+import time
 
-def make_chrome() -> webdriver.Chrome:
+def create_chrome_driver() -> webdriver.Chrome:
     """
     Return a headless Chrome WebDriver configured with:
       --headless, --disable-gpu, --no-sandbox, --disable-extensions, plus
@@ -38,10 +39,10 @@ def make_chrome() -> webdriver.Chrome:
     
     service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=opts)
-    driver.set_page_load_timeout(20)
+    driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT_SECS)
     return driver
 
-def get_meal_links_for_hall(hall: str) -> List[Tuple[str, str]]:
+def fetch_meal_links(hall: str) -> List[Tuple[str, str]]:
     """
     For a single `hall`, launch a headless Chrome session, navigate to the main URL,
     click on the hall name, wait for today’s date cell (DATE_STR). If no date cell
@@ -51,7 +52,7 @@ def get_meal_links_for_hall(hall: str) -> List[Tuple[str, str]]:
 
     driver = None
     try:
-        driver = make_chrome()
+        driver = create_chrome_driver()
         wait = WebDriverWait(driver, WAIT_TIMEOUT_SECS)
         
         print(f"Checking {hall}...")
@@ -109,7 +110,21 @@ def get_meal_links_for_hall(hall: str) -> List[Tuple[str, str]]:
             except:
                 pass
 
-def discover_tasks_resilient() -> List[Tuple[str, str]]:
+def fetch_meal_links_with_retries(hall: str) -> List[Tuple[str, str]]:
+    """
+    Calls the original get_meal_links_for_hall up to MAX_RETRIES times
+    on TimeoutException, sleeping 1s between attempts.
+    Returns [] after the final failure.
+    """
+    for attempt in range(1, MAX_RETRIES+1):
+        links = fetch_meal_links(hall)
+        if links or attempt == MAX_RETRIES:
+            return links
+        print(f"⚠️ No links (attempt {attempt}/{MAX_RETRIES}), retrying…")
+        time.sleep(1)
+    return []
+
+def discover_all_meal_tasks() -> List[Tuple[str, str]]:
     """
     Iterate over all halls in HALLS, call get_meal_links_for_hall(hall) for each,
     and accumulate all (hall, meal) tuples into one list. Returns [] if none found.
@@ -117,7 +132,7 @@ def discover_tasks_resilient() -> List[Tuple[str, str]]:
 
     all_tasks = []
     for hall in HALLS:
-        hall_tasks = get_meal_links_for_hall(hall)
+        hall_tasks = fetch_meal_links_with_retries(hall)
         all_tasks.extend(hall_tasks)
     
     return all_tasks

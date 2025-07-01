@@ -16,6 +16,7 @@ import re
 from typing import Dict, List
 from openai import OpenAI
 from pinecone import Pinecone
+from pinecone.exceptions import NotFoundException
 
 # Config
 INDEX_NAME: str = "dine-nd-menu"
@@ -142,9 +143,13 @@ def main() -> None:
     )
     index = pinecone_client.Index(INDEX_NAME)
 
-    # 1) Delete all existing vectors from the index
+    # 1) Delete all existing vectors from the index if any exist
     print(f"Clearing all existing vectors from index '{INDEX_NAME}'…")
-    index.delete(delete_all=True)
+    try:
+        index.delete(delete_all=True)
+        print("Index cleared.")
+    except NotFoundException:
+        print("No existing namespace (nothing to delete).")
     print("Index cleared. Inserting fresh data…")
 
     # 2) Build the new vectors

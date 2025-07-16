@@ -87,8 +87,15 @@ function AndroidBackButton() {
 // Complete custom header for Android
 function AndroidFixedHeader({ navigation }: { navigation: any }) {
     const insets = useSafeAreaInsets();
+    const baseHeight = StyleSheet.flatten(styles.fixedHeaderContainer)
+        .height as number;
     return (
-        <View style={[styles.fixedHeaderContainer, { paddingTop: insets.top }]}>
+        <View
+            style={[
+                styles.fixedHeaderContainer,
+                { paddingTop: insets.top, height: baseHeight + insets.top },
+            ]}
+        >
             <StatusBar
                 barStyle="light-content"
                 backgroundColor={colors.primary}

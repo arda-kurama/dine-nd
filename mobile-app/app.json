@@ -2,8 +2,8 @@
     "expo": {
         "name": "DineND",
         "slug": "dine-nd",
-        "version": "1.0.9",
-        "runtimeVersion": "1.0.9",
+        "version": "1.0.10",
+        "runtimeVersion": "1.0.10",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
@@ -35,7 +35,7 @@
                 "backgroundImage": "./assets/navy-background.png"
             },
             "edgeToEdgeEnabled": true,
-            "softwareKeyboardLayoutMode": "resize"
+            "softwareKeyboardLayoutMode": "pan"
         },
         "web": {
             "favicon": "./assets/favicon.png"

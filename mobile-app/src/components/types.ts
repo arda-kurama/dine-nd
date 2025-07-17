@@ -36,7 +36,7 @@ export type MenuItem = {
 };
 
 // Special type used in DiningHallScreen.tsx
-export type PlateItem = MenuItem & { servings: number };
+export type PlateItem = MenuItem & { servings: string | number };
 
 // Expected type of entire consolidated_menu.json
 export type ConsolidatedMenu = {

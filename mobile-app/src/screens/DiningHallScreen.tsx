@@ -108,7 +108,9 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const [keyboardOffset, setKeyboardOffset] = useState(0);
 
     // Animated references for panel height and keyboard
-    const panelHeight = useRef(new Animated.Value(90)).current; // collapsed height
+    const COLLAPSED_HEIGHT = 112;
+    const EXPANDED_HEIGHT = 320;
+    const panelHeight = useRef(new Animated.Value(COLLAPSED_HEIGHT)).current; // collapsed height
     const keyboardHeight = useRef(new Animated.Value(0)).current;
     const insets = useSafeAreaInsets();
     const bottomMargin =
@@ -200,7 +202,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     // Toggles the MyPlate panel
     const togglePanel = () => {
         Animated.timing(panelHeight, {
-            toValue: panelExpanded ? 80 : 300,
+            toValue: panelExpanded ? COLLAPSED_HEIGHT : EXPANDED_HEIGHT,
             duration: 300,
             useNativeDriver: false,
         }).start();
@@ -435,32 +437,48 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             <Animated.View
                 style={[
                     styles.panelContainer,
-                    // panelHeight animation still applies on both platforms
-                    Platform.OS === "ios"
-                        ? {
-                              height: panelHeight,
-                              bottom: keyboardHeight,
-                          }
-                        : {
-                              height: panelHeight,
-                              bottom: keyboardOffset,
-                          },
+                    {
+                        height: panelHeight,
+                        bottom: keyboardHeight,
+                    },
                 ]}
             >
-                {/* Panel header with toggle and macro summary */}
+                {/* Panel header with toggle + macros */}
                 <TouchableOpacity
                     style={styles.panelHeader}
                     onPress={togglePanel}
                     activeOpacity={0.8}
                 >
-                    <Text style={styles.panelToggleText}>
-                        {panelExpanded ? "Hide My Plate ▼" : "Show My Plate ▲"}
-                    </Text>
-                    <Text style={styles.macroSummaryText}>
-                        Calories: {totalMacros.calories} kcal | Protein:{" "}
-                        {totalMacros.protein}g | Carbs: {totalMacros.carbs}g |
-                        Fat: {totalMacros.fat}g
-                    </Text>
+                    <View style={styles.togglePill}>
+                        <Ionicons
+                            name={panelExpanded ? "chevron-down" : "chevron-up"}
+                            size={28}
+                            color={colors.background}
+                        />
+                    </View>
+
+                    <View style={styles.macroGridContainer}>
+                        <View style={styles.gridBubble}>
+                            <Text style={styles.bubbleText}>
+                                {totalMacros.calories.toFixed(1)} kcal
+                            </Text>
+                        </View>
+                        <View style={styles.gridBubble}>
+                            <Text style={styles.bubbleText}>
+                                {totalMacros.protein.toFixed(1)}g Protein
+                            </Text>
+                        </View>
+                        <View style={styles.gridBubble}>
+                            <Text style={styles.bubbleText}>
+                                {totalMacros.carbs.toFixed(1)}g Carbs
+                            </Text>
+                        </View>
+                        <View style={styles.gridBubble}>
+                            <Text style={styles.bubbleText}>
+                                {totalMacros.fat.toFixed(1)}g Fat
+                            </Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
 
                 {/* Panel body: list of selected items with serving controls */}
@@ -518,7 +536,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                 style={[
                                                     sharedStyles.input,
                                                     {
-                                                        width: 40,
+                                                        width: 50,
                                                         height: 30,
                                                         textAlign: "center",
                                                         marginRight: 8,
@@ -530,9 +548,15 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                     left: 32,
                                                     right: 32,
                                                 }}
-                                                keyboardType="numeric"
+                                                keyboardType={
+                                                    Platform.OS === "ios"
+                                                        ? "decimal-pad"
+                                                        : "numeric"
+                                                }
+                                                inputMode="decimal"
                                                 value={item.servings.toString()}
                                                 onChangeText={(text) => {
+                                                    // allow empty so user can delete
                                                     if (text === "") {
                                                         setSelectedItems(
                                                             (prev) =>
@@ -542,48 +566,50 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                                         ? {
                                                                               ...i,
                                                                               servings:
-                                                                                  "" as any,
+                                                                                  text,
                                                                           }
                                                                         : i
                                                                 )
                                                         );
-                                                    } else {
-                                                        const newVal =
-                                                            parseFloat(text);
-                                                        if (
-                                                            !isNaN(newVal) &&
-                                                            newVal > 0
-                                                        ) {
-                                                            setSelectedItems(
-                                                                (prev) =>
-                                                                    prev.map(
-                                                                        (i) =>
-                                                                            i.name ===
-                                                                            item.name
-                                                                                ? {
-                                                                                      ...i,
-                                                                                      servings:
-                                                                                          newVal,
-                                                                                  }
-                                                                                : i
-                                                                    )
-                                                            );
-                                                        }
+                                                        return;
+                                                    }
+
+                                                    // up to two digits before dot, optional dot + exactly one digit
+                                                    const regex =
+                                                        /^\d{1,2}(?:\.\d?)?$/;
+                                                    if (
+                                                        regex.test(text) &&
+                                                        parseFloat(text) <= 99
+                                                    ) {
+                                                        setSelectedItems(
+                                                            (prev) =>
+                                                                prev.map((i) =>
+                                                                    i.name ===
+                                                                    item.name
+                                                                        ? {
+                                                                              ...i,
+                                                                              servings:
+                                                                                  text,
+                                                                          }
+                                                                        : i
+                                                                )
+                                                        );
                                                     }
                                                 }}
-                                                onBlur={() => {
+                                                onBlur={({ nativeEvent }) => {
+                                                    let v = parseFloat(
+                                                        nativeEvent.text
+                                                    );
+                                                    if (isNaN(v) || v < 1)
+                                                        v = 1;
+                                                    if (v > 99) v = 99;
                                                     setSelectedItems((prev) =>
                                                         prev.map((i) =>
                                                             i.name === item.name
                                                                 ? {
                                                                       ...i,
                                                                       servings:
-                                                                          !i.servings ||
-                                                                          isNaN(
-                                                                              i.servings as any
-                                                                          )
-                                                                              ? 1
-                                                                              : i.servings,
+                                                                          v,
                                                                   }
                                                                 : i
                                                         )
@@ -967,26 +993,48 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         ...shadows.heavy,
     },
-    panelHeader: {
-        backgroundColor: colors.primary,
-        padding: spacing.sm,
-    },
-    panelToggleText: {
-        ...typography.button,
-        color: colors.accent,
-        textAlign: "center",
-    },
-    macroSummaryText: {
-        ...typography.body,
-        color: colors.background,
-        textAlign: "center",
-        marginTop: spacing.xs,
-    },
     panelBody: {
         padding: spacing.sm,
     },
     itemRemoveText: {
         ...typography.button,
         color: colors.error,
+    },
+    bubbleText: {
+        ...typography.button,
+        color: colors.background,
+    },
+    panelHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingTop: spacing.md,
+        paddingBottom: spacing.sm + 2,
+        paddingHorizontal: spacing.md,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.background,
+    },
+    macroGridContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-around",
+        flex: 1,
+        marginLeft: spacing.sm,
+    },
+    gridBubble: {
+        flexBasis: "45%",
+        backgroundColor: colors.accent,
+        padding: spacing.xs,
+        borderRadius: radii.md,
+        alignItems: "center",
+        marginBottom: spacing.xs,
+    },
+    togglePill: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: `${colors.background}33`,
+        paddingHorizontal: spacing.lg,
+        paddingVertical: spacing.md,
+        borderRadius: radii.md,
     },
 });

@@ -1,6 +1,7 @@
 name: Daily Menu Update
 
 on:
+    # every day at 05:00 UTC
     schedule:
         - cron: "0 5 * * *"
     workflow_dispatch:
@@ -9,50 +10,51 @@ jobs:
     scrape_and_publish:
         runs-on: ubuntu-latest
         steps:
-            # 1. Check out main and run scraper
+            # Check out your repo
             - uses: actions/checkout@v3
               with:
                   ref: main
                   fetch-depth: 0
 
-            - name: Set up Python (with pip cache)
+            # Install Chrome + matching ChromeDriver in one go
+            - name: Set up Chrome & ChromeDriver
+              uses: browser-actions/setup-chrome@v2
+              with:
+                  chrome-version: stable
+                  install-dependencies: true
+                  install-chromedriver: true
+
+            # Symlink Chrome & ChromeDriver to standard locations
+            - name: Symlink Chrome & ChromeDriver
+              run: |
+                  sudo ln -sf "$(which chromedriver)" /usr/bin/chromedriver
+                  sudo ln -sf "$(which google-chrome)"   /usr/bin/chrome
+                  sudo ln -sf "$(which google-chrome)"   /usr/bin/chromium
+
+            # Set up Python (pin to your supported version)
+            - name: Set up Python
               uses: actions/setup-python@v4
               with:
                   python-version: "3.12.3"
                   cache: "pip"
                   cache-dependency-path: requirements.txt
 
-            - name: Install Chromium and dependencies (no Snap)
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y xvfb libnss3 libxss1 libasound2t64 fonts-liberation libatk-bridge2.0-0 libgtk-3-0 libdrm2 libgbm1 wget unzip
-
-                  # Download Chromium build
-                  wget -q https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1181205/chrome-linux.zip
-                  unzip chrome-linux.zip
-                  sudo mv chrome-linux /opt/chrome
-                  sudo ln -sf /opt/chrome/chrome /usr/bin/chromium-browser
-
-                  # Download matching ChromeDriver
-                  wget -q https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1181205/chromedriver_linux64.zip
-                  unzip chromedriver_linux64.zip
-                  sudo mv chromedriver_linux64/chromedriver /usr/bin/chromedriver
-                  sudo chmod +x /usr/bin/chromedriver
-
-            - name: Install Python dependencies
+            # Install your Python deps
+            - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
 
+            # Run your scraper
             - name: Run the dining-hall scraper and stash JSON
               run: |
                   python -m backend.main
-                  mkdir -p /tmp/menu_json
+                  mkdir -p /tmp
                   # Move the freshly generated JSON out of the main workspace and into /tmp
-                  mv menu_summary.json /tmp/menu_json/menu_summary.json
-                  mv consolidated_menu.json /tmp/menu_json/consolidated_menu.json
+                  mv menu_summary.json /tmp/menu_summary.json
+                  mv consolidated_menu.json /tmp/consolidated_menu.json
 
-            # 2. Switch to backend-deployment
+            # Switch to backend-deployment
             - name: Checkout backend-deployment
               uses: actions/checkout@v3
               with:
@@ -60,13 +62,13 @@ jobs:
                   fetch-depth: 0
                   persist-credentials: true
 
-            # 3. Copy JSON from /tmp into backend-deployment root
+            # Copy JSON from /tmp into backend-deployment root
             - name: Copy JSON into backend-deployment
               run: |
-                  cp /tmp/menu_json/menu_summary.json  ./menu_summary.json
-                  cp /tmp/menu_json/consolidated_menu.json ./consolidated_menu.json
+                  cp /tmp/menu_summary.json  ./menu_summary.json
+                  cp /tmp/consolidated_menu.json ./consolidated_menu.json
 
-            # 4. Commit & push if changed
+            # Commit & push if changed
             - name: Commit & push updated JSON
               run: |
                   git add menu_summary.json consolidated_menu.json

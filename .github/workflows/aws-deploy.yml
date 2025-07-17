@@ -1,9 +1,6 @@
-name: Deploy (Zappa → AWS Lambda)
+name: Deploy custom endpoints with Zappa to AWS Lambda
 
 on:
-    # Manual trigger
-    workflow_dispatch:
-
     # Auto-deploy only when code / config that affects the Lambda changes
     push:
         paths:
@@ -11,37 +8,36 @@ on:
             - "zappa_settings.json"
             - "requirements.txt"
             - ".github/workflows/zappa-deploy.yml"
+    workflow_dispatch:
 
 jobs:
     deploy:
         runs-on: ubuntu-latest
+
         # Prevent overlapping updates
         concurrency:
             group: zappa-deploy
             cancel-in-progress: true
 
         steps:
-            # 1) Check out repo
-            - uses: actions/checkout@v4
+            - name: Checkout repo
+              uses: actions/checkout@v4
 
-            # 2) Set up Python with pip caching
-            - name: Set up Python 3.12 (cached)
+            - name: Set up Python with pip caching
               uses: actions/setup-python@v5
               with:
                   python-version: "3.12"
                   cache: "pip"
                   cache-dependency-path: requirements.txt
 
-            # 3) Configure AWS credentials from repo secrets
-            - name: Configure AWS credentials
+            - name: Configure AWS credentials from repo secrets
               uses: aws-actions/configure-aws-credentials@v4
               with:
                   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: ${{ secrets.AWS_REGION }}
 
-            # 4) Create venv, install dependencies, and deploy Zappa
-            - name: Build venv and deploy / update
+            - name: Create venv, install dependencies, and deploy Zappa
               shell: bash
               run: |
                   # Create a virtual environment

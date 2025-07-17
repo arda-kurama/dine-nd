@@ -1,52 +1,46 @@
-name: Daily Menu Update
+name: DineND Daily Menu Update & Embedding
 
 on:
-    # every day at 05:00 UTC
     schedule:
-        - cron: "0 5 * * *"
+        - cron: "0 5 * * *" # 1:00 AM ET
     workflow_dispatch:
 
 jobs:
-    scrape_and_publish:
+    scrape_and_embed:
         runs-on: ubuntu-latest
         steps:
-            # Check out your repo
-            - uses: actions/checkout@v3
+            - name: Checkout main
+              uses: actions/checkout@v3
               with:
                   ref: main
                   fetch-depth: 0
 
-            # Install Chrome + matching ChromeDriver in one go
-            - name: Set up Chrome & ChromeDriver
+            - name: Install Chrome and matching ChromeDriver
               uses: browser-actions/setup-chrome@v2
               with:
                   chrome-version: stable
                   install-dependencies: true
                   install-chromedriver: true
 
-            # Symlink Chrome & ChromeDriver to standard locations
-            - name: Symlink Chrome & ChromeDriver
+            - name: Symlink Chrome and ChromeDriver to standard locations
               run: |
                   sudo ln -sf "$(which chromedriver)" /usr/bin/chromedriver
                   sudo ln -sf "$(which google-chrome)"   /usr/bin/chrome
                   sudo ln -sf "$(which google-chrome)"   /usr/bin/chromium
 
-            # Set up Python (pin to your supported version)
-            - name: Set up Python
+            - name: Install Python 3.12 with pip caching
               uses: actions/setup-python@v4
               with:
                   python-version: "3.12.3"
                   cache: "pip"
                   cache-dependency-path: requirements.txt
 
-            # Install your Python deps
-            - name: Install dependencies
+            - name: Install Python dependencies
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
 
-            # Run your scraper
-            - name: Run the dining-hall scraper and stash JSON
+            - name: Run the dining-hall scraper and stash menu JSONs
               run: |
                   python -m backend.main
                   mkdir -p /tmp
@@ -54,7 +48,13 @@ jobs:
                   mv menu_summary.json /tmp/menu_summary.json
                   mv consolidated_menu.json /tmp/consolidated_menu.json
 
-            # Switch to backend-deployment
+            - name: Run script to embed and upsert to Pinecone
+              env:
+                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+                  PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+                  PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
+              run: python plate_planner/embed_menu.py /tmp/consolidated_menu.json
+
             - name: Checkout backend-deployment
               uses: actions/checkout@v3
               with:
@@ -62,14 +62,12 @@ jobs:
                   fetch-depth: 0
                   persist-credentials: true
 
-            # Copy JSON from /tmp into backend-deployment root
-            - name: Copy JSON into backend-deployment
+            - name: Copy JSON from /tmp into backend-deployment root
               run: |
                   cp /tmp/menu_summary.json  ./menu_summary.json
                   cp /tmp/consolidated_menu.json ./consolidated_menu.json
 
-            # Commit & push if changed
-            - name: Commit & push updated JSON
+            - name: Commit and push updated menu JSONs
               run: |
                   git add menu_summary.json consolidated_menu.json
                   if ! git diff --cached --quiet; then

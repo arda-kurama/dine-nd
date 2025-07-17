@@ -2,50 +2,72 @@ name: DineND Daily Update + Embed
 
 on:
     schedule:
-        - cron: "0 11 * * *" # 7:00 AM EDT daily
+        - cron: "0 11 * * *" # 7 AM EDT
     workflow_dispatch:
 
 jobs:
     scrape-embed-push:
         runs-on: ubuntu-latest
-        container:
-            image: selenium/standalone-chrome:latest
 
         steps:
-            - name: Checkout repo
-              uses: actions/checkout@v4
+            # 1. Check out main branch and run scraper
+            - uses: actions/checkout@v3
+              with:
+                  ref: main
+                  fetch-depth: 0
 
-            - name: Set up Python
-              uses: actions/setup-python@v5
+            - name: Set up Python 3.12 with pip caching
+              uses: actions/setup-python@v4
               with:
                   python-version: "3.12"
+                  cache: pip
+                  cache-dependency-path: requirements.txt
 
-            - name: Cache pip dependencies
-              uses: actions/cache@v3
-              with:
-                  path: ~/.cache/pip
-                  key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-                  restore-keys: |
-                      ${{ runner.os }}-pip-
-
-            - name: Install dependencies
+            - name: Install system dependencies
               run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libnss3-dev xvfb chromium-browser chromium-chromedriver
+
+            - name: Install Python dependencies
+              run: |
+                  pip install --upgrade pip
                   pip install -r requirements.txt
-                  pip install pyyaml
 
-            - name: Run scraper
-              run: python main.py
-
-            - name: Embed scraped data into README
-              run: python .github/scripts/embed_json.py consolidated_menu.json .github/scripts/embed_map.yml README.md
-
-            - name: Commit & push changes
+            - name: Run the dining-hall scraper
               run: |
-                  git config --global user.name "GitHub Actions"
-                  git config --global user.email "actions@github.com"
-                  git pull --rebase
-                  git add consolidated_menu.json menu_summary.json README.md
-                  git diff --cached --quiet || git commit -m "📦 Auto-update for $(date +'%Y-%m-%d')"
-                  git push
+                  python -m backend.main
+                  mkdir -p /tmp/menu_json
+                  mv menu_summary.json /tmp/menu_json/menu_summary.json
+                  mv consolidated_menu.json /tmp/menu_json/consolidated_menu.json
+
+            # 2. Check out backend-deployment branch and push scraped JSON
+            - name: Checkout backend-deployment
+              uses: actions/checkout@v3
+              with:
+                  ref: backend-deployment
+                  fetch-depth: 0
+                  persist-credentials: true
+
+            - name: Copy JSON into backend-deployment
+              run: |
+                  cp /tmp/menu_json/menu_summary.json ./menu_summary.json
+                  cp /tmp/menu_json/consolidated_menu.json ./consolidated_menu.json
+
+            - name: Commit & push updated JSON
+              run: |
+                  git add menu_summary.json consolidated_menu.json
+                  if ! git diff --cached --quiet; then
+                    git config user.name "github-actions[bot]"
+                    git config user.email "github-actions[bot]@users.noreply.github.com"
+                    git commit -m "ci: daily menu update $(date -u +'%Y-%m-%d')"
+                    git push origin backend-deployment
+                  else
+                    echo "No changes to JSON on backend-deployment—skipping commit."
+
+            # 3. Embed to Pinecone using latest backend JSON
+            - name: Run embed & upsert to Pinecone
               env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+                  PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+                  PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
+              run: python plate_planner/embed_menu.py consolidated_menu.json

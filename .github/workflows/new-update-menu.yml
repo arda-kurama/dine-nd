@@ -21,33 +21,36 @@ jobs:
                   cache-dependency-path: requirements.txt
 
             # 3) Install Chrome (deb) + matching Chromedriver
-            - name: Install Chrome & Chromedriver
+            - name: Install Chrome & matching Chromedriver
               run: |
-                  # Add Google’s GPG key & repo
-                  wget -qO- https://dl.google.com/linux/linux_signing_key.pub \
-                    | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-key.gpg
-                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-key.gpg] \
-                    http://dl.google.com/linux/chrome/deb/ stable main" \
-                    | sudo tee /etc/apt/sources.list.d/google-chrome.list
+                  set -eux
 
+                  # 1) Add Google’s repo
+                  wget -qO- https://dl.google.com/linux/linux_signing_key.pub \
+                      | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg
+                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] \
+                      http://dl.google.com/linux/chrome/deb/ stable main" \
+                      | sudo tee /etc/apt/sources.list.d/google-chrome.list
+
+                  # 2) Install Chrome + deps (incl. unzip for driver)
                   sudo apt-get update
                   sudo apt-get install -y \
-                    google-chrome-stable \
-                    xvfb \
-                    libnss3 \
-                    libxi6 \
-                    libgtk-3-0 \
-                    libxss1
+                      google-chrome-stable xvfb libnss3 libxi6 libgtk-3-0 libxss1 unzip
 
-                  # Match Chromedriver version exactly to Chrome
-                  CHROME_VER=$(google-chrome --version | awk '{print $3}')
+                  # 3) Derive the base version and fetch the correct driver
+                  CHROME_VER=$(google-chrome --product-version)
+                  BASE_VER=${CHROME_VER%.*}           # “138.0.7204”
+                  DRIVER_VER=$(wget -qO- \
+                      "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${BASE_VER}")
+                  echo "→ Chrome $CHROME_VER → Driver $DRIVER_VER"
+
                   wget -q --show-progress \
-                    "https://chromedriver.storage.googleapis.com/${CHROME_VER}/chromedriver_linux64.zip"
-                  unzip chromedriver_linux64.zip
-                  sudo mv chromedriver /usr/local/bin/chromedriver
+                      "https://chromedriver.storage.googleapis.com/${DRIVER_VER}/chromedriver_linux64.zip"
+                  unzip -qq chromedriver_linux64.zip
+                  sudo mv chromedriver /usr/local/bin/
                   sudo chmod +x /usr/local/bin/chromedriver
 
-                  # Smoke‑test
+                  # 4) Smoke‑test
                   google-chrome --headless --no-sandbox --disable-gpu --version
                   chromedriver --version
 

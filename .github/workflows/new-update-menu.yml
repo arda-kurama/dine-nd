@@ -2,7 +2,7 @@ name: DineND Daily Update + Embed
 
 on:
     schedule:
-        - cron: "0 11 * * *" # 7 AM EDT
+        - cron: "0 6 * * *" # 2 AM EDT
     workflow_dispatch:
 
 jobs:
@@ -23,10 +23,22 @@ jobs:
                   cache: pip
                   cache-dependency-path: requirements.txt
 
-            - name: Install system dependencies
+            - name: Install Chromium + Chromedriver manually
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y libnss3-dev xvfb chromium-browser chromium-chromedriver
+                  sudo apt-get install -y wget unzip xvfb libnss3 libgconf-2-4 libxi6 libatk1.0-0 libgtk-3-0 libxss1 libasound2
+                  wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chrome-linux64.zip
+                  unzip chrome-linux64.zip
+                  sudo mv chrome-linux64 /opt/chrome
+                  sudo ln -s /opt/chrome/chrome /usr/bin/chromium-browser
+
+                  wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chromedriver-linux64.zip
+                  unzip chromedriver-linux64.zip
+                  sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
+                  sudo chmod +x /usr/bin/chromedriver
+
+                  chromedriver --version
+                  chromium-browser --version
 
             - name: Install Python dependencies
               run: |

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-07-17T18:32:19.563033",
+  "last_updated": "2025-07-17T18:58:48.227663",
   "date": "Thursday, July 17, 2025",
   "dining_halls": {
     "Holy Cross College Dining Hall": {
@@ -23109,33 +23109,6 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "Local Red Delicious Apple",
-              "serving_size": "Apples (206g)",
-              "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "210mg",
-                "total_carbohydrate": "29g",
-                "dietary_fiber": "5g",
-                "sugars": "22g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "10%",
-                "protein": "1%"
-              },
-              "ingredients": "Fresh Red Delicious Apples.",
-              "allergens": "Not Specified"
-            },
-            {
               "name": "Orange",
               "serving_size": "Orange (204g)",
               "nutrition": {
@@ -23160,6 +23133,33 @@
                 "protein": "2%"
               },
               "ingredients": "Orange.",
+              "allergens": "Not Specified"
+            },
+            {
+              "name": "Red Delicious Apple",
+              "serving_size": "Apples (206g)",
+              "nutrition": {
+                "calories": 120,
+                "calories_from_fat": 0,
+                "total_fat": "0g",
+                "saturated_fat": "0g",
+                "cholesterol": "0mg",
+                "sodium": "0mg",
+                "potassium": "210mg",
+                "total_carbohydrate": "29g",
+                "dietary_fiber": "5g",
+                "sugars": "22g",
+                "protein": "< 1g"
+              },
+              "daily_values": {
+                "total_fat": "1%",
+                "saturated_fat": "0%",
+                "cholesterol": "0%",
+                "sodium": "0%",
+                "total_carbohydrate": "10%",
+                "protein": "1%"
+              },
+              "ingredients": "Fresh Red Delicious Apples.",
               "allergens": "Not Specified"
             }
           ],
@@ -24980,7 +24980,7 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "Local Red Delicious Apple",
+              "name": "Red Delicious Apple",
               "serving_size": "Apples (206g)",
               "nutrition": {
                 "calories": 120,
@@ -28444,7 +28444,7 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "Local Red Delicious Apple",
+              "name": "Red Delicious Apple",
               "serving_size": "Apples (206g)",
               "nutrition": {
                 "calories": 120,

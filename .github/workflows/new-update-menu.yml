@@ -25,32 +25,44 @@ jobs:
               run: |
                   set -eux
 
-                  # 1) Add Google’s repo
+                  # 1) Add Google’s APT repo (no snap, fully deterministic)
                   wget -qO- https://dl.google.com/linux/linux_signing_key.pub \
                       | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg
                   echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] \
                       http://dl.google.com/linux/chrome/deb/ stable main" \
                       | sudo tee /etc/apt/sources.list.d/google-chrome.list
 
-                  # 2) Install Chrome + deps (incl. unzip for driver)
+                  # 2) Install Chrome + deps
                   sudo apt-get update
                   sudo apt-get install -y \
                       google-chrome-stable xvfb libnss3 libxi6 libgtk-3-0 libxss1 unzip
 
-                  # 3) Derive the base version and fetch the correct driver
-                  CHROME_VER=$(google-chrome --product-version)
-                  BASE_VER=${CHROME_VER%.*}           # “138.0.7204”
+                  # 3) Pick the right Chromedriver
+                  CHROME_VER=$(google-chrome --product-version)           # e.g. 138.0.7204.157
+                  BASE_VER=${CHROME_VER%.*}                              # 138.0.7204
+                  MAJOR_VER=${CHROME_VER%%.*}                            # 138
+
+                  # try exact BASE match first
                   DRIVER_VER=$(wget -qO- \
-                      "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${BASE_VER}")
+                      "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${BASE_VER}" || true)
+
+                  # if that comes back empty (new patch hasn’t landed yet), fall back to major only
+                  if [ -z "$DRIVER_VER" ]; then
+                      echo "⚠️ no LATEST_RELEASE_${BASE_VER}, falling back to major ${MAJOR_VER}"
+                      DRIVER_VER=$(wget -qO- \
+                      "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${MAJOR_VER}")
+                  fi
+
                   echo "→ Chrome $CHROME_VER → Driver $DRIVER_VER"
 
+                  # 4) Download & install
                   wget -q --show-progress \
                       "https://chromedriver.storage.googleapis.com/${DRIVER_VER}/chromedriver_linux64.zip"
                   unzip -qq chromedriver_linux64.zip
                   sudo mv chromedriver /usr/local/bin/
                   sudo chmod +x /usr/local/bin/chromedriver
 
-                  # 4) Smoke‑test
+                  # 5) Sanity check
                   google-chrome --headless --no-sandbox --disable-gpu --version
                   chromedriver --version
 

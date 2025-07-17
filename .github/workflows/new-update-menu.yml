@@ -23,10 +23,10 @@ jobs:
                   cache: pip
                   cache-dependency-path: requirements.txt
 
-            - name: Install Chromium + Chromedriver manually
+            - name: Install Chromium + Chromedriver manually (no snap)
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y wget unzip xvfb libnss3 libgconf-2-4 libxi6 libatk1.0-0 libgtk-3-0 libxss1 libasound2
+                  sudo apt-get install -y wget unzip xvfb libnss3 libxi6 libatk1.0-0 libgtk-3-0 libxss1 libasound2t64
                   wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chrome-linux64.zip
                   unzip chrome-linux64.zip
                   sudo mv chrome-linux64 /opt/chrome

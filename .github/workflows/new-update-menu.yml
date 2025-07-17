@@ -1,58 +1,71 @@
 name: DineND Daily Update + Embed
-
 on:
     schedule:
-        - cron: "0 6 * * *" # 2 AM EDT
+        - cron: "0 11 * * *" # Daily at 7 AM EDT
     workflow_dispatch:
 
 jobs:
     scrape-embed-push:
         runs-on: ubuntu-latest
-
         steps:
-            # 1. Check out main branch and run scraper
+            # 1) Checkout code
             - uses: actions/checkout@v3
               with:
-                  ref: main
                   fetch-depth: 0
 
-            - name: Set up Python 3.12 with pip caching
-              uses: actions/setup-python@v4
+            # 2) Python setup + pip cache
+            - uses: actions/setup-python@v4
               with:
                   python-version: "3.12"
                   cache: pip
                   cache-dependency-path: requirements.txt
 
-            - name: Install Chromium + Chromedriver manually (no snap)
+            # 3) Install Chrome (deb) + matching Chromedriver
+            - name: Install Chrome & Chromedriver
               run: |
+                  # Add Google’s GPG key & repo
+                  wget -qO- https://dl.google.com/linux/linux_signing_key.pub \
+                    | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-key.gpg
+                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-key.gpg] \
+                    http://dl.google.com/linux/chrome/deb/ stable main" \
+                    | sudo tee /etc/apt/sources.list.d/google-chrome.list
+
                   sudo apt-get update
-                  sudo apt-get install -y wget unzip xvfb libnss3 libxi6 libatk1.0-0 libgtk-3-0 libxss1 libasound2t64
-                  wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chrome-linux64.zip
-                  unzip chrome-linux64.zip
-                  sudo mv chrome-linux64 /opt/chrome
-                  sudo ln -s /opt/chrome/chrome /usr/bin/chromium-browser
+                  sudo apt-get install -y \
+                    google-chrome-stable \
+                    xvfb \
+                    libnss3 \
+                    libxi6 \
+                    libgtk-3-0 \
+                    libxss1
 
-                  wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chromedriver-linux64.zip
-                  unzip chromedriver-linux64.zip
-                  sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
-                  sudo chmod +x /usr/bin/chromedriver
+                  # Match Chromedriver version exactly to Chrome
+                  CHROME_VER=$(google-chrome --version | awk '{print $3}')
+                  wget -q --show-progress \
+                    "https://chromedriver.storage.googleapis.com/${CHROME_VER}/chromedriver_linux64.zip"
+                  unzip chromedriver_linux64.zip
+                  sudo mv chromedriver /usr/local/bin/chromedriver
+                  sudo chmod +x /usr/local/bin/chromedriver
 
+                  # Smoke‑test
+                  google-chrome --headless --no-sandbox --disable-gpu --version
                   chromedriver --version
-                  chromium-browser --version
 
+            # 4) Python deps
             - name: Install Python dependencies
               run: |
                   pip install --upgrade pip
                   pip install -r requirements.txt
 
-            - name: Run the dining-hall scraper
+            # 5) Run your scraper & stash JSON
+            - name: Scrape & Save JSON
               run: |
-                  python -m backend.main
+                  xvfb-run -s "-screen 0 1920x1080x24" python -m backend.main
                   mkdir -p /tmp/menu_json
-                  mv menu_summary.json /tmp/menu_json/menu_summary.json
-                  mv consolidated_menu.json /tmp/menu_json/consolidated_menu.json
+                  mv menu_summary.json     /tmp/menu_json/
+                  mv consolidated_menu.json /tmp/menu_json/
 
-            # 2. Check out backend-deployment branch and push scraped JSON
+            # 6) Checkout backend-deployment branch
             - name: Checkout backend-deployment
               uses: actions/checkout@v3
               with:
@@ -60,24 +73,22 @@ jobs:
                   fetch-depth: 0
                   persist-credentials: true
 
-            - name: Copy JSON into backend-deployment
+            # 7) Copy & commit if changed
+            - name: Commit & Push JSON if changed
               run: |
-                  cp /tmp/menu_json/menu_summary.json ./menu_summary.json
-                  cp /tmp/menu_json/consolidated_menu.json ./consolidated_menu.json
-
-            - name: Commit & push updated JSON
-              run: |
-                  git add menu_summary.json consolidated_menu.json
+                  cp /tmp/menu_json/*.json .
+                  git add *.json
                   if ! git diff --cached --quiet; then
-                    git config user.name "github-actions[bot]"
+                    git config user.name  "github-actions[bot]"
                     git config user.email "github-actions[bot]@users.noreply.github.com"
                     git commit -m "ci: daily menu update $(date -u +'%Y-%m-%d')"
                     git push origin backend-deployment
                   else
-                    echo "No changes to JSON on backend-deployment—skipping commit."
+                    echo "No JSON changes—skipping commit."
+                  fi
 
-            # 3. Embed to Pinecone using latest backend JSON
-            - name: Run embed & upsert to Pinecone
+            # 8) Embed & upsert
+            - name: Embed & Upsert to Pinecone
               env:
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
                   PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}

@@ -25,7 +25,7 @@ jobs:
             - name: Install Chromium and dependencies (no Snap)
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y xvfb libnss3 libxss1 libasound2 fonts-liberation libatk-bridge2.0-0 libgtk-3-0 libdrm2 libgbm1 wget unzip
+                  sudo apt-get install -y xvfb libnss3 libxss1 libasound2t64 fonts-liberation libatk-bridge2.0-0 libgtk-3-0 libdrm2 libgbm1 wget unzip
 
                   # Download Chromium build
                   wget -q https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1181205/chrome-linux.zip

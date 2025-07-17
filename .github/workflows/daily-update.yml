@@ -1,4 +1,4 @@
-name: DineND Daily Menu Update & Embedding
+name: daily-update
 
 on:
     schedule:

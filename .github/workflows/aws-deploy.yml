@@ -1,4 +1,4 @@
-name: Deploy custom endpoints with Zappa to AWS Lambda
+name: aws-deploy
 
 on:
     # Auto-deploy only when code / config that affects the Lambda changes

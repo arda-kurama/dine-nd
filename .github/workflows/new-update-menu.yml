@@ -31,7 +31,7 @@ jobs:
                   wget -q https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1181205/chrome-linux.zip
                   unzip chrome-linux.zip
                   sudo mv chrome-linux /opt/chrome
-                  sudo ln -s /opt/chrome/chrome /usr/bin/chromium-browser
+                  sudo ln -sf /opt/chrome/chrome /usr/bin/chromium-browser
 
                   # Download matching ChromeDriver
                   wget -q https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1181205/chromedriver_linux64.zip

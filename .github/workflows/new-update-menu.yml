@@ -1,0 +1,51 @@
+name: DineND Daily Update + Embed
+
+on:
+    schedule:
+        - cron: "0 11 * * *" # 7:00 AM EDT daily
+    workflow_dispatch:
+
+jobs:
+    scrape-embed-push:
+        runs-on: ubuntu-latest
+        container:
+            image: selenium/standalone-chrome:latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Cache pip dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ~/.cache/pip
+                  key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pip-
+
+            - name: Install dependencies
+              run: |
+                  pip install -r requirements.txt
+                  pip install pyyaml
+
+            - name: Run scraper
+              run: python main.py
+
+            - name: Embed scraped data into README
+              run: python .github/scripts/embed_json.py consolidated_menu.json .github/scripts/embed_map.yml README.md
+
+            - name: Commit & push changes
+              run: |
+                  git config --global user.name "GitHub Actions"
+                  git config --global user.email "actions@github.com"
+                  git pull --rebase
+                  git add consolidated_menu.json menu_summary.json README.md
+                  git diff --cached --quiet || git commit -m "📦 Auto-update for $(date +'%Y-%m-%d')"
+                  git push
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

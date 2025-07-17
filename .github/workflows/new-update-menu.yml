@@ -36,7 +36,7 @@ jobs:
                   # Download matching ChromeDriver
                   wget -q https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1181205/chromedriver_linux64.zip
                   unzip chromedriver_linux64.zip
-                  sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
+                  sudo mv chromedriver_linux64/chromedriver /usr/bin/chromedriver
                   sudo chmod +x /usr/bin/chromedriver
 
             - name: Install Python dependencies

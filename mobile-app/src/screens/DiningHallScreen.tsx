@@ -17,9 +17,8 @@ import {
     Easing,
 } from "react-native";
 
-// Icon set and toast message utility
+// Icon set
 import { Ionicons } from "@expo/vector-icons";
-import Toast from "react-native-root-toast";
 
 // Screen specific types, constants, and themes
 import type {
@@ -784,33 +783,8 @@ function CategoryBlock({
                                                           },
                                                       ];
 
-                                                // Show a toast if adding item
+                                                // Track if item added
                                                 if (!isSelected) {
-                                                    Toast.show(
-                                                        `${item.name} added to your plate`,
-                                                        {
-                                                            duration:
-                                                                Toast.durations
-                                                                    .SHORT,
-                                                            position:
-                                                                Toast.positions
-                                                                    .TOP,
-                                                            shadow: true,
-                                                            animation: true,
-                                                            hideOnPress: true,
-                                                            backgroundColor:
-                                                                colors.primary,
-                                                            textColor:
-                                                                colors.accent,
-                                                            opacity: 0.95,
-                                                            containerStyle: {
-                                                                borderRadius: 8,
-                                                                paddingHorizontal: 16,
-                                                                paddingVertical: 12,
-                                                                marginTop: 40,
-                                                            },
-                                                        }
-                                                    );
                                                     itemAdded(
                                                         item.name,
                                                         hallId,

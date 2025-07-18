@@ -22,6 +22,9 @@ import { ApiResponse } from "../components/types";
 import { ALLERGENS } from "../components/constants";
 import { colors, spacing, sharedStyles } from "../components/themes";
 
+// Statsig import for analytics
+import { useAnalytics } from "../components/statsig";
+
 // Define navigation prop type for this screen
 type Props = NativeStackScreenProps<RootStackParamList, "PlatePlanner">;
 
@@ -43,6 +46,9 @@ export default function PlatePlanner({ route }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<ApiResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
+
+    // Analytics states
+    const { platePlannerUsed, platePlannerFailed } = useAnalytics();
 
     // Macro input definitions for mapping
     const macroFields: [string, string, (v: string) => void][] = [
@@ -159,7 +165,18 @@ export default function PlatePlanner({ route }: Props) {
             // Success: save results
             const json: ApiResponse = await response.json();
             setResult(json);
+            platePlannerUsed(
+                selectedSection || "any",
+                {
+                    calories: cals ?? 0,
+                    protein: prot ?? 0,
+                    carbs: carbs ?? 0,
+                    fat: fat ?? 0,
+                },
+                avoidedAllergies
+            );
         } catch (e: any) {
+            platePlannerFailed(e.message ?? "unknown");
             showError(
                 e.message || "Unexpected network error",
                 onPlanPlatePress

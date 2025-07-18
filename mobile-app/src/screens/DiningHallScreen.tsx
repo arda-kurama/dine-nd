@@ -44,6 +44,9 @@ import {
     sharedStyles,
 } from "../components/themes";
 
+// Statsig import for analytics
+import { useAnalytics } from "../components/statsig";
+
 // Define navigation prop type specific to this screen
 type Props = NativeStackScreenProps<RootStackParamList, "DiningHall">;
 
@@ -693,6 +696,7 @@ function CategoryBlock({
     selectedItems: PlateItem[];
     setSelectedItems: React.Dispatch<React.SetStateAction<PlateItem[]>>;
 }) {
+    const { itemAdded } = useAnalytics();
     return (
         <View>
             {/* Tappable category header row (toggles expansion) */}
@@ -806,6 +810,11 @@ function CategoryBlock({
                                                                 marginTop: 40,
                                                             },
                                                         }
+                                                    );
+                                                    itemAdded(
+                                                        item.name,
+                                                        hallId,
+                                                        meal
                                                     );
                                                 }
 

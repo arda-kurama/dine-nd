@@ -29,6 +29,9 @@ import {
     sharedStyles,
 } from "../components/themes";
 
+// Statsig import for analytics
+import { useAnalytics } from "../components/statsig";
+
 // Define navigation prop type specific to this screen
 type HallListNavProp = NativeStackNavigationProp<RootStackParamList, "Halls">;
 
@@ -41,6 +44,7 @@ export default function HallList({ navigation }: Props) {
     const [summary, setSummary] = useState<MenuSummary | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { hallSelected } = useAnalytics();
 
     // Fetch the menu summary data on initial render
     useEffect(() => {
@@ -99,12 +103,13 @@ export default function HallList({ navigation }: Props) {
                         <View style={styles.cardWrapper}>
                             <TouchableOpacity
                                 activeOpacity={0.8}
-                                onPress={() =>
+                                onPress={() => {
+                                    hallSelected(hallName);
                                     navigation.navigate("DiningHall", {
                                         hallId: hallName,
                                         hallName,
-                                    })
-                                }
+                                    });
+                                }}
                             >
                                 <Image
                                     source={imageSource}

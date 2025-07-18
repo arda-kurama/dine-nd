@@ -1,11 +1,11 @@
 import { Asset } from "expo-asset";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppNavigator from "./src/navigation";
-
+import { AnalyticsProvider } from "./src/components/statsig";
 SplashScreen.preventAutoHideAsync();
 
 // Main component to load entire app
@@ -38,15 +38,17 @@ export default function App() {
     if (!ready) return null;
 
     return (
-        <SafeAreaProvider>
-            {/* Needed for gesture-based components like drawers or modals */}
-            <GestureHandlerRootView style={{ flex: 1 }}>
-                {/* Enables root-level components like Toast or Modal from anywhere */}
-                <RootSiblingParent>
-                    {/* App's navigation hierarchy (e.g. stack/tab screens) */}
-                    <AppNavigator />
-                </RootSiblingParent>
-            </GestureHandlerRootView>
-        </SafeAreaProvider>
+        <AnalyticsProvider>
+            <SafeAreaProvider>
+                {/* Needed for gesture-based components like drawers or modals */}
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                    {/* Enables root-level components like Toast or Modal from anywhere */}
+                    <RootSiblingParent>
+                        {/* App's navigation hierarchy (e.g. stack/tab screens) */}
+                        <AppNavigator />
+                    </RootSiblingParent>
+                </GestureHandlerRootView>
+            </SafeAreaProvider>
+        </AnalyticsProvider>
     );
 }

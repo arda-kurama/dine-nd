@@ -40,7 +40,7 @@
         "web": {
             "favicon": "./assets/favicon.png"
         },
-        "plugins": ["expo-asset"],
+        "plugins": ["expo-asset", "expo-dev-client"],
         "owner": "arda-kurama",
         "extra": {
             "eas": {

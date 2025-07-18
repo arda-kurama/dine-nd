@@ -63,10 +63,13 @@ export function useAnalytics() {
 
     // Event names and types
     const EVT = {
-        HALL_SELECTED: "hall_selected",
+        PAGE_VIEW: "page_view",
         ITEM_ADDED: "item_added",
-        PLANNER_SUCCESS: "plate_planner_used",
-        PLANNER_ERROR: "plate_planner_failed",
+        ITEM_REMOVED: "item_removed",
+        SERVING_CHANGED: "serving_changed",
+        PLATE_PLANNER_SUCCESS: "plate_planner_success",
+        PLATE_PLANNER_FAILED: "plate_planner_failed",
+        FINAL_PLATE: "final_plate",
     } as const;
 
     type Event = (typeof EVT)[keyof typeof EVT];
@@ -74,26 +77,46 @@ export function useAnalytics() {
         client.logEvent(e, value, props);
 
     return {
-        // Generic event logger
         fire,
-
-        // Hall selected
-        hallSelected: (hallName: string) =>
-            fire(EVT.HALL_SELECTED, { hallName }),
-
-        // Item added to my plate
+        pageViewed: (screen: string, props: Record<string, any> = {}) =>
+            fire(EVT.PAGE_VIEW, { screen, ...props }),
         itemAdded: (itemName: string, hallName: string, meal: string) =>
             fire(EVT.ITEM_ADDED, { itemName, hallName, meal }),
-
-        // Plate planner success
-        platePlannerUsed: (
+        itemRemoved: (
+            itemName: string,
+            hallName: string,
+            meal: string,
+            location: string
+        ) => fire(EVT.ITEM_REMOVED, { itemName, hallName, meal, location }),
+        servingSizeChanged: (
+            itemName: string,
+            servings: number,
+            hallName: string,
+            meal: string
+        ) =>
+            fire(EVT.SERVING_CHANGED, {
+                itemName,
+                servings,
+                hallName,
+                meal,
+            }),
+        plannerSuccess: (
             cuisine: string,
             macros: Record<string, number>,
             allergens: string[]
-        ) => fire(EVT.PLANNER_SUCCESS, { cuisine, macros, allergens }),
-
-        // Plate planner failure
-        platePlannerFailed: (error: string) =>
-            fire(EVT.PLANNER_ERROR, { error }),
+        ) => fire(EVT.PLATE_PLANNER_SUCCESS, { cuisine, macros, allergens }),
+        plannerError: (error: string) =>
+            fire(EVT.PLATE_PLANNER_FAILED, { error }),
+        finalPlate: (
+            hallName: string,
+            meal: string,
+            items: { name: string; servings: number }[],
+            macros: {
+                calories: number;
+                protein: number;
+                carbs: number;
+                fat: number;
+            }
+        ) => fire(EVT.FINAL_PLATE, { hallName, meal, items, macros }),
     };
 }

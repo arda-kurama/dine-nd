@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     ScrollView,
     Text,
@@ -9,6 +9,7 @@ import {
     View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useAnalytics } from "../components/statsig";
 
 // Screen specific themes
 import {
@@ -48,6 +49,12 @@ function LinkButton({
 
 // Main info screen
 export default function InfoScreen() {
+    const { pageViewed } = useAnalytics();
+
+    useEffect(() => {
+        pageViewed("InfoScreen");
+    }, []);
+
     return (
         <SafeAreaView style={sharedStyles.screenSurface}>
             <ScrollView

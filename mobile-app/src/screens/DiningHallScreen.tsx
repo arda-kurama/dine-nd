@@ -15,7 +15,9 @@ import {
     Platform,
     KeyboardAvoidingView,
     Easing,
+    AppState,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 // Icon set
 import { Ionicons } from "@expo/vector-icons";
@@ -120,6 +122,73 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             ? Animated.subtract(panelHeight, insets.bottom)
             : Animated.add(panelHeight, keyboardHeight);
 
+    // Analytics hooks and utilities
+    const { pageViewed, itemRemoved, servingSizeChanged, finalPlate } =
+        useAnalytics();
+    const appState = React.useRef(AppState.currentState);
+    const plateLogged = useRef(false);
+    const latestItems = useRef<PlateItem[]>([]);
+    useEffect(() => {
+        latestItems.current = selectedItems;
+    });
+    const logPlateOnce = () => {
+        if (plateLogged.current || !latestItems.current.length) return;
+        finalPlate(
+            hallName,
+            currentMeal,
+            summarizePlate(latestItems.current),
+            computeMacros(latestItems.current)
+        );
+        plateLogged.current = true;
+    };
+    const computeMacros = (items: PlateItem[]) =>
+        items.reduce(
+            (tot, it) => {
+                const s =
+                    typeof it.servings === "number"
+                        ? it.servings
+                        : parseFloat(it.servings) || 0;
+
+                const num = (x: any) =>
+                    typeof x === "number"
+                        ? x
+                        : typeof x === "string" && x.trim().startsWith("<")
+                        ? 0.5
+                        : parseFloat(x) || 0;
+
+                return {
+                    calories: tot.calories + s * num(it.nutrition.calories),
+                    protein: tot.protein + s * num(it.nutrition.protein),
+                    carbs: tot.carbs + s * num(it.nutrition.total_carbohydrate),
+                    fat: tot.fat + s * num(it.nutrition.total_fat),
+                };
+            },
+            { calories: 0, protein: 0, carbs: 0, fat: 0 }
+        );
+    const summarizePlate = (items: PlateItem[]) =>
+        items.map((i) => ({
+            name: i.name,
+            servings:
+                typeof i.servings === "number"
+                    ? i.servings
+                    : parseFloat(i.servings) || 0,
+        }));
+    useFocusEffect(
+        React.useCallback(() => {
+            plateLogged.current = false; // reset when screen gains focus
+            return () => logPlateOnce(); // fire once on blur
+        }, [hallName, currentMeal]) // ← plate changes no longer re‑fire
+    );
+    useEffect(() => {
+        const sub = AppState.addEventListener("change", (next) => {
+            if (appState.current === "active" && next === "background") {
+                logPlateOnce(); // same single‑shot helper
+            }
+            appState.current = next;
+        });
+        return () => sub.remove();
+    }, [hallName, currentMeal]); // ← removed selectedItems
+
     // Adjust panel position based on keyboard visibility
     useEffect(() => {
         const showSub = Keyboard.addListener(
@@ -188,6 +257,13 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             )
         );
     }, [diningHalls, currentMeal, hallId]);
+
+    // Log page view
+    useEffect(() => {
+        if (currentMeal) {
+            pageViewed("DiningHall", { hallName, meal: currentMeal });
+        }
+    }, [hallName, currentMeal]);
 
     // Parses nutrition number strings (e.g., "<5")
     const parseNumber = (x: any) => {
@@ -598,9 +674,12 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                         );
                                                     }
                                                 }}
-                                                onBlur={({ nativeEvent }) => {
+                                                onEndEditing={({
+                                                    nativeEvent,
+                                                }) => {
                                                     let v = parseFloat(
-                                                        nativeEvent.text
+                                                        nativeEvent.text ??
+                                                            item.servings.toString()
                                                     );
                                                     if (isNaN(v) || v < 1)
                                                         v = 1;
@@ -615,6 +694,12 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                                   }
                                                                 : i
                                                         )
+                                                    );
+                                                    servingSizeChanged(
+                                                        item.name,
+                                                        v,
+                                                        hallId,
+                                                        currentMeal
                                                     );
                                                 }}
                                             />
@@ -632,14 +717,20 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                         </TouchableOpacity>
                                         {/* Right side: Remove button */}
                                         <TouchableOpacity
-                                            onPress={() =>
+                                            onPress={() => {
                                                 setSelectedItems((prev) =>
                                                     prev.filter(
                                                         (i) =>
                                                             i.name !== item.name
                                                     )
-                                                )
-                                            }
+                                                );
+                                                itemRemoved(
+                                                    item.name,
+                                                    hallId,
+                                                    currentMeal,
+                                                    "My Plate menu"
+                                                );
+                                            }}
                                             hitSlop={{
                                                 top: 10,
                                                 bottom: 10,
@@ -695,7 +786,7 @@ function CategoryBlock({
     selectedItems: PlateItem[];
     setSelectedItems: React.Dispatch<React.SetStateAction<PlateItem[]>>;
 }) {
-    const { itemAdded } = useAnalytics();
+    const { itemAdded, itemRemoved } = useAnalytics();
     return (
         <View>
             {/* Tappable category header row (toggles expansion) */}
@@ -768,31 +859,35 @@ function CategoryBlock({
                                     <TouchableOpacity
                                         onPress={() => {
                                             setSelectedItems((prev) => {
-                                                // If already selected, remove it
-                                                const newSelection = isSelected
-                                                    ? prev.filter(
-                                                          (x) =>
-                                                              x.name !==
-                                                              item.name
-                                                      )
-                                                    : [
-                                                          ...prev,
-                                                          {
-                                                              ...item,
-                                                              servings: 1, // default to 1 serving
-                                                          },
-                                                      ];
+                                                const wasSelected = prev.some(
+                                                    (x) => x.name === item.name
+                                                );
 
-                                                // Track if item added
-                                                if (!isSelected) {
+                                                if (wasSelected) {
+                                                    itemRemoved(
+                                                        item.name,
+                                                        hallId,
+                                                        meal,
+                                                        "Category list"
+                                                    );
+                                                    return prev.filter(
+                                                        (x) =>
+                                                            x.name !== item.name
+                                                    );
+                                                } else {
                                                     itemAdded(
                                                         item.name,
                                                         hallId,
                                                         meal
                                                     );
+                                                    return [
+                                                        ...prev,
+                                                        {
+                                                            ...item,
+                                                            servings: 1,
+                                                        },
+                                                    ];
                                                 }
-
-                                                return newSelection;
                                             });
                                         }}
                                         hitSlop={{

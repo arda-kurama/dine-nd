@@ -47,8 +47,11 @@ export default function PlatePlanner({ route }: Props) {
     const [result, setResult] = useState<ApiResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Analytics states
-    const { platePlannerUsed, platePlannerFailed } = useAnalytics();
+    // Analytics states and utilities
+    const { pageViewed, plannerSuccess, plannerError } = useAnalytics();
+    useEffect(() => {
+        pageViewed("PlatePlanner", { hallName, mealPeriod });
+    }, [hallName, mealPeriod]);
 
     // Macro input definitions for mapping
     const macroFields: [string, string, (v: string) => void][] = [
@@ -165,7 +168,7 @@ export default function PlatePlanner({ route }: Props) {
             // Success: save results
             const json: ApiResponse = await response.json();
             setResult(json);
-            platePlannerUsed(
+            plannerSuccess(
                 selectedSection || "any",
                 {
                     calories: cals ?? 0,
@@ -176,7 +179,7 @@ export default function PlatePlanner({ route }: Props) {
                 avoidedAllergies
             );
         } catch (e: any) {
-            platePlannerFailed(e.message ?? "unknown");
+            plannerError(e.message ?? "unknown");
             showError(
                 e.message || "Unexpected network error",
                 onPlanPlatePress

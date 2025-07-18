@@ -10,6 +10,7 @@ import {
     Image,
     SafeAreaView,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 // Screen specific types, constants, and themes
 import type { RootStackParamList, MenuSummary } from "../components/types";
@@ -44,7 +45,14 @@ export default function HallList({ navigation }: Props) {
     const [summary, setSummary] = useState<MenuSummary | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { hallSelected } = useAnalytics();
+
+    // Track page view analytics
+    const { pageViewed } = useAnalytics();
+    useFocusEffect(
+        React.useCallback(() => {
+            pageViewed("HallList");
+        }, [])
+    );
 
     // Fetch the menu summary data on initial render
     useEffect(() => {
@@ -104,7 +112,6 @@ export default function HallList({ navigation }: Props) {
                             <TouchableOpacity
                                 activeOpacity={0.8}
                                 onPress={() => {
-                                    hallSelected(hallName);
                                     navigation.navigate("DiningHall", {
                                         hallId: hallName,
                                         hallName,

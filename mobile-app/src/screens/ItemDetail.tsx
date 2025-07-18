@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView, ScrollView, View, Text, StyleSheet } from "react-native";
+import { useAnalytics } from "../components/statsig";
 
 // Screen specific types and themes
 import type { RootStackParamList } from "../components/types";
@@ -26,6 +27,12 @@ export default function ItemDetail({ route }: Props) {
         ingredients,
         allergens,
     } = itemDetail;
+
+    // Track page view analytics
+    const { pageViewed } = useAnalytics();
+    useEffect(() => {
+        pageViewed("ItemDetail", { item: itemDetail.name });
+    }, [itemDetail.name]);
 
     // Define the rows for the nutrition facts table
     const nutrientDefs = [

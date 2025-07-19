@@ -51,12 +51,13 @@ jobs:
                       --non-interactive \
                       --auto-submit
                   else
-                    # Pass the Play service-account key for auto-submit
-                    echo "$PLAY_SERVICE_JSON" > /tmp/play-key.json
-                    eas build \
+                      # Android: write service‑account key and expose via env var
+                      echo "$PLAY_SERVICE_JSON" > /tmp/play-key.json
+                      export GOOGLE_SERVICE_ACCOUNT_KEY_PATH=/tmp/play-key.json
+
+                      eas build \
                       --platform android \
                       --profile production \
                       --non-interactive \
-                      --auto-submit \
-                      --env GOOGLE_SERVICE_ACCOUNT_KEY=@/tmp/play-key.json
+                      --auto-submit
                   fi

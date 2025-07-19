@@ -1,0 +1,55 @@
+name: auto-submit
+
+on:
+    workflow_dispatch:
+
+defaults:
+    run:
+        working-directory: mobile-app
+
+env:
+    STATSIG_CLIENT_KEY: ${{ secrets.STATSIG_CLIENT_KEY }}
+    EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix: { platform: [ios, android] }
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with: { node-version: 20 }
+
+            - run: npm install --global expo-cli eas-cli
+            - run: npm ci
+
+            - name: Write .env
+              run: echo "STATSIG_CLIENT_KEY=$STATSIG_CLIENT_KEY" > .env
+
+            - run: npx expo prebuild --clean --non-interactive
+
+            - run: eas whoami || eas login --token "$EAS_ACCESS_TOKEN"
+
+            - name: Build & Submit ${{ matrix.platform }}
+              env: # extra secrets only when needed
+                  ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }} # iOS only
+                  ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+                  ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+                  PLAY_SERVICE_JSON: ${{ secrets.PLAY_SERVICE_JSON }} # Android only
+              run: |
+                  if [ "${{ matrix.platform }}" = "ios" ]; then
+                    eas build \
+                      --platform ios \
+                      --profile production \
+                      --non-interactive \
+                      --auto-submit
+                  else
+                    eas build \
+                      --platform android \
+                      --profile production \
+                      --non-interactive \
+                      --auto-submit
+                  fi

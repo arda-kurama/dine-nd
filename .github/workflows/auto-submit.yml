@@ -49,9 +49,18 @@ jobs:
             - name: Write Statsig key to .env
               run: echo "STATSIG_CLIENT_KEY=$STATSIG_CLIENT_KEY" > .env
 
+            - name: Sanity‑check Statsig secret length
+              run: |
+                  echo "::add-mask::$STATSIG_CLIENT_KEY"
+                  echo "STATSIG_CLIENT_KEY length=${#STATSIG_CLIENT_KEY}"
+
             - name: Run Expo prebuild (clean)
               run: npx expo prebuild --clean
               env: { CI: 1 }
+
+            - name: Check compiled extra
+              run: |
+                  cat dist/app.config.json | grep -A1 STATSIG_CLIENT_KEY
 
             - name: Build & Auto Submit
               run: |

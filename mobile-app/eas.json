@@ -25,6 +25,9 @@
         },
         "production": {
             "autoIncrement": true,
+            "env": {
+                "STATSIG_CLIENT_KEY": "$STATSIG_CLIENT_KEY"
+            },
             "android": {
                 "buildType": "app-bundle"
             },

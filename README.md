@@ -9,6 +9,7 @@ DineND is a cross-platform app helping Notre Dame students plan meals, track mac
 [![Pinecone](https://img.shields.io/badge/Pinecone-017ACD?style=flat-square&logo=pinecone&logoColor=white)](https://www.pinecone.io/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)](https://openai.com/)
 [![Statsig](https://img.shields.io/badge/Statsig-analytics-blue?style=flat-square&logo=data:image/svg+xml;base64,...)](https://www.statsig.com/)
+
 [![Daily Update](https://github.com/arda-kurama/dine-nd/actions/workflows/daily-update.yml/badge.svg)](https://github.com/arda-kurama/dine-nd/actions/workflows/daily-update.yml)
 [![AWS Deploy](https://github.com/arda-kurama/dine-nd/actions/workflows/aws-deploy.yml/badge.svg)](https://github.com/arda-kurama/dine-nd/actions/workflows/aws-deploy.yml)
 [![Auto Submit](https://github.com/arda-kurama/dine-nd/actions/workflows/auto-submit.yml/badge.svg)](https://github.com/arda-kurama/dine-nd/actions/workflows/auto-submit.yml)

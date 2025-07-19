@@ -77,6 +77,3 @@ yarn-error.*
 *.tsbuildinfo
 
 # @end expo-cli
-
-# Statsig key
-.env

@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { StatsigProviderExpo, useStatsigClient } from "@statsig/expo-bindings";
 
-const sdkKey =
-    Constants.manifestExtra?.STATSIG_CLIENT_KEY ??
-    Constants.expoConfig?.extra?.STATSIG_CLIENT_KEY;
+const sdkKey = "client-faCp1AGVMQdlWGsaLxfTK04p7DV0ey3Af0qZW9MKu6t";
 
 // Generate a unique ID for the user on install and store it securely
 async function getOrCreateAnonID(): Promise<string> {

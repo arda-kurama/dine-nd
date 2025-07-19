@@ -13,7 +13,6 @@ defaults:
         working-directory: mobile-app
 
 env:
-    STATSIG_CLIENT_KEY: ${{ secrets.STATSIG_CLIENT_KEY }}
     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }}
     ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
@@ -21,27 +20,17 @@ env:
     GOOGLE_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY_JSON }}
 
 jobs:
-    build-and-submit:
+    build-ios:
+        if: ${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both' }}
         runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                platform: [ios, android]
-
         steps:
-            - name: Skip non-matching platform
-              if: ${{ github.event.inputs.platform != 'both' && matrix.platform != github.event.inputs.platform }}
-              run: |
-                  echo "Skipping this platform"
-                  exit 0
-              working-directory: .
-
             - name: Checkout repository
               uses: actions/checkout@v4
 
             - name: Set up Node 20
               uses: actions/setup-node@v4
-              with: { node-version: 20 }
+              with:
+                  node-version: 20
 
             - name: Install Expo & EAS CLIs
               run: npm install --global expo-cli eas-cli
@@ -49,17 +38,38 @@ jobs:
             - name: Install project dependencies
               run: npm ci
 
-            - name: Write Statsig key to .env
-              run: echo "STATSIG_CLIENT_KEY=$STATSIG_CLIENT_KEY" > .env
+            - name: Run Expo prebuild (clean)
+              run: npx expo prebuild --clean
+              env:
+                  CI: 1
+
+            - name: Build & Auto Submit (iOS)
+              run: |
+                  eas build --platform ios --profile production --non-interactive --auto-submit
+
+    build-android:
+        if: ${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both' }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node 20
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install Expo & EAS CLIs
+              run: npm install --global expo-cli eas-cli
+
+            - name: Install project dependencies
+              run: npm ci
 
             - name: Run Expo prebuild (clean)
               run: npx expo prebuild --clean
-              env: { CI: 1 }
+              env:
+                  CI: 1
 
-            - name: Build & Auto Submit
+            - name: Build & Auto Submit (Android)
               run: |
-                  if [ "${{ matrix.platform }}" = "ios" ]; then
-                    eas build --platform ios --profile production --non-interactive --auto-submit
-                  else
-                    eas build --platform android --profile production --non-interactive --auto-submit
-                  fi
+                  eas build --platform android --profile production --non-interactive --auto-submit

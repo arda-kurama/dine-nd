@@ -74,7 +74,7 @@ export default function PlatePlanner({ route }: Props) {
         );
     }, []);
 
-    // Fetch available sections for this hall + meal combination
+    // Loads available cuisines for the selected hall and meal; resets selectedSection if invalid
     useEffect(() => {
         async function loadSections() {
             try {
@@ -99,7 +99,7 @@ export default function PlatePlanner({ route }: Props) {
         loadSections();
     }, [hallId, mealPeriod, showError]);
 
-    // Logic for Plan Plate button
+    // Main handler for Plan Plate button: validates input, sends backend request, logs result/failure
     async function onPlanPlatePress() {
         // Parse input values or leave undefined
         const cals = calorieTarget ? parseInt(calorieTarget, 10) : undefined;

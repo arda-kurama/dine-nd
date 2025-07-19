@@ -6,7 +6,7 @@ import { StatsigProviderExpo, useStatsigClient } from "@statsig/expo-bindings";
 
 const sdkKey = "client-faCp1AGVMQdlWGsaLxfTK04p7DV0ey3Af0qZW9MKu6t";
 
-// Generate a unique ID for the user on install and store it securely
+// Creates or fetches a persistent anon user ID from SecureStore, with a 5s timeout fallback to avoid indefinite hangs
 async function getOrCreateAnonID(): Promise<string> {
     const key = "anon_user_id";
 
@@ -25,6 +25,7 @@ async function getOrCreateAnonID(): Promise<string> {
 
     return Promise.race([timeout, fetch]);
 }
+
 // Initialize Statsig with a unique user ID
 export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -32,14 +33,11 @@ export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({
     const [userID, setUserID] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log("🔧 fetching user ID...");
         getOrCreateAnonID()
             .then((id) => {
-                console.log("✅ got user ID:", id);
                 setUserID(id);
             })
             .catch((err) => {
-                console.warn("❌ failed to get user ID:", err);
                 setUserID("fallback-anon-id");
             });
     }, []);
@@ -57,10 +55,11 @@ export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({
     );
 };
 
+// Hook exposing all analytics logging functions, pre-bound to event types
 export function useAnalytics() {
     const { client } = useStatsigClient();
 
-    // Event names and types
+    // Define all event types used in Statsig tracking throughout the app
     const EVT = {
         PAGE_VIEW: "page_view",
         ITEM_ADDED: "item_added",

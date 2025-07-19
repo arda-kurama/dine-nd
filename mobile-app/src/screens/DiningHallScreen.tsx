@@ -131,6 +131,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     useEffect(() => {
         latestItems.current = selectedItems;
     });
+
+    // Logs the current plate one time only—either when user leaves the screen or backgrounds the app
     const logPlateOnce = () => {
         if (plateLogged.current || !latestItems.current.length) return;
         finalPlate(
@@ -141,6 +143,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         );
         plateLogged.current = true;
     };
+
+    // Calculates total macros for a list of items, handling "<5" style values and string servings
     const computeMacros = (items: PlateItem[]) =>
         items.reduce(
             (tot, it) => {
@@ -165,6 +169,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             },
             { calories: 0, protein: 0, carbs: 0, fat: 0 }
         );
+
+    // Returns simplified plate summary with item names and numeric servings for analytics
     const summarizePlate = (items: PlateItem[]) =>
         items.map((i) => ({
             name: i.name,
@@ -173,21 +179,25 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     ? i.servings
                     : parseFloat(i.servings) || 0,
         }));
+
+    // Resets plate logging on focus, and logs on blur (ensuring each plate is logged once per visit)
     useFocusEffect(
         React.useCallback(() => {
-            plateLogged.current = false; // reset when screen gains focus
-            return () => logPlateOnce(); // fire once on blur
-        }, [hallName, currentMeal]) // ← plate changes no longer re‑fire
+            plateLogged.current = false;
+            return () => logPlateOnce();
+        }, [hallName, currentMeal])
     );
+
+    // Listens for backgrounding the app—logs plate if user navigates away via OS or swipe
     useEffect(() => {
         const sub = AppState.addEventListener("change", (next) => {
             if (appState.current === "active" && next === "background") {
-                logPlateOnce(); // same single‑shot helper
+                logPlateOnce();
             }
             appState.current = next;
         });
         return () => sub.remove();
-    }, [hallName, currentMeal]); // ← removed selectedItems
+    }, [hallName, currentMeal]);
 
     // Adjust panel position based on keyboard visibility
     useEffect(() => {
@@ -265,7 +275,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         }
     }, [hallName, currentMeal]);
 
-    // Parses nutrition number strings (e.g., "<5")
+    // Parses values like "<5" or strings into usable numbers for macro calculations
     const parseNumber = (x: any) => {
         if (typeof x === "number") return x;
         if (typeof x === "string") {
@@ -764,7 +774,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     );
 }
 
-// Component for rendering a category block of food items
+// Renders a collapsible list of food items for a given category, with selection handling
 function CategoryBlock({
     category, // category name (e.g., "Homestyle")
     items, // array of MenuItem objects

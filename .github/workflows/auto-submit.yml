@@ -9,7 +9,7 @@ defaults:
 
 env: # expose required secrets to every step
     STATSIG_CLIENT_KEY: ${{ secrets.STATSIG_CLIENT_KEY }}
-    EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
+    EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     PLAY_SERVICE_JSON: ${{ secrets.PLAY_SERVICE_JSON }} # Android
     ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }} # iOS
     ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}

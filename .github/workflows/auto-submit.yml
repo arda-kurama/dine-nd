@@ -42,8 +42,8 @@ jobs:
               run: npx expo prebuild --clean
               env: { CI: 1 }
 
-            - name: Authenticate with EAS (token)
-              run: eas account:login --token "$EAS_ACCESS_TOKEN"
+            - name: Verify EAS auth
+              run: eas whoami
 
             - name: Build & Auto Submit ${{ matrix.platform }}
               run: |

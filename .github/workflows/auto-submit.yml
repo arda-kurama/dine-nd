@@ -32,6 +32,8 @@ jobs:
             - name: Skip non-matching platform
               if: ${{ github.event.inputs.platform != 'both' && matrix.platform != github.event.inputs.platform }}
               run: echo "Skipping this platform"
+                  exit 0
+              working-directory: .
 
             - name: Checkout repository
               uses: actions/checkout@v4

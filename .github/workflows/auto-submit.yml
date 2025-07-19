@@ -2,25 +2,37 @@ name: auto-submit
 
 on:
     workflow_dispatch:
+        inputs:
+            platform:
+                description: "ios | android | both"
+                required: false
+                default: "both"
 
 defaults:
     run:
-        working-directory: mobile-app # all commands run inside /mobile-app
+        working-directory: mobile-app
 
-env: # expose required secrets to every step
+env:
     STATSIG_CLIENT_KEY: ${{ secrets.STATSIG_CLIENT_KEY }}
     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-    ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }} # iOS
+    ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }}
     ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
     ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+    GOOGLE_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY_JSON }}
 
 jobs:
     build-and-submit:
         runs-on: ubuntu-latest
         strategy:
-            matrix: { platform: [ios, android] } # builds run in parallel
+            fail-fast: false
+            matrix:
+                platform: [ios, android]
 
         steps:
+            - name: Skip non-matching platform
+              if: ${{ github.event.inputs.platform != 'both' && matrix.platform != github.event.inputs.platform }}
+              run: echo "Skipping this platform"
+
             - name: Checkout repository
               uses: actions/checkout@v4
 
@@ -41,22 +53,10 @@ jobs:
               run: npx expo prebuild --clean
               env: { CI: 1 }
 
-            - name: Build & Auto Submit ${{ matrix.platform }}
+            - name: Build & Auto Submit
               run: |
                   if [ "${{ matrix.platform }}" = "ios" ]; then
-                    eas build \
-                      --platform ios \
-                      --profile production \
-                      --non-interactive \
-                      --auto-submit
+                    eas build --platform ios --profile production --non-interactive --auto-submit
                   else
-                      # Android: write service‑account key and expose via env var
-                      echo "$PLAY_SERVICE_JSON" > /tmp/play-key.json
-                      export GOOGLE_SERVICE_ACCOUNT_KEY_PATH=/tmp/play-key.json
-
-                      eas build \
-                      --platform android \
-                      --profile production \
-                      --non-interactive \
-                      --auto-submit
+                    eas build --platform android --profile production --non-interactive --auto-submit
                   fi

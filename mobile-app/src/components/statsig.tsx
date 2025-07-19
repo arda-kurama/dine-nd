@@ -5,7 +5,9 @@ import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { StatsigProviderExpo, useStatsigClient } from "@statsig/expo-bindings";
 
-const sdkKey = Constants.expoConfig!.extra!.STATSIG_CLIENT_KEY as string;
+const sdkKey =
+    Constants.manifestExtra?.STATSIG_CLIENT_KEY ??
+    Constants.expoConfig?.extra?.STATSIG_CLIENT_KEY;
 
 // Generate a unique ID for the user on install and store it securely
 async function getOrCreateAnonID(): Promise<string> {

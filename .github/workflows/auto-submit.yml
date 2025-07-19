@@ -5,40 +5,47 @@ on:
 
 defaults:
     run:
-        working-directory: mobile-app
+        working-directory: mobile-app # all commands run inside /mobile-app
 
-env:
+env: # expose required secrets to every step
     STATSIG_CLIENT_KEY: ${{ secrets.STATSIG_CLIENT_KEY }}
     EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
+    PLAY_SERVICE_JSON: ${{ secrets.PLAY_SERVICE_JSON }} # Android
+    ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }} # iOS
+    ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+    ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
 
 jobs:
-    build:
+    build-and-submit:
         runs-on: ubuntu-latest
         strategy:
-            matrix: { platform: [ios, android] }
+            matrix: { platform: [ios, android] } # builds run in parallel
 
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-            - uses: actions/setup-node@v4
+            - name: Set up Node 20
+              uses: actions/setup-node@v4
               with: { node-version: 20 }
 
-            - run: npm install --global expo-cli eas-cli
-            - run: npm ci
+            - name: Install Expo & EAS CLIs
+              run: npm install --global expo-cli eas-cli
 
-            - name: Write .env
+            - name: Install project dependencies
+              run: npm ci
+
+            - name: Write Statsig key to .env
               run: echo "STATSIG_CLIENT_KEY=$STATSIG_CLIENT_KEY" > .env
 
-            - run: npx expo prebuild --clean --non-interactive
+            - name: Run Expo prebuild (clean)
+              run: npx expo prebuild --clean
+              env: { CI: 1 }
 
-            - run: eas whoami || eas login --token "$EAS_ACCESS_TOKEN"
+            - name: Authenticate with EAS (token)
+              run: eas account:login --token "$EAS_ACCESS_TOKEN"
 
-            - name: Build & Submit ${{ matrix.platform }}
-              env: # extra secrets only when needed
-                  ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }} # iOS only
-                  ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
-                  ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
-                  PLAY_SERVICE_JSON: ${{ secrets.PLAY_SERVICE_JSON }} # Android only
+            - name: Build & Auto Submit ${{ matrix.platform }}
               run: |
                   if [ "${{ matrix.platform }}" = "ios" ]; then
                     eas build \
@@ -47,9 +54,12 @@ jobs:
                       --non-interactive \
                       --auto-submit
                   else
+                    # Pass the Play service-account key for auto-submit
+                    echo "$PLAY_SERVICE_JSON" > /tmp/play-key.json
                     eas build \
                       --platform android \
                       --profile production \
                       --non-interactive \
-                      --auto-submit
+                      --auto-submit \
+                      --env GOOGLE_SERVICE_ACCOUNT_KEY=@/tmp/play-key.json
                   fi

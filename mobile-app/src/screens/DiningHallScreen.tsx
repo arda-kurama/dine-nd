@@ -133,13 +133,14 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     });
 
     // Logs the current plate one time only—either when user leaves the screen or backgrounds the app
-    const logPlateOnce = () => {
+    const logPlateOnce = (trigger: "navigate" | "background") => {
         if (plateLogged.current || !latestItems.current.length) return;
         finalPlate(
             hallName,
             currentMeal,
             summarizePlate(latestItems.current),
-            computeMacros(latestItems.current)
+            computeMacros(latestItems.current),
+            trigger
         );
         plateLogged.current = true;
     };
@@ -184,17 +185,25 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     useFocusEffect(
         React.useCallback(() => {
             plateLogged.current = false;
-            return () => logPlateOnce();
+            return () => logPlateOnce("navigate");
         }, [hallName, currentMeal])
     );
 
     // Listens for backgrounding the app—logs plate if user navigates away via OS or swipe
     useEffect(() => {
-        const sub = AppState.addEventListener("change", (next) => {
-            if (appState.current === "active" && next === "background") {
-                logPlateOnce();
+        appState.current = AppState.currentState;
+
+        const sub = AppState.addEventListener("change", (nextState) => {
+            const leaving =
+                nextState === "inactive" ||
+                nextState === "background" ||
+                nextState === "unknown";
+
+            if (appState.current === "active" && leaving) {
+                logPlateOnce("background"); // Fired on OS background / kill
             }
-            appState.current = next;
+
+            appState.current = nextState;
         });
         return () => sub.remove();
     }, [hallName, currentMeal]);

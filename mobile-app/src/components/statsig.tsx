@@ -60,6 +60,7 @@ export function useAnalytics() {
     const { client } = useStatsigClient();
 
     // Define all event types used in Statsig tracking throughout the app
+    type PlateTrigger = "navigate" | "background";
     const EVT = {
         PAGE_VIEW: "page_view",
         ITEM_ADDED: "item_added",
@@ -114,7 +115,15 @@ export function useAnalytics() {
                 protein: number;
                 carbs: number;
                 fat: number;
-            }
-        ) => fire(EVT.FINAL_PLATE, { hallName, meal, items, macros }),
+            },
+            trigger: PlateTrigger
+        ) =>
+            fire(EVT.FINAL_PLATE, {
+                hallName,
+                meal,
+                trigger,
+                items,
+                macros,
+            }),
     };
 }

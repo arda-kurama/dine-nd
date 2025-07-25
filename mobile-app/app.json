@@ -3,7 +3,7 @@
         "name": "DineND",
         "slug": "dine-nd",
         "version": "1.1.4",
-        "runtimeVersion": { "policy": "nativeVersion" },
+        "runtimeVersion": "1.1.4",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",

@@ -29,6 +29,7 @@ import {
     typography,
     sharedStyles,
 } from "../components/themes";
+import * as Updates from "expo-updates";
 
 // Statsig import for analytics
 import { useAnalytics } from "../components/statsig";
@@ -92,9 +93,27 @@ export default function HallList({ navigation }: Props) {
     // Extract dining hall names from the summary data
     const halls = Object.keys(summary.dining_halls);
 
+    // DEBUG: Log update metadata (you'll only see this in dev)
+    useEffect(() => {
+        console.log("=== OTA Update Check ===");
+        console.log("Update ID:", Updates.updateId ?? "None");
+        console.log("Is Embedded Launch:", Updates.isEmbeddedLaunch);
+        console.log("Runtime Version:", Updates.runtimeVersion);
+    }, []);
+
     // Render the list of dining halls
     return (
         <SafeAreaView style={sharedStyles.screenSurface}>
+            {/* DEBUG: Visible indicator for OTA update */}
+            <View style={{ padding: 12, backgroundColor: "#dff0d8" }}>
+                <Text style={{ color: "#3c763d", fontWeight: "bold" }}>
+                    OTA Update Test:{" "}
+                    {Updates.updateId ? "✅ Applied" : "❌ Embedded"}
+                </Text>
+                <Text style={{ color: "#3c763d" }}>
+                    Runtime: {Updates.runtimeVersion}
+                </Text>
+            </View>
             <FlatList
                 data={halls}
                 keyExtractor={(name) => name}

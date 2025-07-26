@@ -29,7 +29,7 @@ import {
     typography,
     sharedStyles,
 } from "../components/themes";
-import * as Updates from "expo-updates";
+import { useUpdates } from "expo-updates";
 
 // Statsig import for analytics
 import { useAnalytics } from "../components/statsig";
@@ -46,6 +46,9 @@ export default function HallList({ navigation }: Props) {
     const [summary, setSummary] = useState<MenuSummary | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    // OTA update info helper
+    const ota = useSafeOtaInfo();
 
     // Track page view analytics
     const { pageViewed } = useAnalytics();
@@ -93,27 +96,36 @@ export default function HallList({ navigation }: Props) {
     // Extract dining hall names from the summary data
     const halls = Object.keys(summary.dining_halls);
 
-    // DEBUG: Log update metadata (you'll only see this in dev)
-    useEffect(() => {
-        console.log("=== OTA Update Check ===");
-        console.log("Update ID:", Updates.updateId ?? "None");
-        console.log("Is Embedded Launch:", Updates.isEmbeddedLaunch);
-        console.log("Runtime Version:", Updates.runtimeVersion);
-    }, []);
+    // DEBUG: Log update metadata
+    function useSafeOtaInfo(): { applied: boolean; runtime?: string } {
+        try {
+            const { currentlyRunning } = useUpdates();
+            return {
+                applied:
+                    !!currentlyRunning &&
+                    !(currentlyRunning as any).isEmbeddedLaunch,
+                runtime: (currentlyRunning as any)?.runtimeVersion,
+            };
+        } catch (e) {
+            if (__DEV__) console.warn("useUpdates failed:", e);
+            return { applied: false };
+        }
+    }
 
     // Render the list of dining halls
     return (
         <SafeAreaView style={sharedStyles.screenSurface}>
             {/* DEBUG: Visible indicator for OTA update */}
-            <View style={{ padding: 12, backgroundColor: "#dff0d8" }}>
+            {/* <View style={{ padding: 12, backgroundColor: "#dff0d8" }}>
                 <Text style={{ color: "#3c763d", fontWeight: "bold" }}>
-                    OTA Update Test:{" "}
-                    {Updates.updateId ? "✅ Applied" : "❌ Embedded"}
+                    OTA Update: {ota.applied ? "✅ Applied" : "❌ Embedded"}
                 </Text>
-                <Text style={{ color: "#3c763d" }}>
-                    Runtime: {Updates.runtimeVersion}
-                </Text>
-            </View>
+                {ota.runtime && (
+                    <Text style={{ color: "#3c763d" }}>
+                        Runtime: {ota.runtime}
+                    </Text>
+                )}
+            </View> */}
             <FlatList
                 data={halls}
                 keyExtractor={(name) => name}

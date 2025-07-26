@@ -13,6 +13,16 @@
             "ios": {
                 "distribution": "store"
             }
+        },
+        "staging": {
+            "channel": "staging",
+            "autoIncrement": true,
+            "android": {
+                "buildType": "app-bundle"
+            },
+            "ios": {
+                "distribution": "internal"
+            }
         }
     },
     "submit": {

@@ -1,10 +1,10 @@
 {
-  "last_updated": "2025-07-27T05:35:03.032349",
-  "date": "Sunday, July 27, 2025",
+  "last_updated": "2025-07-28T05:37:57.157853",
+  "date": "Monday, July 28, 2025",
   "dining_halls": {
-    "Saint Mary's Dining Hall": 3,
     "North Dining Hall": 3,
-    "Holy Cross College Dining Hall": 0,
+    "Holy Cross College Dining Hall": 1,
+    "Saint Mary's Dining Hall": 3,
     "South Dining Hall": 0
   }
 }

@@ -18,6 +18,7 @@ from selenium.common.exceptions import NoSuchElementException, WebDriverExceptio
 from typing import List, Tuple
 from .constants import HALLS, DATE_STR, URL, WAIT_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS, MAX_RETRIES
 import time
+import os
 
 def create_chrome_driver() -> webdriver.Chrome:
     """
@@ -27,7 +28,7 @@ def create_chrome_driver() -> webdriver.Chrome:
     """
 
     opts = Options()
-    opts.add_argument("--headless")
+    opts.add_argument("--headless=new")
     opts.add_argument("--disable-gpu")
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
@@ -37,7 +38,20 @@ def create_chrome_driver() -> webdriver.Chrome:
     opts.add_argument("--disable-backgrounding-occluded-windows")
     opts.add_argument("--disable-renderer-backgrounding")
     
-    service = Service("/usr/bin/chromedriver")
+    # Explicit Chrome binary path provisioned by setup-chrome action
+    chrome_bin = os.environ.get(
+        "CHROME_PATH",
+        "/opt/hostedtoolcache/setup-chrome/chrome/stable/x64/chrome",
+    )
+    opts.binary_location = chrome_bin
+
+    # Explicit Chromedriver path provisioned by setup-chrome action
+    chromedriver_bin = os.environ.get(
+        "CHROMEDRIVER_PATH",
+        "/opt/hostedtoolcache/setup-chrome/chromedriver/stable/x64/chromedriver",
+   )
+    service = Service(chromedriver_bin)
+
     driver = webdriver.Chrome(service=service, options=opts)
     driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT_SECS)
     return driver
@@ -54,7 +68,6 @@ def fetch_meal_links(hall: str) -> List[Tuple[str, str]]:
     try:
         driver = create_chrome_driver()
         wait = WebDriverWait(driver, WAIT_TIMEOUT_SECS)
-        
         print(f"Checking {hall}...")
 
         # Go to the main URL

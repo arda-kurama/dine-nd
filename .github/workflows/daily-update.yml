@@ -22,12 +22,6 @@ jobs:
                   install-dependencies: true
                   install-chromedriver: true
 
-            - name: Symlink Chrome and ChromeDriver to standard locations
-              run: |
-                  sudo ln -sf "$(which chromedriver)" /usr/bin/chromedriver
-                  sudo ln -sf "$(which google-chrome)"   /usr/bin/chrome
-                  sudo ln -sf "$(which google-chrome)"   /usr/bin/chromium
-
             - name: Install Python 3.12 with pip caching
               uses: actions/setup-python@v4
               with:

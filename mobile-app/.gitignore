@@ -76,4 +76,6 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# @end expo-cli
+# Return to managed workflow
+/ios
+/android

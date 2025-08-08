@@ -29,6 +29,7 @@ import {
     typography,
     sharedStyles,
 } from "../components/themes";
+import { useUpdates } from "expo-updates";
 
 // Statsig import for analytics
 import { useAnalytics } from "../components/statsig";
@@ -45,6 +46,9 @@ export default function HallList({ navigation }: Props) {
     const [summary, setSummary] = useState<MenuSummary | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    // OTA update info helper
+    const ota = useSafeOtaInfo();
 
     // Track page view analytics
     const { pageViewed } = useAnalytics();
@@ -92,9 +96,36 @@ export default function HallList({ navigation }: Props) {
     // Extract dining hall names from the summary data
     const halls = Object.keys(summary.dining_halls);
 
+    // DEBUG: Log update metadata
+    function useSafeOtaInfo(): { applied: boolean; runtime?: string } {
+        try {
+            const { currentlyRunning } = useUpdates();
+            return {
+                applied:
+                    !!currentlyRunning &&
+                    !(currentlyRunning as any).isEmbeddedLaunch,
+                runtime: (currentlyRunning as any)?.runtimeVersion,
+            };
+        } catch (e) {
+            if (__DEV__) console.warn("useUpdates failed:", e);
+            return { applied: false };
+        }
+    }
+
     // Render the list of dining halls
     return (
         <SafeAreaView style={sharedStyles.screenSurface}>
+            {/* DEBUG: Visible indicator for OTA update */}
+            {/* <View style={{ padding: 12, backgroundColor: "#dff0d8" }}>
+                <Text style={{ color: "#3c763d", fontWeight: "bold" }}>
+                    OTA Update: {ota.applied ? "✅ Applied" : "❌ Embedded"}
+                </Text>
+                {ota.runtime && (
+                    <Text style={{ color: "#3c763d" }}>
+                        Runtime: {ota.runtime}
+                    </Text>
+                )}
+            </View> */}
             <FlatList
                 data={halls}
                 keyExtractor={(name) => name}

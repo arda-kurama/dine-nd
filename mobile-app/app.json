@@ -2,8 +2,8 @@
     "expo": {
         "name": "DineND",
         "slug": "dine-nd",
-        "version": "1.1.3",
-        "runtimeVersion": "1.1.3",
+        "version": "1.1.4",
+        "runtimeVersion": "1.1.4",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
@@ -40,7 +40,7 @@
         "web": {
             "favicon": "./assets/favicon.png"
         },
-        "plugins": ["expo-asset", "expo-dev-client"],
+        "plugins": ["expo-asset"],
         "owner": "arda-kurama",
         "extra": {
             "eas": {

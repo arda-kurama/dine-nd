@@ -25,14 +25,14 @@ def main() -> None:
     Exits with code 1 if no meals are found.
     """
 
-    print(f"🚀 Starting memory-optimized scraping for {DATE_STR}...")
+    print(f"Starting main scraping for {DATE_STR}...")
     
     # Discover available meals
     discovered_tasks = discover_all_meal_tasks()
 
     # If no meals were discovered, write empty outputs and exit zero
     if not discovered_tasks:
-        print("⚠️  No meals to scrape for today — generating empty JSON outputs.")
+        print("No meals to scrape for today, generating empty JSON outputs.")
 
         # Produce an “empty frame”: all halls, no meals
         empty_consolidated = consolidate_meal_data([])
@@ -43,14 +43,14 @@ def main() -> None:
         with open("menu_summary.json", "w", encoding="utf-8") as f:
             json.dump(empty_summary, f, indent=2)
 
-        print("✅ Wrote empty consolidated_menu.json and menu_summary.json")
+        print("Wrote empty consolidated_menu.json and menu_summary.json")
         sys.exit(0)
 
     # Print the number of discovered tasks
-    print(f"\n✓ Found {len(discovered_tasks)} available meals to scrape")
+    print(f"\nFound {len(discovered_tasks)} available meals to scrape.")
 
     # Parallelize the scrape with memory optimization
-    print(f"🔄 Starting parallel scraping of {len(discovered_tasks)} meals...")
+    print(f"Starting parallel scraping of {len(discovered_tasks)} meals...")
 
     # Limit concurrency to avoid resource exhaustion
     max_workers = min(4, os.cpu_count() or 1, len(discovered_tasks))
@@ -76,7 +76,7 @@ def main() -> None:
                 failed += 1
                 print(f"Unhandled task error: {e}")
 
-    print(f"\n🔄 Consolidating {len(meal_data_results)} meal datasets...")
+    print(f"\nConsolidating {len(meal_data_results)} meal datasets.")
     
     # Consolidate all data in memory
     consolidated_data = consolidate_meal_data(meal_data_results)
@@ -94,14 +94,14 @@ def main() -> None:
 
     # Print final summary
     print(f"\n{'='*70}")
-    print(f"🎉 MEMORY-OPTIMIZED SCRAPING COMPLETE")
+    print(f"SCRAPING COMPLETE!!!")
     print(f"{'='*70}")
-    print(f"✅ Successfully processed: {completed} meals")
+    print(f"Successfully processed: {completed} meals.")
     if failed > 0:
-        print(f"✗ Failed: {failed} meals")
-    print(f"📱 Full menu data: {output_file} (~{os.path.getsize(output_file) / 1024:.1f} KB)")
-    print(f"⚡ Lightweight summary: {summary_file} (~{os.path.getsize(summary_file) / 1024:.1f} KB)")
-    print("🚀 Ready for React Native deployment!")
+        print(f"Failed: {failed} meals.")
+    print(f"Full menu data: {output_file} (~{os.path.getsize(output_file) / 1024:.1f} KB)")
+    print(f"Lightweight summary: {summary_file} (~{os.path.getsize(summary_file) / 1024:.1f} KB)")
+    print("Ready for deployment!")
 
 if __name__ == "__main__":
     main()

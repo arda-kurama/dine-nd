@@ -17,9 +17,9 @@ HALLS = [
     "South Dining Hall",
 ]
 
-WAIT_TIMEOUT_SECS = 20
-PAGE_LOAD_TIMEOUT_SECS = 60
-MAX_RETRIES = 3
+WAIT_TIMEOUT_SECS = 10
+PAGE_LOAD_TIMEOUT_SECS = 30
+MAX_RETRIES = 2
 DATE_STR = datetime.now().strftime("%A, %B %-d, %Y")
 URL = "https://netnutrition.cbord.com/nn-prod/ND"
 

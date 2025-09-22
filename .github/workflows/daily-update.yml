@@ -36,13 +36,92 @@ jobs:
 
             - name: Run the dining-hall scraper and stash menu JSONs
               run: |
+                  set -euo pipefail
                   python -m backend.main
                   mkdir -p /tmp
                   # Move the freshly generated JSON out of the main workspace and into /tmp
                   mv menu_summary.json /tmp/menu_summary.json
                   mv consolidated_menu.json /tmp/consolidated_menu.json
 
+            # Soft check: measure meal count but don't fail yet
+            - name: Soft-check meal count
+              id: soft_check
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  JSON=/tmp/consolidated_menu.json
+                  if [[ ! -s "$JSON" ]]; then
+                    echo "total_meals=0" >> "$GITHUB_OUTPUT"
+                    exit 0
+                  fi
+                  python - <<'PY'
+                  import json, os
+                  p = "/tmp/consolidated_menu.json"
+                  with open(p, "r", encoding="utf-8") as f:
+                      data = json.load(f)
+                  dh = data.get("dining_halls", {})
+                  total_meals = sum(len(meals) for meals in dh.values() if isinstance(meals, dict)) if isinstance(dh, dict) else 0
+                  with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+                      out.write(f"total_meals={total_meals}\n")
+                  print(f"Soft check: total_meals={total_meals}")
+                  PY
+
+            # If soft check found 0 meals, wait and scrape once more (full fresh run)
+            - name: Retry scrape due to empty menu (soft-check triggered)
+              if: steps.soft_check.outputs.total_meals == '0'
+              run: |
+                  set -euo pipefail
+                  echo "Soft-check found 0 meals. Backing off 90s and retrying scrape..."
+                  sleep 90
+                  rm -f menu_summary.json consolidated_menu.json
+                  rm -f /tmp/menu_summary.json /tmp/consolidated_menu.json
+                  python -m backend.main
+                  mv menu_summary.json /tmp/menu_summary.json
+                  mv consolidated_menu.json /tmp/consolidated_menu.json
+
+            - name: Validate consolidated_menu.json has meals
+              id: validate_menu
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  JSON=/tmp/consolidated_menu.json
+
+                  if [[ ! -s "$JSON" ]]; then
+                    echo "ERROR: $JSON missing or empty." >&2
+                    exit 1
+                  fi
+
+                  python - <<'PY'
+                  import json, sys
+                  p = "/tmp/consolidated_menu.json"
+                  with open(p, "r", encoding="utf-8") as f:
+                      data = json.load(f)
+
+                  dh = data.get("dining_halls", {})
+                  if not isinstance(dh, dict):
+                      print("ERROR: dining_halls missing or not a dict", file=sys.stderr)
+                      sys.exit(1)
+
+                  total_meals = sum(len(meals) for meals in dh.values() if isinstance(meals, dict))
+                  if total_meals == 0:
+                      print("ERROR: No meals found across all halls. Failing workflow.", file=sys.stderr)
+                      sys.exit(1)
+
+                  print(f"OK: total meals found = {total_meals}")
+                  PY
+
+            # Optional: capture artifacts on failure for debugging
+            - name: Upload debug artifacts on failure
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: failed-scrape
+                  path: |
+                      /tmp/consolidated_menu.json
+                      **/*.log
+
             - name: Run script to embed and upsert to Pinecone
+              if: success()
               env:
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
                   PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
@@ -62,6 +141,7 @@ jobs:
                   cp /tmp/consolidated_menu.json ./consolidated_menu.json
 
             - name: Commit and push updated menu JSONs
+              if: success()
               run: |
                   git add menu_summary.json consolidated_menu.json
                   if ! git diff --cached --quiet; then

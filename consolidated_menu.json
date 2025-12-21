@@ -1,3281 +1,65 @@
 {
-  "last_updated": "2025-12-20T05:28:20.902741",
-  "date": "Saturday, December 20, 2025",
+  "last_updated": "2025-12-21T05:29:50.774470",
+  "date": "Sunday, December 21, 2025",
   "dining_halls": {
     "North Dining Hall": {
-      "Dinner": {
-        "available": true,
-        "categories": {
-          "Homestyle": [
-            {
-              "name": "Balsamic Fig Roasted Brussels Sprouts",
-              "serving_size": "4z Portion (114g)",
-              "nutrition": {
-                "calories": 190,
-                "calories_from_fat": 23,
-                "total_fat": "2.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "660mg",
-                "potassium": "390mg",
-                "total_carbohydrate": "40g",
-                "dietary_fiber": "3g",
-                "sugars": "27g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "4%",
-                "saturated_fat": "2%",
-                "cholesterol": "0%",
-                "sodium": "27%",
-                "total_carbohydrate": "13%",
-                "protein": "3%"
-              },
-              "ingredients": "Brussels Sprout (Fresh Brussels Sprouts.), Dressing Balsamic Fig Glaze Kens (Balsamic Vinegar, Sugar, Fructose, Corn Syrup, Fig Base (Fig, Water, Citirc Acid) Raisin Paste, Water, Modified Corn Starch, Contains Less Than 2% of Salt, Xantham Gum.), Oil EVOO Mediterranean Imptd (Extra virgin olive oil.), Salt Kosher Crystal Diamond (Salt), Pepper Blk Ground Spiceology (Black Ground Pepper)",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Grill": [
-            {
-              "name": "Smash Burger",
-              "serving_size": "Patty (118g)",
-              "nutrition": {
-                "calories": 290,
-                "calories_from_fat": 207,
-                "total_fat": "23g",
-                "saturated_fat": "9g",
-                "cholesterol": "80mg",
-                "sodium": "640mg",
-                "potassium": "310mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "19g"
-              },
-              "daily_values": {
-                "total_fat": "36%",
-                "saturated_fat": "46%",
-                "cholesterol": "27%",
-                "sodium": "27%",
-                "total_carbohydrate": "1%",
-                "protein": "19%"
-              },
-              "ingredients": "Beef Patty Wide 80/20 4z Fs Halperns (Beef.), Pepper Blk Ground TE (Ground Black Pepper.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Spice Salt Onion TE (Dehydrated Onion.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Signature Grilled Cheese",
-              "serving_size": "1/2 Sandwich (106g)",
-              "nutrition": {
-                "calories": 360,
-                "calories_from_fat": 162,
-                "total_fat": "18g",
-                "saturated_fat": "11g",
-                "cholesterol": "50mg",
-                "sodium": "1670mg",
-                "potassium": "95mg",
-                "total_carbohydrate": "34g",
-                "dietary_fiber": "1g",
-                "sugars": "0g",
-                "protein": "14g"
-              },
-              "daily_values": {
-                "total_fat": "28%",
-                "saturated_fat": "57%",
-                "cholesterol": "17%",
-                "sodium": "70%",
-                "total_carbohydrate": "11%",
-                "protein": "14%"
-              },
-              "ingredients": "Bread Panini Rustic Slcd Fz (Flour (Wheat, Malted Barley), Water, Salt, Yeast, Contains less than 2% of each of the following: Monocalcium Phosphate, Corn Starch, Mono and Diglycerides, Potassium Iodate, Ascorbic Acid, Enzymes, Enriched Flour (Wheat, Niacin, Reduced Iron, Thiamine Mononitrate, Riboflavin, Folic Acid), Calcium Propionate (preservative). COMMON ALLERGENS PRESENT: Wheat.), Cheese Gouda Smkd Brickmans (Milk, Cultures, Salt, Enzymes. COMMON ALLERGENS PRESENT: Milk.), Cheese Cheddar Mild 0.75z Slcd GC (Pasteurized milk, cheese culture, salt, enzyme, color added. COMMON ALLERGENS PRESENT: Milk.), Cheese Havarti Slcd Brickmans (Pasteurized Milk, Salt, Cheese Culture, Enzymes, Annatto Coloring. COMMON ALLERGENS PRESENT: Milk.), Butter Clarified Grade AA Packer Label (Cream, Salt. Contains: Milk), Relish Pepper Red Hot Chpd (Fresh Peppers, Water, Vinegar, Salt, Xanthan Gum, Sodium Benzoate (Preservative), Sodium Metabisulfite (Preservative)), Cheese Cream Whipped Philadelphia (Pasteurized Milk And Cream, Whey Protein Concentrate, Modified Food Starch, Salt, Cheese Culture, Guar Gum, Lactic Acid, Carob Bean Gum, Xanthan Gum, Natamycin (A Natural Mold Inhibitor). Common Allergens Present: Milk.)",
-              "allergens": "Milk, Wheat"
-            },
-            {
-              "name": "Black Bean Veggie Burger",
-              "serving_size": "Patty (120g)",
-              "nutrition": {
-                "calories": 170,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "1g",
-                "cholesterol": "0mg",
-                "sodium": "450mg",
-                "potassium": "470mg",
-                "total_carbohydrate": "26g",
-                "dietary_fiber": "9g",
-                "sugars": "3g",
-                "protein": "15g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "5%",
-                "cholesterol": "0%",
-                "sodium": "19%",
-                "total_carbohydrate": "9%",
-                "protein": "15%"
-              },
-              "ingredients": "Burger Blk Bean Chipotle Ckd Fz MSF (Water, onions, cooked black beans (black beans, water), cooked brown rice (water, brown rice), corn, soy protein concentrate, tomatoes,wheat gluten, onion powder, vegetable oil (corn, canola and/or sunflower oil), green chiles, soy protein isolate, bulgur wheat,cornstarch.Contains 2% or less of green peppers, red bell peppers, spices, tomato powder, cilantro, tomato juice, salt, chipotle pepper,methylcellulose, cooked onion and carrot juice concentrate, jalapeno pepper, carrageenan, garlic powder, natural flavor, paprika, soy saucepowder (soybeans, wheat, salt), gum arabic, vinegar, citric acid, red pepper, green pepper juice, turmeric, garlic juice, lime juice COMMON ALLERGENS PRESENT: Wheat, Soy.)",
-              "allergens": "Soy, Wheat"
-            },
-            {
-              "name": "Sauteed Mushrooms",
-              "serving_size": "1z Portion (28g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 9,
-                "total_fat": "1g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "115mg",
-                "total_carbohydrate": "< 1g",
-                "dietary_fiber": "0g",
-                "sugars": "< 1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "2%",
-                "saturated_fat": "1%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Mushroom Wht Slcd Fresh (Fresh White Mushrooms.), Flavor Fry (Soybean Oil, Hydrogenated Soybean Oil, Soy Lecithin, Natural and Artificial Flavors, Artificial Color. COMMON ALLERGENS PRESENT: Soy.)",
-              "allergens": "Soy"
-            },
-            {
-              "name": "Sauteed Onions",
-              "serving_size": "1z Portion (34g)",
-              "nutrition": {
-                "calories": 30,
-                "calories_from_fat": 18,
-                "total_fat": "2g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "45mg",
-                "total_carbohydrate": "3g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "3%",
-                "saturated_fat": "1%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "Onion Yellow Slcd 1/8\" Fs (Fresh Yellow Onions.), Oil Salad Vegetable Clr GC (Soybean Oil.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Onion Tanglers",
-              "serving_size": "3z Portion (97g)",
-              "nutrition": {
-                "calories": 390,
-                "calories_from_fat": 279,
-                "total_fat": "31g",
-                "saturated_fat": "4g",
-                "cholesterol": "0mg",
-                "sodium": "260mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "26g",
-                "dietary_fiber": "3g",
-                "sugars": "3g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "47%",
-                "saturated_fat": "20%",
-                "cholesterol": "0%",
-                "sodium": "11%",
-                "total_carbohydrate": "9%",
-                "protein": "3%"
-              },
-              "ingredients": "Onion Tangler Brd IQF Moore (Onions, Vegetable Oil (Soybean And/Or Canola), Bleached Wheat Flour, Yellow Corn Flour. Contains 2% or less of Citric Acid, Dextrose, Dried Garlic, Food Starch - Modified, Guar Gum, Lactic Acid, Maltodextrin, Natural Flavor, Onion Powder, Salt, Sorbitol, Water, Whey. COMMON ALLERGENS PRESENT: Milk, Wheat.), Oil Bulk RTI Canola Clr Fry (Canola Oil, TBHQ and Citric Acid Added To Protect Flavor, Dimethylpolysiloxanes, An Anti-Foaming Agent Added.)",
-              "allergens": "Milk, Wheat"
-            },
-            {
-              "name": "Bacon",
-              "serving_size": "Bacon Round (12g)",
-              "nutrition": {
-                "calories": 50,
-                "calories_from_fat": 36,
-                "total_fat": "4g",
-                "saturated_fat": "1.5g",
-                "cholesterol": "15mg",
-                "sodium": "210mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "4g"
-              },
-              "daily_values": {
-                "total_fat": "6%",
-                "saturated_fat": "8%",
-                "cholesterol": "5%",
-                "sodium": "9%",
-                "total_carbohydrate": "0%",
-                "protein": "4%"
-              },
-              "ingredients": "Smoke Flavoring Added Cured Pork with Water, Salt, Smoke Flavoring, Sugar, Sodium Diacetate, Dextrose, Sodium Erythorbate, Sodium Nitrite.",
-              "allergens": "Pork"
-            }
-          ],
-          "Grill Condiments": [
-            {
-              "name": "Ketchup",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 5,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "15mg",
-                "potassium": "20mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "1%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Tomato Concentrate, Sugar, Distilled Vinegar, Less than 2% of: Salt, Natural Flavors, *Potassium Chloride, Onion Powder, Citric Acid, Garlic Powder, Spices.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Mayonnaise",
-              "serving_size": "1 Tbsp (14g)",
-              "nutrition": {
-                "calories": 100,
-                "calories_from_fat": 99,
-                "total_fat": "11g",
-                "saturated_fat": "2g",
-                "cholesterol": "10mg",
-                "sodium": "75mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "17%",
-                "saturated_fat": "10%",
-                "cholesterol": "3%",
-                "sodium": "3%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Soybean Oil, Distilled Vinegar, Egg Yolk, High Fructose Corn Syrup, Contains Less Than 2% Of Salt, Water, Mustard Seed, Calcium Disodium Edta (To Protect Flavor). Contains: Egg.",
-              "allergens": "Eggs"
-            },
-            {
-              "name": "Spicy Brown Mustard",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 30,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "280mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "12%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Vinegar, Water, Mustard Seed, Salt, Less than 2% of: Spices, Turmeric.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Yellow Mustard",
-              "serving_size": "1 tsp (5g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "60mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "3%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Distilled White Vinegar, Water, Mustard Seed, Mustard Bram, Salt, Turmeric, Spices.",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Grill Vegetable Toppings": [
-            {
-              "name": "Dill Pickle",
-              "serving_size": "Slice (5g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "50mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Fresh Cucumbers, water, vinegar, salt, calcium chloride, sodium benzoate (preservative), spices, turmeric, polysorbate 80. COMMON ALLERGENS PRESENT: None.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Tomato",
-              "serving_size": "Tomatoes (113g)",
-              "nutrition": {
-                "calories": 20,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "5mg",
-                "potassium": "270mg",
-                "total_carbohydrate": "4g",
-                "dietary_fiber": "1g",
-                "sugars": "3g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "1%"
-              },
-              "ingredients": "cherry tomato",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Pizzaria": [
-            {
-              "name": "Cheese",
-              "serving_size": "1/16 Cut Slice (76g)",
-              "nutrition": {
-                "calories": 170,
-                "calories_from_fat": 72,
-                "total_fat": "8g",
-                "saturated_fat": "3g",
-                "cholesterol": "15mg",
-                "sodium": "500mg",
-                "potassium": "70mg",
-                "total_carbohydrate": "18g",
-                "dietary_fiber": "2g",
-                "sugars": "2g",
-                "protein": "8g"
-              },
-              "daily_values": {
-                "total_fat": "12%",
-                "saturated_fat": "15%",
-                "cholesterol": "5%",
-                "sodium": "21%",
-                "total_carbohydrate": "6%",
-                "protein": "8%"
-              },
-              "ingredients": "Dough Pizza 20z Ball Fz Mama LaRosa (Enriched Flour Bleached (Wheat our, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboavin, Folic Acid), Water, Sugar, Salt, Soybean Oil with Mono & Di-glycerides, Wheat Gluten, Yeast, Enzymes, Ascorbic Acid, L-cysteine), Cheese Mozz Part-Skim Feather Shrd Primo (Pasteurized Milk, Skim Milk; Cheese Cultures; Salt; Enzymes; Powdered Cellulose (Added To Prevent Caking); Natamycin (Added As A Mold Inhibitor). Common Allergens Present: Milk.), Tomato Plum San Marzano #10 Tavolini (San Marzano D.O.P. Plum Peeled Tomatoes, San Marzano D.O.P. Tomato Puree.), Water (Filtered Tap Water.), Tomato Paste #10 Redpack (Tomatoes and Citric Acid.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Cheese Parmesan Grated Primo (Imported Parmesan Cheese: (Pasteurized Part-Skim Cows Milk, Cheese Cultures, Salt, Enzymes), Powdered Cellulose added to prevent caking, Natamycin (A Natural Mold Inhibitor). COMMON ALLERGENS PRESENT: Milk.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Pepper Blk Ground TE (Ground Black Pepper.), Basil Leaf Ground TE (Basil.), Oregano Ground TE (Oregano.), Parsley Flake TE (Parsley.)",
-              "allergens": "Milk, Wheat"
-            },
-            {
-              "name": "Margherita Pizza",
-              "serving_size": "1/8 Slice (141g)",
-              "nutrition": {
-                "calories": 300,
-                "calories_from_fat": 126,
-                "total_fat": "14g",
-                "saturated_fat": "6g",
-                "cholesterol": "20mg",
-                "sodium": "920mg",
-                "potassium": "115mg",
-                "total_carbohydrate": "35g",
-                "dietary_fiber": "3g",
-                "sugars": "4g",
-                "protein": "13g"
-              },
-              "daily_values": {
-                "total_fat": "21%",
-                "saturated_fat": "29%",
-                "cholesterol": "7%",
-                "sodium": "38%",
-                "total_carbohydrate": "12%",
-                "protein": "13%"
-              },
-              "ingredients": "Dough Pizza 20z Ball Fz Mama LaRosa (Enriched Flour Bleached (Wheat our, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboavin, Folic Acid), Water, Sugar, Salt, Soybean Oil with Mono & Di-glycerides, Wheat Gluten, Yeast, Enzymes, Ascorbic Acid, L-cysteine), Cheese Mozz Dry Pk (Pasteurized Milk, Vinegar, Salt, Vegetable Enzymes.), Tomato Plum San Marzano #10 Tavolini (San Marzano D.O.P. Plum Peeled Tomatoes, San Marzano D.O.P. Tomato Puree.), Water (Filtered Tap Water.), Tomato Paste #10 Redpack (Tomatoes and Citric Acid.), Basil Fs (Basil.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Cheese Parmesan Grated Primo (Imported Parmesan Cheese: (Pasteurized Part-Skim Cows Milk, Cheese Cultures, Salt, Enzymes), Powdered Cellulose added to prevent caking, Natamycin (A Natural Mold Inhibitor). COMMON ALLERGENS PRESENT: Milk.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Pepper Blk Ground TE (Ground Black Pepper.), Basil Leaf Ground TE (Basil.), Oregano Ground TE (Oregano.), Parsley Flake TE (Parsley.)",
-              "allergens": "Milk, Wheat"
-            },
-            {
-              "name": "Pepperoni",
-              "serving_size": "1/16 Cut Slice (83g)",
-              "nutrition": {
-                "calories": 220,
-                "calories_from_fat": 117,
-                "total_fat": "13g",
-                "saturated_fat": "5g",
-                "cholesterol": "30mg",
-                "sodium": "740mg",
-                "potassium": "60mg",
-                "total_carbohydrate": "17g",
-                "dietary_fiber": "2g",
-                "sugars": "2g",
-                "protein": "9g"
-              },
-              "daily_values": {
-                "total_fat": "21%",
-                "saturated_fat": "25%",
-                "cholesterol": "10%",
-                "sodium": "31%",
-                "total_carbohydrate": "6%",
-                "protein": "10%"
-              },
-              "ingredients": "Dough Pizza 20z Ball Fz Mama LaRosa (Enriched Flour Bleached (Wheat our, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboavin, Folic Acid), Water, Sugar, Salt, Soybean Oil with Mono & Di-glycerides, Wheat Gluten, Yeast, Enzymes, Ascorbic Acid, L-cysteine), Cheese Mozz Part-Skim Feather Shrd Primo (Pasteurized Milk, Skim Milk; Cheese Cultures; Salt; Enzymes; Powdered Cellulose (Added To Prevent Caking); Natamycin (Added As A Mold Inhibitor). Common Allergens Present: Milk.), Pepperoni Chix & Beef Slcd Halal (Green Mabha, Bht With Citric Acid Added To Help Protect Flavor.\nSmoke Flavoring Added Ingredients: Chicken, Beef, Turkey, Salt, Contains 2% Or\nLess Of Water, Dextrose, Spices, Smoke Flavoring, Flavoring, Garlic Powder,\nOleoresin Of Paprika, Rosemary Extract, Sodium Ascorbate, Spice Extractive, Citric\nAcid, Lactic Acid Starter Culture, Bha, Bht, Sodium Nitrite.), Tomato Plum San Marzano #10 Tavolini (San Marzano D.O.P. Plum Peeled Tomatoes, San Marzano D.O.P. Tomato Puree.), Water (Filtered Tap Water.), Tomato Paste #10 Redpack (Tomatoes and Citric Acid.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Cheese Parmesan Grated Primo (Imported Parmesan Cheese: (Pasteurized Part-Skim Cows Milk, Cheese Cultures, Salt, Enzymes), Powdered Cellulose added to prevent caking, Natamycin (A Natural Mold Inhibitor). COMMON ALLERGENS PRESENT: Milk.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Pepper Blk Ground TE (Ground Black Pepper.), Basil Leaf Ground TE (Basil.), Oregano Ground TE (Oregano.), Parsley Flake TE (Parsley.)",
-              "allergens": "Milk, Wheat"
-            }
-          ],
-          "Deli Meat": [
-            {
-              "name": "Bacon",
-              "serving_size": "1 Tbsp (14g)",
-              "nutrition": {
-                "calories": 60,
-                "calories_from_fat": 41,
-                "total_fat": "4.5g",
-                "saturated_fat": "2g",
-                "cholesterol": "25mg",
-                "sodium": "320mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "7%",
-                "saturated_fat": "10%",
-                "cholesterol": "8%",
-                "sodium": "14%",
-                "total_carbohydrate": "0%",
-                "protein": "5%"
-              },
-              "ingredients": "Ingredients: Bacon (Cured With Water, Salt, Sugar, Sodium Erythorbate, Sodium Nitrite. May also contain\nSmoke Flavoring, Dextrose, Sodium Phosphate, Potassium Chloride, Sodium Diacetate, Flavoring, Honey).",
-              "allergens": "Pork"
-            },
-            {
-              "name": "Sliced Smoked Turkey",
-              "serving_size": "2.5z (71g)",
-              "nutrition": {
-                "calories": 80,
-                "calories_from_fat": 18,
-                "total_fat": "2g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "30mg",
-                "sodium": "460mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "13g"
-              },
-              "daily_values": {
-                "total_fat": "3%",
-                "saturated_fat": "3%",
-                "cholesterol": "11%",
-                "sodium": "19%",
-                "total_carbohydrate": "0%",
-                "protein": "13%"
-              },
-              "ingredients": "Turkey Breast Meat, Water, Salt, Turbinado Sugar, Carrageenan (from seaweed), Baking Soda.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Smoked Sliced Ham",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 30,
-                "calories_from_fat": 9,
-                "total_fat": "1g",
-                "saturated_fat": "0g",
-                "cholesterol": "15mg",
-                "sodium": "180mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "1%",
-                "cholesterol": "5%",
-                "sodium": "7%",
-                "total_carbohydrate": "0%",
-                "protein": "5%"
-              },
-              "ingredients": "Pork, Water, Natural Salt Blend (Potassium Chloride, Sea Salt), Turbinado Sugar, Salt, Cultured Celery Powder, Cherry Powder.",
-              "allergens": "Pork"
-            },
-            {
-              "name": "Smoked Tempeh",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 45,
-                "calories_from_fat": 14,
-                "total_fat": "1.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "95mg",
-                "total_carbohydrate": "3g",
-                "dietary_fiber": "2g",
-                "sugars": "0g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "2%",
-                "saturated_fat": "2%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "5%"
-              },
-              "ingredients": "Cultured Organic Soybeans (Soybeans, Lactic Acid From Plant Sources), Water, Organic Brown Rice.",
-              "allergens": "Soy"
-            },
-            {
-              "name": "Tuna Salad",
-              "serving_size": "1z Portion (33g)",
-              "nutrition": {
-                "calories": 80,
-                "calories_from_fat": 63,
-                "total_fat": "7g",
-                "saturated_fat": "1.5g",
-                "cholesterol": "15mg",
-                "sodium": "135mg",
-                "potassium": "65mg",
-                "total_carbohydrate": "< 1g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "4g"
-              },
-              "daily_values": {
-                "total_fat": "11%",
-                "saturated_fat": "6%",
-                "cholesterol": "5%",
-                "sodium": "6%",
-                "total_carbohydrate": "0%",
-                "protein": "4%"
-              },
-              "ingredients": "Light Tuna Chunks (Light tuna, water, vegetable broth, salt), Mayonnaise Heavy-Duty KE (Soybean Oil, Egg Yolks, Water, Corn Syrup, Distilled Vinegar, Contains Less Than 2% Of Salt, Mustard Seed, Calcium Disodium Edta Added To Protect Flavor. Common Allergens Present: Egg.), Celery Diced (Celery.), Onion Red Diced 3/8\" Fs (Red Onions.), Lemon Choice Fs (Fresh Lemons.), Salt Kosher Crystal Diamond (Salt), Pepper Wht Ground Spiceology (White Pepper)",
-              "allergens": "Eggs, Fish"
-            }
-          ],
-          "Deli Cheese": [
-            {
-              "name": "Jalapeno Monterey Jack",
-              "serving_size": "Slice (19g)",
-              "nutrition": {
-                "calories": 60,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "3g",
-                "cholesterol": "20mg",
-                "sodium": "110mg",
-                "potassium": "10mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "4g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "16%",
-                "cholesterol": "6%",
-                "sodium": "5%",
-                "total_carbohydrate": "0%",
-                "protein": "5%"
-              },
-              "ingredients": "Pasteurized milk, Jalapeno Peppers, cheese culture, salt and enzymes. COMMON ALLERGENS PRESENT: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Mild Cheddar",
-              "serving_size": "Slice (21g)",
-              "nutrition": {
-                "calories": 80,
-                "calories_from_fat": 63,
-                "total_fat": "7g",
-                "saturated_fat": "4g",
-                "cholesterol": "20mg",
-                "sodium": "135mg",
-                "potassium": "20mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "11%",
-                "saturated_fat": "20%",
-                "cholesterol": "7%",
-                "sodium": "6%",
-                "total_carbohydrate": "0%",
-                "protein": "5%"
-              },
-              "ingredients": "Pasteurized milk, cheese culture, salt, enzyme, color added. COMMON ALLERGENS PRESENT: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Provolone Cheese Slice",
-              "serving_size": "Slice (21g)",
-              "nutrition": {
-                "calories": 70,
-                "calories_from_fat": 54,
-                "total_fat": "6g",
-                "saturated_fat": "3.5g",
-                "cholesterol": "15mg",
-                "sodium": "190mg",
-                "potassium": "30mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "9%",
-                "saturated_fat": "18%",
-                "cholesterol": "5%",
-                "sodium": "8%",
-                "total_carbohydrate": "0%",
-                "protein": "5%"
-              },
-              "ingredients": "Pasteurized Milk, Cheese Culture, Salt, Enzymes. Common Allergens Present: Milk.",
-              "allergens": "Milk"
-            }
-          ],
-          "Plant Based": [
-            {
-              "name": "Steamed Broccoli",
-              "serving_size": "4z Portion (122g)",
-              "nutrition": {
-                "calories": 35,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "15mg",
-                "potassium": "170mg",
-                "total_carbohydrate": "6g",
-                "dietary_fiber": "4g",
-                "sugars": "2g",
-                "protein": "4g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "1%",
-                "total_carbohydrate": "2%",
-                "protein": "4%"
-              },
-              "ingredients": "Broccoli Florets Fz (Broccoli. COMMON ALLERGENS PRESENT: None.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Baked Sweet Potatoes",
-              "serving_size": "Potatoes (129g)",
-              "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 9,
-                "total_fat": "1g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "45mg",
-                "potassium": "610mg",
-                "total_carbohydrate": "27g",
-                "dietary_fiber": "4g",
-                "sugars": "8g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "9%",
-                "protein": "3%"
-              },
-              "ingredients": "Potato Sweet (Sweet Potatoes), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Quinoa",
-              "serving_size": "2z Portion (57g)",
-              "nutrition": {
-                "calories": 200,
-                "calories_from_fat": 23,
-                "total_fat": "2.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "80mg",
-                "potassium": "410mg",
-                "total_carbohydrate": "38g",
-                "dietary_fiber": "4g",
-                "sugars": "1g",
-                "protein": "8g"
-              },
-              "daily_values": {
-                "total_fat": "4%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "3%",
-                "total_carbohydrate": "13%",
-                "protein": "8%"
-              },
-              "ingredients": "Quinoa Wht Pre-washed GC (Quinoa.), Salt Kosher Crystal Diamond (Salt), Water (Filtered Tap Water.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Santa Fe Chicken",
-              "serving_size": "4z Portion (113g)",
-              "nutrition": {
-                "calories": 110,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "65mg",
-                "sodium": "170mg",
-                "potassium": "400mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "25g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "22%",
-                "sodium": "7%",
-                "total_carbohydrate": "0%",
-                "protein": "25%"
-              },
-              "ingredients": "Chix Tndrln Jumbo Raw CVP Fs (Chicken Tenderloins.), Cold Water (Filtered Tap Water.), Marinade Salsa Santa Fe (Salt, Spices, Sodium Phosphates, Sugar, Tomato Powder, Garlic Powder, Paprika, Onion Powder.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Fresh Fruit": [
-            {
-              "name": "Bananas",
-              "serving_size": "Banana (151g)",
-              "nutrition": {
-                "calories": 140,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "540mg",
-                "total_carbohydrate": "35g",
-                "dietary_fiber": "4g",
-                "sugars": "18g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "12%",
-                "protein": "1%"
-              },
-              "ingredients": "Fresh Banana.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Orange",
-              "serving_size": "Orange (204g)",
-              "nutrition": {
-                "calories": 100,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "370mg",
-                "total_carbohydrate": "24g",
-                "dietary_fiber": "5g",
-                "sugars": "19g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "8%",
-                "protein": "2%"
-              },
-              "ingredients": "Orange.",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Desserts": [
-            {
-              "name": "Magnolia Bakery Banana Pudding Cups",
-              "serving_size": "4oz Cup (113g)",
-              "nutrition": {
-                "calories": 260,
-                "calories_from_fat": 126,
-                "total_fat": "14g",
-                "saturated_fat": "9g",
-                "cholesterol": "45mg",
-                "sodium": "130mg",
-                "potassium": "160mg",
-                "total_carbohydrate": "32g",
-                "dietary_fiber": "< 1g",
-                "sugars": "17g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "22%",
-                "saturated_fat": "43%",
-                "cholesterol": "16%",
-                "sodium": "5%",
-                "total_carbohydrate": "11%",
-                "protein": "2%"
-              },
-              "ingredients": "Cream Whipping Heavy 36% HGal Fs PF (Cream, Carrageenan. Contains: Milk.), Bananas (Fresh Banana.), Milk Condensed Sweetened Eagle (Milk, Sugar), Ice Cold Water (Filtered Tap Water.), Wafer Nilla NBC (Unbleached Enriched Flour (Wheat Flour, Niacin, Reduced Iron, Thiamine Mononitrate (Vitamin B1), Riboflavin (Vitamin B2), Folic Acid), Sugar, Soybean And/OR Canola Oil, Palm Oil, High Fructose Corn Syrup, Whey (From Milk), Eggs, Salt, Leavening (Baking Soda, Calcium Phosphate), Mono-And-Diglycerides, Natural And Artifical Flavor, Soy Lecithin. Contains: Wheat, Milk, Egg, Soy.), Mix Pudding Vanilla Instant GC (Sugar, Dextrose, Modified Food Starch, Less Than 2% Of Tricalcium Phosphate, Disodium Phosphate, Tetrasodium Pyrophosphate, Salt, Natural And Artificial Flavor, Mono And Diglycerides, Nonfat Milk, Xanthan Gum, Yellow 5, Yellow 6. Common Allergens Present: Milk.)",
-              "allergens": "Eggs, Milk, Soy, Wheat"
-            },
-            {
-              "name": "Brooklyn Blackout Cake",
-              "serving_size": "Slice (92g)",
-              "nutrition": {
-                "calories": 310,
-                "calories_from_fat": 144,
-                "total_fat": "16g",
-                "saturated_fat": "4g",
-                "cholesterol": "20mg",
-                "sodium": "290mg",
-                "potassium": "30mg",
-                "total_carbohydrate": "38g",
-                "dietary_fiber": "< 1g",
-                "sugars": "27g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "24%",
-                "saturated_fat": "19%",
-                "cholesterol": "7%",
-                "sodium": "12%",
-                "total_carbohydrate": "13%",
-                "protein": "3%"
-              },
-              "ingredients": "Sugar Beet Granulated (Granulated Beet Sugar), Milk Whole Gal PF (Grade A Milk & Vitamin D3. Contains: Milk.), Flour All Purpose Bleached Gold Medal (Bleached Wheat Flour, Malted Barley Flour, Niacin, Iron, Thiamin Mononitrate, Riboflavin, Folic Acid. Common Allergens Present: Wheat.), Oil Salad Vegetable Clr GC (Soybean Oil.), Water Hot (195f) (Filtered Tap Water.), Cocoa Powder All-Purpose GC (Cocoa.), Butter Salted Prints AA GC (Cream, Salt. COMMON ALLERGENS PRESENT: Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Sugar Powdered 10x 2lb Pioneer (Granulated Sugar, Cornstarch.), Mix Pudding Choc Instant Jello (Sugar, Modified Cornstarch, Cocoa (Preocess With Alkali), Dextrose, Tetrasodium Pyrophosphate And Disodium Phosphate (For Thickening), Contains Less Than 2% Of Natural And Artificial Flavor, Salt, Mono-And-Diglycerides, Calcium Sulfate, Xanthan Gum, Artificial Color, Red 40, Yellow 5, Blue 1.), Baking Soda (Sodium Bicarbonate.), Cream Whipping Heavy 36% HGal Fs PF (Cream, Carrageenan. Contains: Milk.), Curl Choc Dk Kosher (Sugar, Chocolate Liquor, Cocoa Butter, Butter Oil (Milk), Soy Lecithin (emulsifier), Natural Vanilla. Contains Soy, Milk.), Flavor Vanilla Imitation KE (Water, Artificial Flavor, Caramel Color, Citric Acid, Sodium Benzoate.), Baking Powder (Corn Starch, Sodium Bicarbonate, Sodium Aluminum Sulfate, Monocalcium Phosphate.), Salt Kosher Crystal Diamond (Salt), Coffee Chokoleti (100% Arabica)",
-              "allergens": "Eggs, Milk, Soy, Wheat"
-            }
-          ],
-          "Yogurt Toppings": [
-            {
-              "name": "Granola",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 130,
-                "calories_from_fat": 41,
-                "total_fat": "4.5g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "100mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "20g",
-                "dietary_fiber": "1g",
-                "sugars": "7g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "7%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "4%",
-                "total_carbohydrate": "7%",
-                "protein": "2%"
-              },
-              "ingredients": "Whole Grain Oats, Sugar, Canola Oil, Rice Flour, Honey, Salt, Brown Sugar Syrup, Baking Soda, Soy Lecithin, Natural Flavor. Common Allergens Present: Soy.",
-              "allergens": "Soy"
-            }
-          ],
-          "Yogurt": [
-            {
-              "name": "Blueberry Yogurt",
-              "serving_size": "6z Cup (170g)",
-              "nutrition": {
-                "calories": 130,
-                "calories_from_fat": 14,
-                "total_fat": "1.5g",
-                "saturated_fat": "1g",
-                "cholesterol": "10mg",
-                "sodium": "85mg",
-                "potassium": "240mg",
-                "total_carbohydrate": "24g",
-                "dietary_fiber": "0g",
-                "sugars": "18g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "2%",
-                "saturated_fat": "5%",
-                "cholesterol": "3%",
-                "sodium": "4%",
-                "total_carbohydrate": "8%",
-                "protein": "5%"
-              },
-              "ingredients": "Cultured Milk and Skim Milk, Sugar, Blueberries, Natural Flavors, Fruit and Vegetable Juice (color), Lemon Juice, Carob Bean Gum, Modified Cornstarch, Carrageenan, Pectin, Vitamin A Palmitate and Vitamin D3.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Cottage Cheese",
-              "serving_size": "1/2 Cup (114g)",
-              "nutrition": {
-                "calories": 100,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "3g",
-                "cholesterol": "25mg",
-                "sodium": "490mg",
-                "potassium": "5g",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "4g",
-                "sugars": "11g",
-                "protein": "N/A"
-              },
-              "daily_values": {
-                "total_fat": "7%",
-                "saturated_fat": "16%",
-                "cholesterol": "8%",
-                "sodium": "20%",
-                "total_carbohydrate": "",
-                "protein": "N/A"
-              },
-              "ingredients": "Skim Milk, Milk, Cream, Lactose, Salt, Stabilizer (Guar Gum, Mono and Diglycerides, Xanthan Gum, Carrageenan, Carob Bean Gum), Citric Acid, Carbon Dioxide and Potassium Sorbate (Maintain Freshness) and Cheese Cultures.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Plain Fat Free Yogurt",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "20mg",
-                "potassium": "55mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "1%",
-                "total_carbohydrate": "1%",
-                "protein": "1%"
-              },
-              "ingredients": "Cultured Milk and Skim Milk, Sugar, Modified Cornstarch, Carrageenan, Pectin, Vitamin A Palmitate and Vitamin D3. Allergens Contains: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Plain Greek Yogurt",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "10mg",
-                "potassium": "30mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "3%"
-              },
-              "ingredients": "Cultured Grade A Non Fat Milk Contains Active Yogurt Cultures: S. Thermophilus & L. Bulgaricus. Common Allergens Present: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Strawberry Yogurt",
-              "serving_size": "6z Cup (170g)",
-              "nutrition": {
-                "calories": 130,
-                "calories_from_fat": 14,
-                "total_fat": "1.5g",
-                "saturated_fat": "1g",
-                "cholesterol": "10mg",
-                "sodium": "85mg",
-                "potassium": "240mg",
-                "total_carbohydrate": "24g",
-                "dietary_fiber": "0g",
-                "sugars": "18g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "2%",
-                "saturated_fat": "5%",
-                "cholesterol": "3%",
-                "sodium": "4%",
-                "total_carbohydrate": "8%",
-                "protein": "5%"
-              },
-              "ingredients": "Cultured Milk and Skim Milk, Sugar, Strawberries, Natural Flavors, Carob Bean Gum, Fruit and Vegetable Juice (color), Modified Cornstarch, Carrageenan, Pectin, Vitamin A Palmitate and Vitamin D3.",
-              "allergens": "Milk"
-            }
-          ],
-          "Salad Bar Greens": [
-            {
-              "name": "Iceberg Lettuce",
-              "serving_size": "1 cup portion (38g)",
-              "nutrition": {
-                "calories": 5,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "< 1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "Fresh Iceberg Salad Mix.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Spinach",
-              "serving_size": "1/4 cup (21g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "20mg",
-                "potassium": "120mg",
-                "total_carbohydrate": "< 1g",
-                "dietary_fiber": "< 1g",
-                "sugars": "0g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "1%",
-                "total_carbohydrate": "0%",
-                "protein": "1%"
-              },
-              "ingredients": "Spinach.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Spring Mix",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "10mg",
-                "potassium": "80mg",
-                "total_carbohydrate": "< 1g",
-                "dietary_fiber": "< 1g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "50% Baby Green Leaf, 30% Baby Red Leaf & 20% Baby Arugula.",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Salad Bar Vegetables": [
-            {
-              "name": "Carrots",
-              "serving_size": "Tablespoon (7g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "15mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Carrots.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Edamame",
-              "serving_size": "Tablespoon (14g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 5,
-                "total_fat": "0.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "70mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "< 1g",
-                "sugars": "0g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "2%"
-              },
-              "ingredients": "Edamame (shelled soybeans).",
-              "allergens": "Soy"
-            },
-            {
-              "name": "Red Grape Tomatoes",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 5,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "65mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "< 1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "cherry tomato",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Tri Color Peppers",
-              "serving_size": "Portion (43g)",
-              "nutrition": {
-                "calories": 10,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "85mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "< 1g",
-                "sugars": "< 1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "Pepper Grn Lg Fs (Green Peppers.), Pepper Bell Red Fs (Red Pepper.), Pepper Yellow Fs (Yellow Bell Pepper.)",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Salad Bar Toppings": [
-            {
-              "name": "Black Beans",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 25,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "30mg",
-                "potassium": "105mg",
-                "total_carbohydrate": "4g",
-                "dietary_fiber": "1g",
-                "sugars": "0g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "1%",
-                "total_carbohydrate": "1%",
-                "protein": "2%"
-              },
-              "ingredients": "Bean Blk Low Sodilum #10 Bushs (Prepared Black Beans, Water, Salt, Calcium Chloride (Firming Agent).)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Crispy Fried French Onion",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 160,
-                "calories_from_fat": 108,
-                "total_fat": "12g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "60mg",
-                "potassium": "60mg",
-                "total_carbohydrate": "16g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "19%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "3%",
-                "total_carbohydrate": "5%",
-                "protein": "0%"
-              },
-              "ingredients": "Onions, Enriched Flour (Wheat Flour, Niacin, Reduced Iron, Thiamin Mononitrate, Riboflavin, Folic Acid), Vegetable Oil (Sunflower, Safflower And/Or Canola), Salt. Common Allergens Present: Wheat.",
-              "allergens": "Wheat"
-            },
-            {
-              "name": "Croutons",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 36,
-                "total_fat": "4g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "300mg",
-                "potassium": "55mg",
-                "total_carbohydrate": "20g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "4g"
-              },
-              "daily_values": {
-                "total_fat": "6%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "13%",
-                "total_carbohydrate": "7%",
-                "protein": "4%"
-              },
-              "ingredients": "Enriched Flour (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamin Mononitrate, Riboflavin, Folic Acid), Canola And/Or Sunflower Oil (With Rosemary Extract And Ascorbic Acid [To Preserve Freshness]), Whey, Yeast, Sugar, 2% Or Less Of Salt, Corn Syrup Solids, Onion Powder, Dehydrated Parsley, Garlic Powder, Autolyzed Yeast Extract, Enzymes. Common Allergens Present: Wheat, Milk. May Contain: Tree Nuts.",
-              "allergens": "Milk, Wheat"
-            }
-          ],
-          "Salad Bar Cheese": [
-            {
-              "name": "Mild Cheddar",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 110,
-                "calories_from_fat": 81,
-                "total_fat": "9g",
-                "saturated_fat": "5g",
-                "cholesterol": "30mg",
-                "sodium": "190mg",
-                "potassium": "20mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "6g"
-              },
-              "daily_values": {
-                "total_fat": "14%",
-                "saturated_fat": "25%",
-                "cholesterol": "10%",
-                "sodium": "8%",
-                "total_carbohydrate": "0%",
-                "protein": "6%"
-              },
-              "ingredients": "Cheddar Cheese (Cultured Pasteurized Milk, Salt, Enzymes, Color Added, Anti-cake (Potato Starch, Powdered Cellulose). Common Allergens Present: Milk.",
-              "allergens": "Milk"
-            }
-          ],
-          "Salad Bar Proteins": [
-            {
-              "name": "Chopped Hard Cooked Eggs",
-              "serving_size": ".5z Portion (14g)",
-              "nutrition": {
-                "calories": 20,
-                "calories_from_fat": 14,
-                "total_fat": "1.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "55mg",
-                "sodium": "20mg",
-                "potassium": "20mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "2%",
-                "saturated_fat": "2%",
-                "cholesterol": "18%",
-                "sodium": "1%",
-                "total_carbohydrate": "0%",
-                "protein": "2%"
-              },
-              "ingredients": "Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.)",
-              "allergens": "Eggs"
-            },
-            {
-              "name": "Tuna",
-              "serving_size": "1/4 Cup (36g)",
-              "nutrition": {
-                "calories": 35,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "15mg",
-                "sodium": "150mg",
-                "potassium": "105mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "8g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "6%",
-                "sodium": "6%",
-                "total_carbohydrate": "0%",
-                "protein": "8%"
-              },
-              "ingredients": "Light tuna, water, vegetable broth, salt",
-              "allergens": "Fish"
-            }
-          ],
-          "Salad Bar Dressing": [
-            {
-              "name": "Balsamic Vinaigrette",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 60,
-                "calories_from_fat": 41,
-                "total_fat": "4.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "190mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "5g",
-                "dietary_fiber": "0g",
-                "sugars": "4g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "7%",
-                "saturated_fat": "2%",
-                "cholesterol": "0%",
-                "sodium": "8%",
-                "total_carbohydrate": "2%",
-                "protein": "0%"
-              },
-              "ingredients": "Water, High Fructose Corn Syrup, Balsamic Vinegar, Red Wine Vinegar, Vegetable Oil (Soybean And/Or Canola), Olive Oil, Contains Less Than 2% Of Salt, Garlic,* Xanthan Gum, Spice, Sodium Alginate, Propyleneglycol Alginate, Calcium Disodium Edta (To Protect Flavor). *Dried.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Buttermilk Ranch",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 130,
-                "calories_from_fat": 126,
-                "total_fat": "14g",
-                "saturated_fat": "2g",
-                "cholesterol": "10mg",
-                "sodium": "180mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "22%",
-                "saturated_fat": "10%",
-                "cholesterol": "3%",
-                "sodium": "8%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Soybean Oil, Water, Distilled Vinegar, Egg Yolk, Buttermilk Solids, Contains Less Than 2% Of Salt, Sugar, Lemon Juice Concentrate, Garlic, * Onion, * Xanthan Gum, Sorbic Acid (Preservative), Natural Flavor, Cream, Spice, Maltodextrin, Whey, Vinegar Powder, Buttermilk, Autolyzed Yeast Extract, Milk, Sour Cream Powder, Lactic Acid, Calcium Disodium Edta (To Protect Flavor), Citric Acid. *Dried. Contains Egg, Milk",
-              "allergens": "Eggs, Milk"
-            },
-            {
-              "name": "Country French",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 99,
-                "total_fat": "11g",
-                "saturated_fat": "2g",
-                "cholesterol": "0mg",
-                "sodium": "200mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "6g",
-                "dietary_fiber": "0g",
-                "sugars": "6g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "18%",
-                "saturated_fat": "9%",
-                "cholesterol": "0%",
-                "sodium": "9%",
-                "total_carbohydrate": "2%",
-                "protein": "0%"
-              },
-              "ingredients": "SOYBEAN OIL, SUGAR, WATER, DISTILLED VINEGAR, APPLE CIDER VINEGAR, TOMATO PASTE, HONEY, CONTAINS LESS THAN 2% OF SALT, PAPRIKA, MUSTARD FLOUR, XANTHAN GUM, ONION,* GARLIC,* BEETROOT JUICE CONCENTRATE, NATURAL FLAVOR. *DRIED. COMMON ALLERGENS PRESENT: None.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Creamy Caesar",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 110,
-                "calories_from_fat": 99,
-                "total_fat": "11g",
-                "saturated_fat": "2g",
-                "cholesterol": "15mg",
-                "sodium": "290mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "0g",
-                "sugars": "< 1g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "17%",
-                "saturated_fat": "9%",
-                "cholesterol": "5%",
-                "sodium": "12%",
-                "total_carbohydrate": "1%",
-                "protein": "1%"
-              },
-              "ingredients": "Soybean Oil, Distilled Vinegar, Water, Romano Cheese (Pasteurized Part-Skim Milk, Cheese Cultures, Salt, Enzymes), Parmesan Cheese (Pasteurized Part-Skim Milk, Cheese Cultures, Salt, Enzymes), Sugar, Egg Yolk, Salt, Contains Less Than 2% Of Garlic Juice, Modified Corn Starch, Spice, Natural Flavors, Xanthan Gum, Corn Syrup Solids, Garlic,* Anchovies, Polysorbate 60, Onion,* Sodium Benzoate (Preservative), Lactic Acid, Maltodextrin, Garlic, Spice (Including Celery), Calcium Disodium Edta (To Protect Flavor), Hydrolyzed Soyprotein, Autolyzed Yeast Extract, Soy Sauce Solids (Naturally Fermented Wheat And Soybeans, Maltodextrin, Salt), Palm Oil, Tamarind, Caramel Color. *Dried. Common Allergens Present: Egg, Fish, Milk, Wheat, Soy.",
-              "allergens": "Eggs, Fish, Milk, Soy, Wheat"
-            },
-            {
-              "name": "Fat Free Raspberry Vinaigrette",
-              "serving_size": "Fluid Oz (28g)",
-              "nutrition": {
-                "calories": 35,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "80mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "8g",
-                "dietary_fiber": "0g",
-                "sugars": "8g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "3%",
-                "total_carbohydrate": "3%",
-                "protein": "0%"
-              },
-              "ingredients": "Water, Distilled Vinegar, Sugar, Corn Syrup Solids, Contains Less Than 2% Of Cucumber Juice, Salt, Raspberry Juice Concentrate, Xanthan Gum, Maltodextrin, Potassium Sorbate (Preservative), Onion,* Red Bell Pepper,* Citric Acid, Garlic,* Artificial Flavor, Red 40, Calcium Disodium Edta (To Protect Flavor), Blue 1.*Dried.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Honey Mustard Dressing",
-              "serving_size": "Fluid Oz (28g)",
-              "nutrition": {
-                "calories": 150,
-                "calories_from_fat": 126,
-                "total_fat": "14g",
-                "saturated_fat": "2.5g",
-                "cholesterol": "10mg",
-                "sodium": "130mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "8g",
-                "dietary_fiber": "0g",
-                "sugars": "8g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "22%",
-                "saturated_fat": "12%",
-                "cholesterol": "3%",
-                "sodium": "6%",
-                "total_carbohydrate": "3%",
-                "protein": "0%"
-              },
-              "ingredients": "SOYBEAN OIL, HIGH FRUCTOSE CORN SYRUP, SPICY BROWN MUSTARD (DISTILLED VINEGAR, WATER, MUSTARD SEED, SALT, TURMERIC, SPICES), HONEY, DISTILLED VINEGAR, EGG YOLK, CONTAINS LESS THAN 2% OF SALT, WATER, PROPYLENEGLYCOL ALGINATE, MUSTARD FLOUR, CALCIUM DISODIUM EDTA (TO PROTECT FLAVOR). COMMON ALLERGENS PRESENT: Egg.",
-              "allergens": "Eggs"
-            },
-            {
-              "name": "Lite Ranch",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 70,
-                "calories_from_fat": 63,
-                "total_fat": "7g",
-                "saturated_fat": "1g",
-                "cholesterol": "< 5mg",
-                "sodium": "25mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "< 1g",
-                "dietary_fiber": "0g",
-                "sugars": "< 1g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "10%",
-                "saturated_fat": "5%",
-                "cholesterol": "2%",
-                "sodium": "1%",
-                "total_carbohydrate": "0%",
-                "protein": "1%"
-              },
-              "ingredients": "CULTURED BUTTERMILK, WATER, VEGETABLE OIL (SOYBEAN AND/OR CANOLA), DISTILLED VINEGAR, EGG YOLK, CONTAINS LESS THAN 2% OF SALT, CORN STARCH, SUGAR, DISODIUM INOSINATE, AND DISODIUM GUANYLATE, NONFAT MILK POWDER, ONION,* XANTHAN GUM, NONFAT MILK SOLIDS, SORBIC ACID (PRESERVATIVE), LACTIC ACID, SPICE, CREAM, GARLIC,* WHEY, VINEGAR POWDER, MUSTARD FLOUR, GUAR GUM, SOUR CREAM POWDER, MILK, DIPOTASSIUM PHOSPHATE, NATURAL FLAVOR, CITRIC ACID. *DRIED. COMMON ALLERGENS PRESENT: Egg, Milk.",
-              "allergens": "Eggs, Milk"
-            },
-            {
-              "name": "Low Calorie Italian",
-              "serving_size": "2 Tbsp (30g)",
-              "nutrition": {
-                "calories": 25,
-                "calories_from_fat": 14,
-                "total_fat": "1.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "410mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "3g",
-                "dietary_fiber": "0g",
-                "sugars": "2g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "2%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "17%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "Water, Distilled Vinegar, Sugar, Vegetable Oil (Soybean And/Or Canola), Salt, Contains Less Than 2% Of Garlic,* Xanthan Gum, Onion,* Lemon Juice Concentrate, Spice, Red Bell Pepper,* Calcium Disodium Edta (To Protect Flavor), Natural Flavor, Annatto Extract (Color), Paprika Extract (Color), Caramel Color. *Dried.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Mushroom",
-              "serving_size": "1/4 Cup (18g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "75mg",
-                "total_carbohydrate": "< 1g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Fresh White Mushrooms.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Plant Based Ranch Dressing",
-              "serving_size": "2z Portion (65g)",
-              "nutrition": {
-                "calories": 210,
-                "calories_from_fat": 198,
-                "total_fat": "22g",
-                "saturated_fat": "2g",
-                "cholesterol": "0mg",
-                "sodium": "340mg",
-                "potassium": "85mg",
-                "total_carbohydrate": "6g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "34%",
-                "saturated_fat": "10%",
-                "cholesterol": "0%",
-                "sodium": "14%",
-                "total_carbohydrate": "2%",
-                "protein": "0%"
-              },
-              "ingredients": "Mayonnaise Vegan Hellmanns (Rapeseed Oil (72%), Water, Spirit Vinegar, Sugar, Salt, Modified Starch, Natural Flavoring (Contains Mustard), Lemon Juice Concentrate, Antioxidant (Calcium Disodium Edta), Color (Paprika Extract).), Cream Cooking Plant Based Fz Richs (Water, Vegetable Oil (High Oleic Canola And/Or High Oleic Sunflower), Rice Syrup, Whole Brown Rice, Contains Less Than 2% Of The Following: Maltodextrin, Dipotassium Phosphate, Pea Protein, Calcium Carbonate, Sunflower Lecithin, Tapioca Starch, Cellulose Gum, Natural Flavor, Salt, Rice Extract, Xanthan Gum.), Juice Lemon 100% GC (Lemon Juice from Concentrate (Water, Concentrated Lemon Juice), Sodium Benzoate (Preservative) and Lemon Oil.), Garlic Granulated TE (Dried Garlic.), Salt Kosher Crystal Diamond (Salt), Spice Onion Granulated TE (Dried Onion.), Peppercorn Blk Whl TE (Black Peppercorns.), Thyme Leaf TE (Thyme Leaves.), Parsley Flake TE (Parsley.)",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Vegan": [
-            {
-              "name": "Avocado",
-              "serving_size": "2z Portion (57g)",
-              "nutrition": {
-                "calories": 90,
-                "calories_from_fat": 81,
-                "total_fat": "9g",
-                "saturated_fat": "1g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "290mg",
-                "total_carbohydrate": "5g",
-                "dietary_fiber": "4g",
-                "sugars": "0g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "14%",
-                "saturated_fat": "5%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "2%",
-                "protein": "1%"
-              },
-              "ingredients": "Avocado.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Baby Carrots",
-              "serving_size": "3z (85g)",
-              "nutrition": {
-                "calories": 25,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "50mg",
-                "potassium": "200mg",
-                "total_carbohydrate": "6g",
-                "dietary_fiber": "2g",
-                "sugars": "3g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "2%",
-                "protein": "1%"
-              },
-              "ingredients": "Carrots.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Celery Sticks",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "25mg",
-                "potassium": "75mg",
-                "total_carbohydrate": "< 1g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "1%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "celery",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Hummus with Tahini",
-              "serving_size": "1z Portion (23g)",
-              "nutrition": {
-                "calories": 70,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "135mg",
-                "potassium": "20mg",
-                "total_carbohydrate": "3g",
-                "dietary_fiber": "1g",
-                "sugars": "0g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "6%",
-                "total_carbohydrate": "1%",
-                "protein": "2%"
-              },
-              "ingredients": "Bean Garbanzo Low Sodium #10 Bushs (Prepared Chick Peas, Water, Salt, Calcium Chloride (Firming Agent), Disodium EDTA (Promotes Color Retention).), Tahini (Sesame Seed) Paste (Sesame Seed. Contains: Sesame Seed.), Juice Lemon 100% GC (Lemon Juice from Concentrate (Water, Concentrated Lemon Juice), Sodium Benzoate (Preservative) and Lemon Oil.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Salt Kosher Crystal Diamond (Salt), Fresh Peeled Garlic, cleaned (Garlic.), Pepper Red Cayenne Ground TE (Cayenne Peppers.)",
-              "allergens": "Sesame Seed"
-            },
-            {
-              "name": "Pita Chips",
-              "serving_size": "1 oz portion (28g)",
-              "nutrition": {
-                "calories": 70,
-                "calories_from_fat": 5,
-                "total_fat": "0.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "55mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "13g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "4%",
-                "protein": "2%"
-              },
-              "ingredients": "Enriched Wheat Flour [Wheat Flour, Malted Barley Niacin, Reduced Iron, Thiamine Mononitrate (B1), Riboflavin (B2), Folic Acid], Water, Soybean Oil and/or Canola Oil, Contains 2% or less of: Salt, Sugar, Dough Conditioner (Calcium Sulfate, Acacia Gum, Vegetable Mono- and Diglycerides, and Enzymes), Calcium Propionate and Potassium Sorbate (Preservatives). COMMON ALLERGENS PRESENT: Wheat.",
-              "allergens": "Wheat"
-            },
-            {
-              "name": "Plant Based Mozzarella",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 90,
-                "calories_from_fat": 63,
-                "total_fat": "7g",
-                "saturated_fat": "7g",
-                "cholesterol": "0mg",
-                "sodium": "510mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "6g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "11%",
-                "saturated_fat": "35%",
-                "cholesterol": "0%",
-                "sodium": "21%",
-                "total_carbohydrate": "2%",
-                "protein": "0%"
-              },
-              "ingredients": "Filtered Water, Coconut Oil, Food Starch-Modified (Potato & Corn), Corn Starch, Salt (Sea Salt), Mozzarella Flavor (Vegan Sources), Olive Extract, Beta Carotene (Color), Vitamin B12, Powdered Cellulose Added to Prevent Caking.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Quinoa & Lentil Salad",
-              "serving_size": "3z Portion (85g)",
-              "nutrition": {
-                "calories": 200,
-                "calories_from_fat": 81,
-                "total_fat": "9g",
-                "saturated_fat": "1g",
-                "cholesterol": "0mg",
-                "sodium": "680mg",
-                "potassium": "250mg",
-                "total_carbohydrate": "21g",
-                "dietary_fiber": "4g",
-                "sugars": "3g",
-                "protein": "6g"
-              },
-              "daily_values": {
-                "total_fat": "14%",
-                "saturated_fat": "4%",
-                "cholesterol": "0%",
-                "sodium": "28%",
-                "total_carbohydrate": "7%",
-                "protein": "6%"
-              },
-              "ingredients": "Cooked Quinoa (Water, Quinoa), Lentils (Water, Lentils), Water, Cooked Split Peas, Expeller Pressed Canola Oil, Lemon Juice, Spices, Sugar, Contains Less Than 2% Of Extra Virgin Olive Oil With Lemon Oil, Salt.",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Protein Bar": [
-            {
-              "name": "Baked Sweet Potatoes",
-              "serving_size": "Potatoes (129g)",
-              "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 9,
-                "total_fat": "1g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "45mg",
-                "potassium": "610mg",
-                "total_carbohydrate": "27g",
-                "dietary_fiber": "4g",
-                "sugars": "8g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "9%",
-                "protein": "3%"
-              },
-              "ingredients": "Potato Sweet (Sweet Potatoes), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Firm Tofu",
-              "serving_size": "2z Portion (57g)",
-              "nutrition": {
-                "calories": 50,
-                "calories_from_fat": 23,
-                "total_fat": "2.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "230mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "1g",
-                "sugars": "0g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "4%",
-                "saturated_fat": "2%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "5%"
-              },
-              "ingredients": "Water, Soybeans, Natural Coagulants (Calcium Chloride, Magnesium Chloride).",
-              "allergens": "Soy"
-            },
-            {
-              "name": "Ground Flax Seed",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 150,
-                "calories_from_fat": 108,
-                "total_fat": "12g",
-                "saturated_fat": "1g",
-                "cholesterol": "0mg",
-                "sodium": "10mg",
-                "potassium": "230mg",
-                "total_carbohydrate": "8g",
-                "dietary_fiber": "8g",
-                "sugars": "0g",
-                "protein": "5g"
-              },
-              "daily_values": {
-                "total_fat": "18%",
-                "saturated_fat": "5%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "3%",
-                "protein": "5%"
-              },
-              "ingredients": "Brown Flax Seeds.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "High Protein Grain BleND",
-              "serving_size": "3z portion (85g)",
-              "nutrition": {
-                "calories": 190,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "220mg",
-                "potassium": "350mg",
-                "total_carbohydrate": "33g",
-                "dietary_fiber": "5g",
-                "sugars": "1g",
-                "protein": "7g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "2%",
-                "cholesterol": "0%",
-                "sodium": "9%",
-                "total_carbohydrate": "11%",
-                "protein": "7%"
-              },
-              "ingredients": "Quinoa Wht Pre-washed GC (Quinoa.), Water (Filtered Tap Water.), Quinoa Red Pre-Washed GC (Red Quinoa.), Grain Amaranth Orgc Woodland (Organic Amaranth Grain), Flax Seed Ground Brown (Brown Flax Seeds.), Seed Chia Blk Orgc Woodland (Whole Black Chia Seed.), Salt Kosher Crystal Diamond (Salt)",
-              "allergens": "Wheat"
-            },
-            {
-              "name": "Kale",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "10mg",
-                "potassium": "140mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "1g",
-                "sugars": "< 1g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "1%"
-              },
-              "ingredients": "67% Kale, 16.5% Red Cabbage, 16.5% Carrot.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Marinated Artichoke Heart",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 9,
-                "total_fat": "1g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "80mg",
-                "potassium": "75mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "< 1g",
-                "sugars": "< 1g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "3%",
-                "total_carbohydrate": "1%",
-                "protein": "1%"
-              },
-              "ingredients": "Artichoke Hearts, Water, Sunflower Oil, Can Vinegar, Salt, Spices, Citric Acid and/or Ascorbic Acid.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Nutritional Yeast",
-              "serving_size": "Gram (1g)",
-              "nutrition": {
-                "calories": 5,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "1%"
-              },
-              "ingredients": "Dried Yeast, Niacin (B-3), Pyridoxine Hydrochloride (B-6), Thiamine Hydrochloride (B-1), Riboflavin (B-2), Folic Acid (B-9) and Cyanocobalamin (B-12). Allergy Alert: Product packed in a facility that also handles nuts, peanuts, soy and wheat.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Organic Black Chia Seed",
-              "serving_size": "1 Tbsp (14g)",
-              "nutrition": {
-                "calories": 70,
-                "calories_from_fat": 41,
-                "total_fat": "4.5g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "6g",
-                "dietary_fiber": "5g",
-                "sugars": "0g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "7%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "2%",
-                "protein": "3%"
-              },
-              "ingredients": "Whole Black Chia Seed.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Roasted & Salted Sunflower Seeds",
-              "serving_size": "1/4 Cup (28g)",
-              "nutrition": {
-                "calories": 180,
-                "calories_from_fat": 135,
-                "total_fat": "15g",
-                "saturated_fat": "2g",
-                "cholesterol": "0mg",
-                "sodium": "220mg",
-                "potassium": "150mg",
-                "total_carbohydrate": "7g",
-                "dietary_fiber": "3g",
-                "sugars": "< 1g",
-                "protein": "6g"
-              },
-              "daily_values": {
-                "total_fat": "23%",
-                "saturated_fat": "10%",
-                "cholesterol": "0%",
-                "sodium": "9%",
-                "total_carbohydrate": "2%",
-                "protein": "6%"
-              },
-              "ingredients": "Sunflower Seeds, Peanut Oil, Salt. COMMON ALLERGENS PRESENT: None. MAY CONTAIN: Peanuts, Tree Nuts..",
-              "allergens": "Peanuts, Tree Nuts"
-            },
-            {
-              "name": "Roasted Cauliflower",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 5,
-                "total_fat": "0.5g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "40mg",
-                "potassium": "85mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "0%",
-                "protein": "1%"
-              },
-              "ingredients": "Cauliflower Floret Regular Cut Fs (Fresh Cauliflower Florets.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Pepper Blk Ground TE (Ground Black Pepper.), Salt Kosher Crystal Diamond (Salt)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Sliced Almonds",
-              "serving_size": "1/3 cup (30g)",
-              "nutrition": {
-                "calories": 190,
-                "calories_from_fat": 153,
-                "total_fat": "17g",
-                "saturated_fat": "1g",
-                "cholesterol": "0mg",
-                "sodium": "5mg",
-                "potassium": "210mg",
-                "total_carbohydrate": "6g",
-                "dietary_fiber": "3g",
-                "sugars": "1g",
-                "protein": "6g"
-              },
-              "daily_values": {
-                "total_fat": "26%",
-                "saturated_fat": "5%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "2%",
-                "protein": "6%"
-              },
-              "ingredients": "Almonds.",
-              "allergens": "Tree Nuts"
-            },
-            {
-              "name": "Vegan Kimchi",
-              "serving_size": "1 Cup (85g)",
-              "nutrition": {
-                "calories": 30,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "810mg",
-                "potassium": "140mg",
-                "total_carbohydrate": "9g",
-                "dietary_fiber": "3g",
-                "sugars": "6g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "34%",
-                "total_carbohydrate": "3%",
-                "protein": "0%"
-              },
-              "ingredients": "Cabbage, Mustard Greens, Apple, Garlic, Sugar, Carrot, Green Onion, Salt, Gochugaru Red Pepper, Ginger",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Walnuts",
-              "serving_size": "Tablespoon (7g)",
-              "nutrition": {
-                "calories": 50,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "30mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "1%"
-              },
-              "ingredients": "Walnuts. COMMON ALLERGENS PRESENT: Tree Nuts. MAY CONTAIN: Peanuts.",
-              "allergens": "Peanuts, Tree Nuts"
-            }
-          ],
-          "Soft Serve": [
-            {
-              "name": "Chocolate Soft Serve",
-              "serving_size": "Cup (227g)",
-              "nutrition": {
-                "calories": 340,
-                "calories_from_fat": 108,
-                "total_fat": "12g",
-                "saturated_fat": "8g",
-                "cholesterol": "40mg",
-                "sodium": "260mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "52g",
-                "dietary_fiber": "3g",
-                "sugars": "49g",
-                "protein": "8g"
-              },
-              "daily_values": {
-                "total_fat": "18%",
-                "saturated_fat": "39%",
-                "cholesterol": "13%",
-                "sodium": "11%",
-                "total_carbohydrate": "17%",
-                "protein": "8%"
-              },
-              "ingredients": "Milk, Sugar, Cream, Corn Syrup, High Fructose Corn Syrup, Whey, Cocoa, Nonfat Milk, Mono & Diglycerides, Guar Gum, Tetrasodium Pyrophosphate, Dextrose, Carrageenan, And Vitamin A Palmitate. COMMON ALLERGENS PRESENT: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Dole Pineapple Whip",
-              "serving_size": "1 Serving (28g)",
-              "nutrition": {
-                "calories": 110,
-                "calories_from_fat": 5,
-                "total_fat": "0.5g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "10mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "26g",
-                "dietary_fiber": "0g",
-                "sugars": "25g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "9%",
-                "protein": "0%"
-              },
-              "ingredients": "Sugar, Dextrose, Stabilizers (Hydroxypropyl Methylcellulose, Locust Bean Gum, Guar Gum, Karaya Gum, Pectin, Cellulose Gum, Xanthan Gum), Coconut Oil, Contains 2% Or Less Of Each Of The Following: Maltodextrin, Citric Acid, Natural & Artificial Flavor, Modified Food Starch, Malic Acid, Beta Carotene (Color), Mono & Diglycerides, Silicon Dioxide (Anticaking).",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Dole Strawberry Whip",
-              "serving_size": "1 Serving (28g)",
-              "nutrition": {
-                "calories": 110,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "10mg",
-                "potassium": "5mg",
-                "total_carbohydrate": "26g",
-                "dietary_fiber": "0g",
-                "sugars": "25g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "9%",
-                "protein": "0%"
-              },
-              "ingredients": "Sugar, Dextrose, Maltodextrin, Stabilizers (Hydroxypropyl Methylcellulose, Locust Bean Gum, Guar Gum, Karaya Gum, Pectin, Cellulose Gum, Xanthan Gum), Coconut Oil, Contains 2% Or Less Of Each Of The Following: Citric Acid, Color (Dehydrated Blackcurrant, Caramel Color, Carrot Extract), Natural Flavor, Modified Food Starch, Mono & Diglycerides, Silicon Dioxide (Anticaking).",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Toppings": [
-            {
-              "name": "Caramel Syrup",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 80,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "40mg",
-                "potassium": "15mg",
-                "total_carbohydrate": "18g",
-                "dietary_fiber": "0g",
-                "sugars": "12g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "6%",
-                "protein": "0%"
-              },
-              "ingredients": "CORN SYRUP, HIGH FRUCTOSE CORN SYRUP, SUGAR, CONDENSED NONFAT MILK, WATER, HEAVY WHIPPING CREAM, CONTAINS 2% OR LESS OF SALT, PECTIN, ARTIFICIAL FLAVORS, POTASSIUM SORBATE - A PRESERVATIVE, CARAMEL COLOR AND DISODIUM PHOSPHATE. COMMON ALLERGENS PRESENT: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Chocolate Chips",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 130,
-                "calories_from_fat": 72,
-                "total_fat": "8g",
-                "saturated_fat": "4g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "19g",
-                "dietary_fiber": "2g",
-                "sugars": "15g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "12%",
-                "saturated_fat": "19%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "6%",
-                "protein": "2%"
-              },
-              "ingredients": "Sugar, Unsweetened Chocolate, Cocoa Butter, Soy Lecithin (an emulsifier), Natural Vanilla Extract, Milk. COMMON ALLERGENS PRESENT: Milk, Soy.",
-              "allergens": "Milk, Soy"
-            },
-            {
-              "name": "Chocolate Syrup",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 70,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "15mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "16g",
-                "dietary_fiber": "< 1g",
-                "sugars": "15g",
-                "protein": "< 1g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "1%",
-                "total_carbohydrate": "5%",
-                "protein": "1%"
-              },
-              "ingredients": "High Fructose Corn Syrup, Water, Cocoa And Cocoa Processed With Alkali, Modified Food Starch, Caramel Color, Salt, Potassium Sorbate- A Preservative, Xanthan Gum, Titanium Dioxide (Color), Artificial Colors (Yellow 5, Red 3 And Blue 1), And Natural And Artificial Flavors.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Oreo Cookie Crumble",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 140,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "1.5g",
-                "cholesterol": "0mg",
-                "sodium": "95mg",
-                "potassium": "40mg",
-                "total_carbohydrate": "21g",
-                "dietary_fiber": "1g",
-                "sugars": "11g",
-                "protein": "1g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "8%",
-                "cholesterol": "0%",
-                "sodium": "4%",
-                "total_carbohydrate": "7%",
-                "protein": "1%"
-              },
-              "ingredients": "Unbleached Enriched Flour (Wheat Flour, Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}, Riboflavin {Vitamin B2}, Folic Acid), Sugar, Palm And/Or Canola Oil, Cocoa (Processed With Alkali), Invert Sugar, Leavening (Baking Soda And/Or Calcium Phosphate), Soy Lecithin, Salt, Chocolate, Natural Flavor. Common Allergens Present: Soy, Wheat.",
-              "allergens": "Soy, Wheat"
-            },
-            {
-              "name": "Rainbow Sprinkles",
-              "serving_size": "Ounce (28g)",
-              "nutrition": {
-                "calories": 140,
-                "calories_from_fat": 63,
-                "total_fat": "7g",
-                "saturated_fat": "3.5g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "21g",
-                "dietary_fiber": "0g",
-                "sugars": "14g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "11%",
-                "saturated_fat": "18%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "7%",
-                "protein": "0%"
-              },
-              "ingredients": "Sugar, Corn Starch, Palm Oil & Palm Kernel Oil, Soy Lecithin, Dextrin,Carnauba Wax, Confectioners Glaze, FD&C Yellow #5 Lake, Yellow #6 Lake,Blue #1 Lake, Red #40 Lake, Red #3. COMMON ALLERGENS PRESENT: Soy.",
-              "allergens": "Soy"
-            }
-          ],
-          "Coffee & Tea": [
-            {
-              "name": "Cafe Delight Cane Sugar Pc",
-              "serving_size": "Stick (3g)",
-              "nutrition": {
-                "calories": 10,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "3g",
-                "dietary_fiber": "0g",
-                "sugars": "3g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "ORGANIC CANE SUGAR. COMMON ALLERGENS PRESENT: None.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Coffeemate Hazelnut Creamer",
-              "serving_size": "Fluid Oz (32g)",
-              "nutrition": {
-                "calories": 10,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "2g",
-                "dietary_fiber": "0g",
-                "sugars": "2g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "1%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "WATER, SUGAR, COCONUT OIL, SODIUM CASEINATE (A MILK DERIVATIVE), DIPOTASSIUM PHOSPHATE, DATEM, ARTIFICIAL FLAVOR, MONO- AND DIGLYCERIDES, BETACAROTENE COLOR, RIBOFLAVIN COLOR. COMMON ALLERGENS PRESENT: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Coffeemate Original Creamer",
-              "serving_size": "Fluid Oz (30g)",
-              "nutrition": {
-                "calories": 30,
-                "calories_from_fat": 27,
-                "total_fat": "3g",
-                "saturated_fat": "3g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "5%",
-                "saturated_fat": "15%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "WATER, COCONUT OIL, SUGAR, SODIUM CASEINATE (A MILK DERIVATIVE), DIPOTASSIUM PHOSPHATE, DATEM, MONO- AND DIGLYCERIDES, ARTIFICIAL FLAVOR, BETA-CAROTENE COLOR. COMMON ALLERGENS PRESENT: Milk.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "ecoStick Blue Sugar Substitute",
-              "serving_size": "Stick (0g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "DEXTROSE, ASPARTAME.PHENYLKETONURICS: CONTAINS PHENYLALANINE.COMMON ALLERGENS PRESENT: None",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "ecoStick Pink Sugar Substitute",
-              "serving_size": "Stick (0g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "DEXTROSE, SACCHARIN, CREAM OF TARTAR, CALCIUM SILICATE (AN ANTI-CAKING AGENT). COMMON ALLERGENS PRESENT: None.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "ecoStick Yellow Sugar Substitute",
-              "serving_size": "Stick (0g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "1g",
-                "dietary_fiber": "0g",
-                "sugars": "1g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Dextrose, Sucralose. COMMON ALLERGENS PRESENT: None.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "French Vanilla Coffee Creamer",
-              "serving_size": "Fluid Oz (32g)",
-              "nutrition": {
-                "calories": 160,
-                "calories_from_fat": 23,
-                "total_fat": "2.5g",
-                "saturated_fat": "0mg",
-                "cholesterol": "15mg",
-                "sodium": "9g",
-                "potassium": "7g",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "N/A",
-                "sugars": "N/A",
-                "protein": "N/A"
-              },
-              "daily_values": {
-                "total_fat": "4%",
-                "saturated_fat": "0%",
-                "cholesterol": "1%",
-                "sodium": "3%",
-                "total_carbohydrate": "0%",
-                "protein": "N/A"
-              },
-              "ingredients": "Not Specified",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Honey",
-              "serving_size": "Pkt (9g)",
-              "nutrition": {
-                "calories": 25,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "5mg",
-                "total_carbohydrate": "7g",
-                "dietary_fiber": "0g",
-                "sugars": "7g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "2%",
-                "protein": "0%"
-              },
-              "ingredients": "Honey. COMMON ALLERGENS PRESENT: None",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Lipton Black Tea Bag",
-              "serving_size": "Tea Bag (7g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Decaffeinated Orange Pekoe And Pekoe Cut Black Tea.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Lipton Decaf Tea Bag",
-              "serving_size": "Tea Bag (10g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "0mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Decaffeinated Orange Pekoe And Pekoe Cut Black Tea.",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Fountain Drinks": [
-            {
-              "name": "2%",
-              "serving_size": "12flz (340g)",
-              "nutrition": {
-                "calories": 180,
-                "calories_from_fat": 63,
-                "total_fat": "7g",
-                "saturated_fat": "5g",
-                "cholesterol": "30mg",
-                "sodium": "180mg",
-                "potassium": "520mg",
-                "total_carbohydrate": "16g",
-                "dietary_fiber": "0g",
-                "sugars": "16g",
-                "protein": "12g"
-              },
-              "daily_values": {
-                "total_fat": "11%",
-                "saturated_fat": "26%",
-                "cholesterol": "10%",
-                "sodium": "7%",
-                "total_carbohydrate": "5%",
-                "protein": "12%"
-              },
-              "ingredients": "Grade A Reduced Fat Milk, Vitamin A Palmitate & Vitamin D3",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Barq's Root Beer",
-              "serving_size": "12z Cup (340g)",
-              "nutrition": {
-                "calories": 170,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "75mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "42g",
-                "dietary_fiber": "0g",
-                "sugars": "42g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "3%",
-                "total_carbohydrate": "14%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Syrup Root Beer BIB Barqs (Carbonated Water, High Fructose Corn Syrup, Caramel Color, Sodium Benzoate (To Protect Taste), Citric Acid, Caffeine, Artificial And Natural Flavors, Acacia.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Cherry Coke",
-              "serving_size": "12z Cup (340g)",
-              "nutrition": {
-                "calories": 140,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "45mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "40g",
-                "dietary_fiber": "0g",
-                "sugars": "40g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "13%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Syrup Coke Cherry Bib (High Fructose Corn Syrup, Caramel Color, Phosphoric Acid, Natural Flavors, Caffeine.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Coke Classic",
-              "serving_size": "12z Cup (343g)",
-              "nutrition": {
-                "calories": 140,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "55mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "18g",
-                "dietary_fiber": "0g",
-                "sugars": "39g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "6%",
-                "protein": "0%"
-              },
-              "ingredients": "Carbonated Water (Filtered Tap Water.), Syrup Coke Classic Bib (High Fructose Corn Syrup, Caramel Color, Phosphoric Acid, Natural Flavors, Caffeine.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Coke Zero",
-              "serving_size": "12z Cups (340g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "50mg",
-                "potassium": "60mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Syrup Coke Zero BIB (Caramel Color, Phosphoric Acid, Aspartame, Potassium Benzoate (To Protect Taste), Natural Flavors, Potassium Citrate, Acesulfame Potassium, Caffeine, Stevia Extract. Phenylketonurics: Contains Phenylalanine. Zero Sugar.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Diet Coke",
-              "serving_size": "12z Cup (340g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "50mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Syrup Coke Diet BIB (Caramel Color, Aspartame, Phosphoric Acid, Potassium Benzoate (To Protect Taste), Natural Flavors, Citric Acid, Caffeine.\nPhenylketonurics: Contains Phenylalanine)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Diet Sprite",
-              "serving_size": "12z Cup (340g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "45mg",
-                "potassium": "105mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "0%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Syrup Sprite Diet BIB (Carbonated Water, Citric Acid, Potassium Citrate, Natural Flavors, Potassium Benzoate (To Protect Taste), Aspartame, Acesulfame Potassium. Phenylketonurics: Contains Phenylalanine)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Pibb Extra",
-              "serving_size": "12 Flz Cup (340g)",
-              "nutrition": {
-                "calories": 0,
-                "calories_from_fat": 0,
-                "total_fat": "N/A",
-                "saturated_fat": "N/A",
-                "cholesterol": "N/A",
-                "sodium": "N/A",
-                "potassium": "N/A",
-                "total_carbohydrate": "N/A",
-                "dietary_fiber": "N/A",
-                "sugars": "N/A",
-                "protein": "N/A"
-              },
-              "daily_values": {
-                "total_fat": "N/A",
-                "saturated_fat": "N/A",
-                "cholesterol": "N/A",
-                "sodium": "N/A",
-                "total_carbohydrate": "N/A",
-                "protein": "N/A"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Pibb Xtra BIB",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Powerade Mountain Blast",
-              "serving_size": "12 Flz Cup (340g)",
-              "nutrition": {
-                "calories": 80,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "250mg",
-                "potassium": "80mg",
-                "total_carbohydrate": "21g",
-                "dietary_fiber": "21g",
-                "sugars": "21g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "11%",
-                "total_carbohydrate": "7%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Syrup Powerade Mountain Blast BIB (High Fructose Corn Syrup, Less Than 0.5% Of: Citric Acid, Electrolytes (Salt, Sodium Citrate, Magnesium And Calcium Chlorides, Mono-Potassium Phosphate), Vitamins B12 And C (Cyanocobalamin And Ascorbic Acid), Natural Flavors, Modified Food Starch, Calcium Disodium Edta (To Protect Color), Medium Chain Triglycerides, Sucrose Acetate Isobutyrate, Blue 1.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Sprite",
-              "serving_size": "12 Flz Cup (326g)",
-              "nutrition": {
-                "calories": 130,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "70mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "35g",
-                "dietary_fiber": "35g",
-                "sugars": "35g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "3%",
-                "total_carbohydrate": "12%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Syrup Sprite BIB (High Fructose Corn Syrup, Citric Acid, Natural Flavors, Sodium Citrate, Sodium Benzoate (To Protect Taste). 100% Natural Flavors No Caffeine)",
-              "allergens": "Not Specified"
-            }
-          ],
-          "Milk": [
-            {
-              "name": "Chocolate Pea",
-              "serving_size": "1 Cup (230g)",
-              "nutrition": {
-                "calories": 140,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "140mg",
-                "potassium": "180mg",
-                "total_carbohydrate": "15g",
-                "dietary_fiber": "2g",
-                "sugars": "13g",
-                "protein": "8g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "6%",
-                "total_carbohydrate": "5%",
-                "protein": "8%"
-              },
-              "ingredients": "WATER, CANE SUGAR, PEA PROTEIN, CANOLA OIL, COCOA POWDER (PROCESSED WITH ALKALI), VITAMIN BLEND (CALCIUM CARBONATE, VITAMIN A\nPALMITATE, VITAMIN D2, VITAMIN B12 ), NATURAL FLAVOR, SUNFLOWER LECITHIN, TARA GUM, SEA SALT, GELLAN GUM.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Oat Milk",
-              "serving_size": "1 Cup (230g)",
-              "nutrition": {
-                "calories": 130,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "40mg",
-                "potassium": "20mg",
-                "total_carbohydrate": "19g",
-                "dietary_fiber": "1g",
-                "sugars": "6g",
-                "protein": "2g"
-              },
-              "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "2%",
-                "total_carbohydrate": "6%",
-                "protein": "2%"
-              },
-              "ingredients": "Water, Organic Hydrolyzed Oat Flour, Canola Oil, Vitamin Blend (Calcium Carbonate, Vitamin A Palmitate, Vitamin D2, Vitamin B12), Sunflower Lecithin, Sea Salt, Gellan Gum.",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Skim",
-              "serving_size": "12flz (340g)",
-              "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "5mg",
-                "sodium": "180mg",
-                "potassium": "530mg",
-                "total_carbohydrate": "16g",
-                "dietary_fiber": "0g",
-                "sugars": "16g",
-                "protein": "12g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "2%",
-                "sodium": "7%",
-                "total_carbohydrate": "5%",
-                "protein": "12%"
-              },
-              "ingredients": "Grade A Fat Free (Skim) Milk, Vitamin A Palmitate & Vitamin D3.",
-              "allergens": "Milk"
-            },
-            {
-              "name": "Soy",
-              "serving_size": "1 Cup (230g)",
-              "nutrition": {
-                "calories": 100,
-                "calories_from_fat": 36,
-                "total_fat": "4g",
-                "saturated_fat": "0.5g",
-                "cholesterol": "0mg",
-                "sodium": "105mg",
-                "potassium": "180mg",
-                "total_carbohydrate": "9g",
-                "dietary_fiber": "1g",
-                "sugars": "7g",
-                "protein": "8g"
-              },
-              "daily_values": {
-                "total_fat": "6%",
-                "saturated_fat": "3%",
-                "cholesterol": "0%",
-                "sodium": "4%",
-                "total_carbohydrate": "3%",
-                "protein": "8%"
-              },
-              "ingredients": "WATER, SOYMILK POWDER (SOYBEANS), CANE SUGAR, VITAMIN BLEND (CALCIUM CARBONATE, VITAMIN A PALMITATE, VITAMIN D2, VITAMIN B12), NATURAL FLAVOR, DIPOTASSIUM PHOSPHATE, SUNFLOWER LECITHIN, SEA SALT, GELLAN GUM CONTAINS: SOY.",
-              "allergens": "Soy"
-            }
-          ],
-          "Juice": [
-            {
-              "name": "Apple Juice",
-              "serving_size": "6 Flz Cup (170g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "5mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "3g",
-                "dietary_fiber": "0g",
-                "sugars": "3g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Juice Conc Apple 6:1 Fz MM (Frozen Concentrated Apple Juice. COMMON ALLERGENS PRESENT: None.)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Cranberry",
-              "serving_size": "6 Flz Cup (170g)",
-              "nutrition": {
-                "calories": 70,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "5mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "17g",
-                "dietary_fiber": "0g",
-                "sugars": "16g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "6%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Juice Conc Cranberry 4.7:1 Fz MM (High Fructose Corn Syrup, Sugar, Water, Concentrated Cranberry Juice, Citric Acid (provides tartness), Vitamin C (Ascorbic Acid).)",
-              "allergens": "Not Specified"
-            },
-            {
-              "name": "Orange",
-              "serving_size": "6 Flz Cup (171g)",
-              "nutrition": {
-                "calories": 15,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
-                "saturated_fat": "0g",
-                "cholesterol": "0mg",
-                "sodium": "10mg",
-                "potassium": "70mg",
-                "total_carbohydrate": "4g",
-                "dietary_fiber": "0g",
-                "sugars": "4g",
-                "protein": "0g"
-              },
-              "daily_values": {
-                "total_fat": "0%",
-                "saturated_fat": "0%",
-                "cholesterol": "0%",
-                "sodium": "0%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
-              },
-              "ingredients": "Water (Filtered Tap Water.), Juice Conc Orange 100% 5:1 Fz MM (100% Orange Juice From Concentrate Contains Pure Filtered Water, Premium Concentrated Orange Juice. .)",
-              "allergens": "Not Specified"
-            }
-          ]
-        }
-      },
       "Brunch": {
         "available": true,
         "categories": {
           "Breakfast": [
             {
-              "name": "Fruity Pebble Pancake",
-              "serving_size": "Pancake (94g)",
+              "name": "Red Velvet Pancakes",
+              "serving_size": "2 Pancake Portion (271g)",
               "nutrition": {
-                "calories": 240,
-                "calories_from_fat": 54,
-                "total_fat": "6g",
-                "saturated_fat": "2.5g",
-                "cholesterol": "25mg",
-                "sodium": "480mg",
-                "potassium": "130mg",
-                "total_carbohydrate": "44g",
-                "dietary_fiber": "< 1g",
-                "sugars": "16g",
-                "protein": "5g"
+                "calories": 770,
+                "calories_from_fat": 225,
+                "total_fat": "25g",
+                "saturated_fat": "16g",
+                "cholesterol": "105mg",
+                "sodium": "510mg",
+                "potassium": "170mg",
+                "total_carbohydrate": "125g",
+                "dietary_fiber": "2g",
+                "sugars": "78g",
+                "protein": "12g"
               },
               "daily_values": {
-                "total_fat": "9%",
-                "saturated_fat": "12%",
-                "cholesterol": "9%",
-                "sodium": "20%",
-                "total_carbohydrate": "15%",
-                "protein": "5%"
+                "total_fat": "38%",
+                "saturated_fat": "78%",
+                "cholesterol": "34%",
+                "sodium": "21%",
+                "total_carbohydrate": "42%",
+                "protein": "12%"
               },
-              "ingredients": "Mix Pancake Buttermilk Sweet GC (Enriched Bleached Flour (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamin Mononitrate, Riboflavin, Folic Acid), Sugar, Dextrose, Defatted Soy Flour, Soybean Oil, Wheat Flour, Less Than 2% Of: Baking Soda, Buttermilk, Monocalcium Phosphate, Artificial Flavors (Contains Milk Derivatives), Salt, Sodium Acid Pyrophosphate, Yellow 5, Yellow 5 Lake, Yellow 6, Yellow 6 Lake. COMMON ALLERGENS PRESENT: Wheat, Soy, Milk.), Milk 2% Dispenser PF (Grade A Reduced Fat Milk, Vitamin A Palmitate & Vitamin D3), Fruity Pebbles Cereal (Rice, Sugar, Canola And/OR Soybean Oil, Salt, Contains 1% Or Less Of: Natural And Artificial Flavor, Red 40, Yellow 6, Yellow 5, Blue 1, TUrmeric Oleoresin (Color), BHT And BHA Added TO Preserve Freshness, Sodium Ascorbate And Ascorbic Acid (Vitamin C), Niacinamide (Vitamin B3), Reduced Iton, Zinc Oxide, Vitamin A Palmitate, Pyridoxine Hydrochloride (Citamin B6), Thiamin Mononitrate (Vitamin B1), Riboflavin (Vitamin B2), Folic Acid, Vitamin D3, Vitamin B12.), Cream Whipping Heavy 36% HGal Fs PF (Cream, Carrageenan. Contains: Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Sugar Beet Granulated (Granulated Beet Sugar), Sugar Powdered 10x 2lb Pioneer (Granulated Sugar, Cornstarch.), Flavor Vanilla Imitation KE (Water, Artificial Flavor, Caramel Color, Citric Acid, Sodium Benzoate.)",
-              "allergens": "Eggs, Milk, Soy, Wheat"
+              "ingredients": "Milk Whole Gal PF (Grade A Milk & Vitamin D3. Contains: Milk.), Flour All Purpose Unbleached Gold Medal (Unbleached Wheat Flour, Malted Barley Flour, Niacin, Iron, Thiamin Mononitrate, Riboflavin, Folic Acid. Common Allergens Present: Wheat.), Sugar Powdered 10x 2lb Pioneer (Granulated Sugar, Cornstarch.), Cheese Cream BIB (Pasteurized Milk And Cream, Cheese Culture, Salt, Guar Gum, Xanthan Gum, Carob Bean Gum. Common Allergens Present: Milk.), Cream Half & Half Fs PF (Milk, Cream. Contains: Milk), Sugar Beet Granulated (Granulated Beet Sugar), Unsalted Butter, melted (Pasteurized Cream, Natural Flavorings. Contains Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Vinegar Wht Distilled 5% (White Distilled Vinegar and Filtered Water.), Cocoa Powder All-Purpose GC (Cocoa.), Color Liq Red GC (Water, Glycerine, FD&C Red #40 and Red #3.\nGlycerine not from pork), Flavor Vanilla Imitation KE (Water, Artificial Flavor, Caramel Color, Citric Acid, Sodium Benzoate.), Baking Powder (Corn Starch, Sodium Bicarbonate, Sodium Aluminum Sulfate, Monocalcium Phosphate.), Salt Kosher Crystal Diamond (Salt), Baking Soda (Sodium Bicarbonate.)",
+              "allergens": "Eggs, Milk, Wheat"
             },
             {
-              "name": "Breakfast Casserole",
-              "serving_size": "1/32 (254g)",
+              "name": "Bacon Egg and Cheese Bite",
+              "serving_size": "Bite (57g)",
               "nutrition": {
-                "calories": 300,
-                "calories_from_fat": 180,
-                "total_fat": "20g",
-                "saturated_fat": "7g",
-                "cholesterol": "285mg",
-                "sodium": "640mg",
-                "potassium": "430mg",
-                "total_carbohydrate": "16g",
-                "dietary_fiber": "< 1g",
-                "sugars": "5g",
-                "protein": "15g"
+                "calories": 170,
+                "calories_from_fat": 126,
+                "total_fat": "14g",
+                "saturated_fat": "5g",
+                "cholesterol": "140mg",
+                "sodium": "610mg",
+                "potassium": "50mg",
+                "total_carbohydrate": "0g",
+                "dietary_fiber": "0g",
+                "sugars": "0g",
+                "protein": "11g"
               },
               "daily_values": {
-                "total_fat": "31%",
-                "saturated_fat": "34%",
-                "cholesterol": "96%",
-                "sodium": "27%",
-                "total_carbohydrate": "5%",
-                "protein": "15%"
+                "total_fat": "21%",
+                "saturated_fat": "26%",
+                "cholesterol": "47%",
+                "sodium": "25%",
+                "total_carbohydrate": "0%",
+                "protein": "11%"
               },
-              "ingredients": "Milk Whole Gal PF (Grade A Milk & Vitamin D3. Contains: Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Potato Hash Brown Patty IQF Ore-Ida (Potatoes, Vegetable Oil (Contains One Or More Of The Following Oils: Canola, Soybean, Cottonseed, Sunflower, Corn). Contains 2% or less of Dehydrated Onion, Dextrose, Natural Flavor, Salt, Sodium Acid Pyrophosphate Added To Maintain Natural Color.), Cheese Cheddar Mild Feather Shrd (Cheddar Cheese (Cultured Pasteurized Milk, Salt, Enzymes, Color Added, Anti-cake (Potato Starch, Powdered Cellulose). Common Allergens Present: Milk.), Oil Liq Pan & Grill Butter Flvr GC (Soybean Oil, Hydrogenated Soybean Oil, Soy Lecithin, Natural and Artificial Flavors, Artificial Color. COMMON ALLERGENS PRESENT: Soy.), Pepper Blk Ground TE (Ground Black Pepper.), Salt Kosher Crystal Diamond (Salt), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
-              "allergens": "Eggs, Milk, Soy"
+              "ingredients": "Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Cheese Cheddar Mild Feather Shrd (Cheddar Cheese (Cultured Pasteurized Milk, Salt, Enzymes, Color Added, Anti-cake (Potato Starch, Powdered Cellulose). Common Allergens Present: Milk.), Pork Bacon Diced 3/8\" Ckd Fs Hormel (Ingredients: Bacon (Cured With Water, Salt, Sugar, Sodium Erythorbate, Sodium Nitrite. May also contain\nSmoke Flavoring, Dextrose, Sodium Phosphate, Potassium Chloride, Sodium Diacetate, Flavoring, Honey).), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Pepper Blk Ground TE (Ground Black Pepper.), Salt Kosher Crystal Diamond (Salt)",
+              "allergens": "Eggs, Milk, Pork"
             },
             {
               "name": "Bacon",
@@ -3305,31 +89,31 @@
               "allergens": "Pork"
             },
             {
-              "name": "Sausage Link",
-              "serving_size": "Link (28g)",
+              "name": "Chicken Sausage Link",
+              "serving_size": "Link (40g)",
               "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 108,
-                "total_fat": "12g",
-                "saturated_fat": "4g",
-                "cholesterol": "20mg",
-                "sodium": "170mg",
-                "potassium": "50mg",
-                "total_carbohydrate": "0g",
+                "calories": 80,
+                "calories_from_fat": 45,
+                "total_fat": "5g",
+                "saturated_fat": "1.5g",
+                "cholesterol": "35mg",
+                "sodium": "240mg",
+                "potassium": "0mg",
+                "total_carbohydrate": "2g",
                 "dietary_fiber": "0g",
                 "sugars": "0g",
-                "protein": "3g"
+                "protein": "6g"
               },
               "daily_values": {
-                "total_fat": "18%",
-                "saturated_fat": "20%",
-                "cholesterol": "7%",
-                "sodium": "7%",
-                "total_carbohydrate": "0%",
-                "protein": "3%"
+                "total_fat": "8%",
+                "saturated_fat": "7%",
+                "cholesterol": "12%",
+                "sodium": "10%",
+                "total_carbohydrate": "1%",
+                "protein": "6%"
               },
-              "ingredients": "Sausage Link Pork Bkfst Raw Fz Hormel (Pork, Water, Salt, Spices, Natural Flavor (Rosemary Extract, Green Tea Extract), Dextrose, Sugar, Flavoring. In Collagen Casing)",
-              "allergens": "Pork"
+              "ingredients": "Chicken, Water, Salt, Potato Starch, Sugar, Spices, Dried Parsley, Calcium Alginate Casing.",
+              "allergens": "Not Specified"
             },
             {
               "name": "Hard Boiled Egg",
@@ -3386,31 +170,31 @@
               "allergens": "Eggs, Soy"
             },
             {
-              "name": "Roasted Rosemary Potatoes",
-              "serving_size": "4z Portion (115g)",
+              "name": "Company Potatoes",
+              "serving_size": "4z Portion (121g)",
               "nutrition": {
-                "calories": 170,
-                "calories_from_fat": 45,
-                "total_fat": "5g",
-                "saturated_fat": "1g",
-                "cholesterol": "0mg",
-                "sodium": "260mg",
-                "potassium": "640mg",
-                "total_carbohydrate": "25g",
-                "dietary_fiber": "2g",
-                "sugars": "1g",
-                "protein": "4g"
+                "calories": 380,
+                "calories_from_fat": 90,
+                "total_fat": "10g",
+                "saturated_fat": "4g",
+                "cholesterol": "20mg",
+                "sodium": "390mg",
+                "potassium": "870mg",
+                "total_carbohydrate": "60g",
+                "dietary_fiber": "3g",
+                "sugars": "4g",
+                "protein": "10g"
               },
               "daily_values": {
-                "total_fat": "8%",
-                "saturated_fat": "4%",
-                "cholesterol": "0%",
-                "sodium": "11%",
-                "total_carbohydrate": "8%",
-                "protein": "4%"
+                "total_fat": "16%",
+                "saturated_fat": "21%",
+                "cholesterol": "6%",
+                "sodium": "16%",
+                "total_carbohydrate": "20%",
+                "protein": "10%"
               },
-              "ingredients": "Potato Redskin Rstd Rosemary Fz Simplot (Redskin Potatoes, Olive Oil, Dextrose, Contains Less Than 2% Of Citric Acid, Dehydrated Garlic, Dehydrated Onion, Natural Flavors, Paprika Oleoresin Color, Salt, Spices (Including Rosemary), Sugar, Torula Yeast, Turmeric Oleoresin Color, Yeast Extract.), Oil Salad Vegetable Clr GC (Soybean Oil.)",
-              "allergens": "Not Specified"
+              "ingredients": "Potato Hash Brown Shrd Dehydrated BAF (Potato (Dry), Corn Starch, Dextrose And Onion Powder. Freshness Preserved With Sodium Bisulfite And Bht.), Grated Cheddar Cheese (Cheddar Cheese (Cultured Pasteurized Milk, Salt, Enzymes, Color Added, Anti-cake (Potato Starch, Powdered Cellulose). Common Allergens Present: Milk.), Cream of Mushroom Soup (Water, Vegetable Oil (Corn, Canola, And/Or Soybean), Mushrooms, Modified Food Starch, Wheat Flour, Contains Less Than 2% Of: Salt, Cream (Milk), Soy Protein Concentrate, Yeast Extract, Whey*, Garlic*,Flavoring. *Dried. Common Allergens Present: Milk, Wheat, Soy.), Onion Diced Fz (Onions.), Chip Potato Kettle Orig GLPCC 14z (Potatoes, Sunflower and/or Canola Oil, Sea salt. COMMON ALLERGENS PRESENT: None.), Cream Sour 5lb PF (Milk, Cream, Whey, Modified Cornstarch, Sodium Phosphate, Guar Gum, Carrageenan, Calcium Sulfate, Carob Bean Gum, Nonfat Dry Milk. Contains: Milk), Oil Liq Pan & Grill Butter Flvr GC (Soybean Oil, Hydrogenated Soybean Oil, Soy Lecithin, Natural and Artificial Flavors, Artificial Color. COMMON ALLERGENS PRESENT: Soy.), Salt Kosher Crystal Diamond (Salt), Pepper Blk Ground TE (Ground Black Pepper.), Water, 140F-160F (Filtered Tap Water.)",
+              "allergens": "Milk, Soy, Wheat"
             },
             {
               "name": "Buttered Biscuit",
@@ -3523,111 +307,57 @@
           ],
           "Brunch Entree": [
             {
-              "name": "Breakfast Casserole",
-              "serving_size": "1/32 (254g)",
+              "name": "Red Velvet Pancakes",
+              "serving_size": "2 Pancake Portion (271g)",
               "nutrition": {
-                "calories": 300,
-                "calories_from_fat": 180,
-                "total_fat": "20g",
-                "saturated_fat": "7g",
-                "cholesterol": "285mg",
-                "sodium": "640mg",
-                "potassium": "430mg",
-                "total_carbohydrate": "16g",
-                "dietary_fiber": "< 1g",
-                "sugars": "5g",
-                "protein": "15g"
+                "calories": 770,
+                "calories_from_fat": 225,
+                "total_fat": "25g",
+                "saturated_fat": "16g",
+                "cholesterol": "105mg",
+                "sodium": "510mg",
+                "potassium": "170mg",
+                "total_carbohydrate": "125g",
+                "dietary_fiber": "2g",
+                "sugars": "78g",
+                "protein": "12g"
               },
               "daily_values": {
-                "total_fat": "31%",
-                "saturated_fat": "34%",
-                "cholesterol": "96%",
-                "sodium": "27%",
-                "total_carbohydrate": "5%",
-                "protein": "15%"
+                "total_fat": "38%",
+                "saturated_fat": "78%",
+                "cholesterol": "34%",
+                "sodium": "21%",
+                "total_carbohydrate": "42%",
+                "protein": "12%"
               },
-              "ingredients": "Milk Whole Gal PF (Grade A Milk & Vitamin D3. Contains: Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Potato Hash Brown Patty IQF Ore-Ida (Potatoes, Vegetable Oil (Contains One Or More Of The Following Oils: Canola, Soybean, Cottonseed, Sunflower, Corn). Contains 2% or less of Dehydrated Onion, Dextrose, Natural Flavor, Salt, Sodium Acid Pyrophosphate Added To Maintain Natural Color.), Cheese Cheddar Mild Feather Shrd (Cheddar Cheese (Cultured Pasteurized Milk, Salt, Enzymes, Color Added, Anti-cake (Potato Starch, Powdered Cellulose). Common Allergens Present: Milk.), Oil Liq Pan & Grill Butter Flvr GC (Soybean Oil, Hydrogenated Soybean Oil, Soy Lecithin, Natural and Artificial Flavors, Artificial Color. COMMON ALLERGENS PRESENT: Soy.), Pepper Blk Ground TE (Ground Black Pepper.), Salt Kosher Crystal Diamond (Salt), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
-              "allergens": "Eggs, Milk, Soy"
+              "ingredients": "Milk Whole Gal PF (Grade A Milk & Vitamin D3. Contains: Milk.), Flour All Purpose Unbleached Gold Medal (Unbleached Wheat Flour, Malted Barley Flour, Niacin, Iron, Thiamin Mononitrate, Riboflavin, Folic Acid. Common Allergens Present: Wheat.), Sugar Powdered 10x 2lb Pioneer (Granulated Sugar, Cornstarch.), Cheese Cream BIB (Pasteurized Milk And Cream, Cheese Culture, Salt, Guar Gum, Xanthan Gum, Carob Bean Gum. Common Allergens Present: Milk.), Cream Half & Half Fs PF (Milk, Cream. Contains: Milk), Sugar Beet Granulated (Granulated Beet Sugar), Unsalted Butter, melted (Pasteurized Cream, Natural Flavorings. Contains Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Vinegar Wht Distilled 5% (White Distilled Vinegar and Filtered Water.), Cocoa Powder All-Purpose GC (Cocoa.), Color Liq Red GC (Water, Glycerine, FD&C Red #40 and Red #3.\nGlycerine not from pork), Flavor Vanilla Imitation KE (Water, Artificial Flavor, Caramel Color, Citric Acid, Sodium Benzoate.), Baking Powder (Corn Starch, Sodium Bicarbonate, Sodium Aluminum Sulfate, Monocalcium Phosphate.), Salt Kosher Crystal Diamond (Salt), Baking Soda (Sodium Bicarbonate.)",
+              "allergens": "Eggs, Milk, Wheat"
             },
             {
-              "name": "Sausage Link",
-              "serving_size": "Link (28g)",
+              "name": "Chicken Sausage Link",
+              "serving_size": "Link (40g)",
               "nutrition": {
-                "calories": 120,
-                "calories_from_fat": 108,
-                "total_fat": "12g",
-                "saturated_fat": "4g",
-                "cholesterol": "20mg",
-                "sodium": "170mg",
-                "potassium": "50mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "18%",
-                "saturated_fat": "20%",
-                "cholesterol": "7%",
-                "sodium": "7%",
-                "total_carbohydrate": "0%",
-                "protein": "3%"
-              },
-              "ingredients": "Sausage Link Pork Bkfst Raw Fz Hormel (Pork, Water, Salt, Spices, Natural Flavor (Rosemary Extract, Green Tea Extract), Dextrose, Sugar, Flavoring. In Collagen Casing)",
-              "allergens": "Pork"
-            },
-            {
-              "name": "Scrambled Eggs",
-              "serving_size": "4z Portion (114g)",
-              "nutrition": {
-                "calories": 170,
-                "calories_from_fat": 117,
-                "total_fat": "13g",
-                "saturated_fat": "3.5g",
-                "cholesterol": "420mg",
-                "sodium": "160mg",
-                "potassium": "160mg",
-                "total_carbohydrate": "0g",
-                "dietary_fiber": "0g",
-                "sugars": "0g",
-                "protein": "14g"
-              },
-              "daily_values": {
-                "total_fat": "21%",
-                "saturated_fat": "18%",
-                "cholesterol": "140%",
-                "sodium": "7%",
-                "total_carbohydrate": "0%",
-                "protein": "14%"
-              },
-              "ingredients": "Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Oil Liq Pan & Grill Butter Flvr GC (Soybean Oil, Hydrogenated Soybean Oil, Soy Lecithin, Natural and Artificial Flavors, Artificial Color. COMMON ALLERGENS PRESENT: Soy.)",
-              "allergens": "Eggs, Soy"
-            },
-            {
-              "name": "Roasted Rosemary Potatoes",
-              "serving_size": "4z Portion (115g)",
-              "nutrition": {
-                "calories": 170,
+                "calories": 80,
                 "calories_from_fat": 45,
                 "total_fat": "5g",
-                "saturated_fat": "1g",
-                "cholesterol": "0mg",
-                "sodium": "260mg",
-                "potassium": "640mg",
-                "total_carbohydrate": "25g",
-                "dietary_fiber": "2g",
-                "sugars": "1g",
-                "protein": "4g"
+                "saturated_fat": "1.5g",
+                "cholesterol": "35mg",
+                "sodium": "240mg",
+                "potassium": "0mg",
+                "total_carbohydrate": "2g",
+                "dietary_fiber": "0g",
+                "sugars": "0g",
+                "protein": "6g"
               },
               "daily_values": {
                 "total_fat": "8%",
-                "saturated_fat": "4%",
-                "cholesterol": "0%",
-                "sodium": "11%",
-                "total_carbohydrate": "8%",
-                "protein": "4%"
+                "saturated_fat": "7%",
+                "cholesterol": "12%",
+                "sodium": "10%",
+                "total_carbohydrate": "1%",
+                "protein": "6%"
               },
-              "ingredients": "Potato Redskin Rstd Rosemary Fz Simplot (Redskin Potatoes, Olive Oil, Dextrose, Contains Less Than 2% Of Citric Acid, Dehydrated Garlic, Dehydrated Onion, Natural Flavors, Paprika Oleoresin Color, Salt, Spices (Including Rosemary), Sugar, Torula Yeast, Turmeric Oleoresin Color, Yeast Extract.), Oil Salad Vegetable Clr GC (Soybean Oil.)",
+              "ingredients": "Chicken, Water, Salt, Potato Starch, Sugar, Spices, Dried Parsley, Calcium Alginate Casing.",
               "allergens": "Not Specified"
             }
           ],
@@ -3658,6 +388,33 @@
               },
               "ingredients": "Beef Patty Wide 80/20 4z Fs Halperns (Beef.), Pepper Blk Ground TE (Ground Black Pepper.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Spice Salt Onion TE (Dehydrated Onion.)",
               "allergens": "Not Specified"
+            },
+            {
+              "name": "Onion Tanglers",
+              "serving_size": "3z Portion (97g)",
+              "nutrition": {
+                "calories": 390,
+                "calories_from_fat": 279,
+                "total_fat": "31g",
+                "saturated_fat": "4g",
+                "cholesterol": "0mg",
+                "sodium": "260mg",
+                "potassium": "0mg",
+                "total_carbohydrate": "26g",
+                "dietary_fiber": "3g",
+                "sugars": "3g",
+                "protein": "3g"
+              },
+              "daily_values": {
+                "total_fat": "47%",
+                "saturated_fat": "20%",
+                "cholesterol": "0%",
+                "sodium": "11%",
+                "total_carbohydrate": "9%",
+                "protein": "3%"
+              },
+              "ingredients": "Onion Tangler Brd IQF Moore (Onions, Vegetable Oil (Soybean And/Or Canola), Bleached Wheat Flour, Yellow Corn Flour. Contains 2% or less of Citric Acid, Dextrose, Dried Garlic, Food Starch - Modified, Guar Gum, Lactic Acid, Maltodextrin, Natural Flavor, Onion Powder, Salt, Sorbitol, Water, Whey. COMMON ALLERGENS PRESENT: Milk, Wheat.), Oil Bulk RTI Canola Clr Fry (Canola Oil, TBHQ and Citric Acid Added To Protect Flavor, Dimethylpolysiloxanes, An Anti-Foaming Agent Added.)",
+              "allergens": "Milk, Wheat"
             },
             {
               "name": "Black Bean Veggie Burger",
@@ -3739,33 +496,6 @@
               },
               "ingredients": "Onion Yellow Slcd 1/8\" Fs (Fresh Yellow Onions.), Oil Salad Vegetable Clr GC (Soybean Oil.)",
               "allergens": "Not Specified"
-            },
-            {
-              "name": "Onion Tanglers",
-              "serving_size": "3z Portion (97g)",
-              "nutrition": {
-                "calories": 390,
-                "calories_from_fat": 279,
-                "total_fat": "31g",
-                "saturated_fat": "4g",
-                "cholesterol": "0mg",
-                "sodium": "260mg",
-                "potassium": "0mg",
-                "total_carbohydrate": "26g",
-                "dietary_fiber": "3g",
-                "sugars": "3g",
-                "protein": "3g"
-              },
-              "daily_values": {
-                "total_fat": "47%",
-                "saturated_fat": "20%",
-                "cholesterol": "0%",
-                "sodium": "11%",
-                "total_carbohydrate": "9%",
-                "protein": "3%"
-              },
-              "ingredients": "Onion Tangler Brd IQF Moore (Onions, Vegetable Oil (Soybean And/Or Canola), Bleached Wheat Flour, Yellow Corn Flour. Contains 2% or less of Citric Acid, Dextrose, Dried Garlic, Food Starch - Modified, Guar Gum, Lactic Acid, Maltodextrin, Natural Flavor, Onion Powder, Salt, Sorbitol, Water, Whey. COMMON ALLERGENS PRESENT: Milk, Wheat.), Oil Bulk RTI Canola Clr Fry (Canola Oil, TBHQ and Citric Acid Added To Protect Flavor, Dimethylpolysiloxanes, An Anti-Foaming Agent Added.)",
-              "allergens": "Milk, Wheat"
             }
           ],
           "Grill Condiments": [
@@ -3963,87 +693,87 @@
               "allergens": "Milk, Wheat"
             },
             {
-              "name": "Margherita Pizza",
-              "serving_size": "1/8 Slice (141g)",
+              "name": "Prosciutto Pizza",
+              "serving_size": "1 Slice (128g)",
               "nutrition": {
-                "calories": 300,
-                "calories_from_fat": 126,
-                "total_fat": "14g",
-                "saturated_fat": "6g",
-                "cholesterol": "20mg",
-                "sodium": "920mg",
-                "potassium": "115mg",
-                "total_carbohydrate": "35g",
-                "dietary_fiber": "3g",
-                "sugars": "4g",
+                "calories": 260,
+                "calories_from_fat": 81,
+                "total_fat": "9g",
+                "saturated_fat": "4g",
+                "cholesterol": "190mg",
+                "sodium": "880mg",
+                "potassium": "110mg",
+                "total_carbohydrate": "32g",
+                "dietary_fiber": "2g",
+                "sugars": "5g",
                 "protein": "13g"
               },
               "daily_values": {
-                "total_fat": "21%",
-                "saturated_fat": "29%",
-                "cholesterol": "7%",
-                "sodium": "38%",
-                "total_carbohydrate": "12%",
+                "total_fat": "15%",
+                "saturated_fat": "19%",
+                "cholesterol": "63%",
+                "sodium": "37%",
+                "total_carbohydrate": "11%",
                 "protein": "13%"
               },
-              "ingredients": "Dough Pizza 20z Ball Fz Mama LaRosa (Enriched Flour Bleached (Wheat our, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboavin, Folic Acid), Water, Sugar, Salt, Soybean Oil with Mono & Di-glycerides, Wheat Gluten, Yeast, Enzymes, Ascorbic Acid, L-cysteine), Cheese Mozz Dry Pk (Pasteurized Milk, Vinegar, Salt, Vegetable Enzymes.), Tomato Plum San Marzano #10 Tavolini (San Marzano D.O.P. Plum Peeled Tomatoes, San Marzano D.O.P. Tomato Puree.), Water (Filtered Tap Water.), Tomato Paste #10 Redpack (Tomatoes and Citric Acid.), Basil Fs (Basil.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Cheese Parmesan Grated Primo (Imported Parmesan Cheese: (Pasteurized Part-Skim Cows Milk, Cheese Cultures, Salt, Enzymes), Powdered Cellulose added to prevent caking, Natamycin (A Natural Mold Inhibitor). COMMON ALLERGENS PRESENT: Milk.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Pepper Blk Ground TE (Ground Black Pepper.), Basil Leaf Ground TE (Basil.), Oregano Ground TE (Oregano.), Parsley Flake TE (Parsley.)",
-              "allergens": "Milk, Wheat"
+              "ingredients": "Dough Pizza 20z Ball Fz Mama LaRosa (Enriched Flour Bleached (Wheat our, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboavin, Folic Acid), Water, Sugar, Salt, Soybean Oil with Mono & Di-glycerides, Wheat Gluten, Yeast, Enzymes, Ascorbic Acid, L-cysteine), Cheese Mozz Part-Skim Feather Shrd Primo (Pasteurized Milk, Skim Milk; Cheese Cultures; Salt; Enzymes; Powdered Cellulose (Added To Prevent Caking); Natamycin (Added As A Mold Inhibitor). Common Allergens Present: Milk.), Tomato Plum San Marzano #10 Tavolini (San Marzano D.O.P. Plum Peeled Tomatoes, San Marzano D.O.P. Tomato Puree.), Ham Prosciutto Slcd Fs Margherita (Cured with Salt, Sugar, Spices, Sodium Nitrate, Sodium Nitrite, Flavoring.), Glz Balsamic Orig Roland (Balsamic Vinegar of Modena \"Aceto Balsamico Di Modena IGP\" 70% (Wine Vinegar, Concentrated Grape Must, Caramel Color), Glucose Syrup, Sugar, Modified Corn Starch, Xanthan Gum. Contains Sulfites.), Water (Filtered Tap Water.), Tomato Paste #10 Redpack (Tomatoes and Citric Acid.), Arugula Baby Wild Fs (Wild Arugula), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Cheese Parmesan Grated Primo (Imported Parmesan Cheese: (Pasteurized Part-Skim Cows Milk, Cheese Cultures, Salt, Enzymes), Powdered Cellulose added to prevent caking, Natamycin (A Natural Mold Inhibitor). COMMON ALLERGENS PRESENT: Milk.), Salt Kosher Crystal Diamond (Salt), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Garlic Granulated TE (Dried Garlic.), Pepper Blk Ground TE (Ground Black Pepper.), Basil Leaf Ground TE (Basil.), Oregano Ground TE (Oregano.), Parsley Flake TE (Parsley.)",
+              "allergens": "Milk, Pork, Wheat"
             },
             {
-              "name": "Pepperoni",
-              "serving_size": "1/16 Cut Slice (83g)",
+              "name": "Sausage",
+              "serving_size": "1/8 Cut Slice (173g)",
               "nutrition": {
-                "calories": 220,
-                "calories_from_fat": 117,
-                "total_fat": "13g",
-                "saturated_fat": "5g",
-                "cholesterol": "30mg",
-                "sodium": "740mg",
-                "potassium": "60mg",
-                "total_carbohydrate": "17g",
-                "dietary_fiber": "2g",
-                "sugars": "2g",
-                "protein": "9g"
+                "calories": 410,
+                "calories_from_fat": 207,
+                "total_fat": "23g",
+                "saturated_fat": "6g",
+                "cholesterol": "40mg",
+                "sodium": "1400mg",
+                "potassium": "120mg",
+                "total_carbohydrate": "37g",
+                "dietary_fiber": "4g",
+                "sugars": "4g",
+                "protein": "19g"
               },
               "daily_values": {
-                "total_fat": "21%",
-                "saturated_fat": "25%",
-                "cholesterol": "10%",
-                "sodium": "31%",
-                "total_carbohydrate": "6%",
-                "protein": "10%"
+                "total_fat": "36%",
+                "saturated_fat": "29%",
+                "cholesterol": "14%",
+                "sodium": "58%",
+                "total_carbohydrate": "12%",
+                "protein": "19%"
               },
-              "ingredients": "Dough Pizza 20z Ball Fz Mama LaRosa (Enriched Flour Bleached (Wheat our, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboavin, Folic Acid), Water, Sugar, Salt, Soybean Oil with Mono & Di-glycerides, Wheat Gluten, Yeast, Enzymes, Ascorbic Acid, L-cysteine), Cheese Mozz Part-Skim Feather Shrd Primo (Pasteurized Milk, Skim Milk; Cheese Cultures; Salt; Enzymes; Powdered Cellulose (Added To Prevent Caking); Natamycin (Added As A Mold Inhibitor). Common Allergens Present: Milk.), Pepperoni Chix & Beef Slcd Halal (Green Mabha, Bht With Citric Acid Added To Help Protect Flavor.\nSmoke Flavoring Added Ingredients: Chicken, Beef, Turkey, Salt, Contains 2% Or\nLess Of Water, Dextrose, Spices, Smoke Flavoring, Flavoring, Garlic Powder,\nOleoresin Of Paprika, Rosemary Extract, Sodium Ascorbate, Spice Extractive, Citric\nAcid, Lactic Acid Starter Culture, Bha, Bht, Sodium Nitrite.), Tomato Plum San Marzano #10 Tavolini (San Marzano D.O.P. Plum Peeled Tomatoes, San Marzano D.O.P. Tomato Puree.), Water (Filtered Tap Water.), Tomato Paste #10 Redpack (Tomatoes and Citric Acid.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Cheese Parmesan Grated Primo (Imported Parmesan Cheese: (Pasteurized Part-Skim Cows Milk, Cheese Cultures, Salt, Enzymes), Powdered Cellulose added to prevent caking, Natamycin (A Natural Mold Inhibitor). COMMON ALLERGENS PRESENT: Milk.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Pepper Blk Ground TE (Ground Black Pepper.), Basil Leaf Ground TE (Basil.), Oregano Ground TE (Oregano.), Parsley Flake TE (Parsley.)",
-              "allergens": "Milk, Wheat"
+              "ingredients": "Dough Pizza 20z Ball Fz Mama LaRosa (Enriched Flour Bleached (Wheat our, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboavin, Folic Acid), Water, Sugar, Salt, Soybean Oil with Mono & Di-glycerides, Wheat Gluten, Yeast, Enzymes, Ascorbic Acid, L-cysteine), Sausage Ital Chnk Ckd Fz Fontanini (Pork, Spices, Water, Salt, Corn Syrup Solids, Garlic, Paprika, Natural Flavor (Autolyzed Yeast Extract, Lactic Acid, Spice Extractive), Sugar, Disodium Inosinate and Disodium Guanylate, Soy Lecithin used as Processing Aid.), Cheese Mozz Part-Skim Feather Shrd Primo (Pasteurized Milk, Skim Milk; Cheese Cultures; Salt; Enzymes; Powdered Cellulose (Added To Prevent Caking); Natamycin (Added As A Mold Inhibitor). Common Allergens Present: Milk.), Tomato Plum San Marzano #10 Tavolini (San Marzano D.O.P. Plum Peeled Tomatoes, San Marzano D.O.P. Tomato Puree.), Water (Filtered Tap Water.), Tomato Paste #10 Redpack (Tomatoes and Citric Acid.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.), Oil Canola & EVOO Blend 75/25 GC (Canola Oil & Extra Virgin Olive Oil.), Cheese Parmesan Grated Primo (Imported Parmesan Cheese: (Pasteurized Part-Skim Cows Milk, Cheese Cultures, Salt, Enzymes), Powdered Cellulose added to prevent caking, Natamycin (A Natural Mold Inhibitor). COMMON ALLERGENS PRESENT: Milk.), Salt Kosher Crystal Diamond (Salt), Garlic Granulated TE (Dried Garlic.), Pepper Blk Ground TE (Ground Black Pepper.), Basil Leaf Ground TE (Basil.), Oregano Ground TE (Oregano.), Parsley Flake TE (Parsley.)",
+              "allergens": "Milk, Pork, Soy, Wheat"
             }
           ],
           "Pastaria": [
             {
-              "name": "Marinara Sauce",
-              "serving_size": "1 Flz Portion (42g)",
+              "name": "Garlic & Herb Breadstick",
+              "serving_size": "1ct (51g)",
               "nutrition": {
-                "calories": 10,
-                "calories_from_fat": 0,
-                "total_fat": "0g",
+                "calories": 130,
+                "calories_from_fat": 18,
+                "total_fat": "2g",
                 "saturated_fat": "0g",
                 "cholesterol": "0mg",
-                "sodium": "135mg",
-                "potassium": "100mg",
-                "total_carbohydrate": "3g",
+                "sodium": "230mg",
+                "potassium": "40mg",
+                "total_carbohydrate": "24g",
                 "dietary_fiber": "0g",
-                "sugars": "2g",
-                "protein": "0g"
+                "sugars": "< 1g",
+                "protein": "4g"
               },
               "daily_values": {
-                "total_fat": "0%",
+                "total_fat": "3%",
                 "saturated_fat": "0%",
                 "cholesterol": "0%",
-                "sodium": "6%",
-                "total_carbohydrate": "1%",
-                "protein": "0%"
+                "sodium": "10%",
+                "total_carbohydrate": "8%",
+                "protein": "4%"
               },
-              "ingredients": "Tomato Diced in Juice #10 GC (Diced Tomatoes, Tomato Juice, Salt, Calcium Chloride, Citric Acid.), Tomato Puree #10 (Tomato Puree (Water, Tomato Paste), Citric Acid. COMMON ALLERGENS PRESENT: None.), Onion Diced 3/8\" Fs (Fresh Yellow Onions.), Fresh Peeled Garlic, cleaned (Garlic.), Sugar Beet Granulated (Granulated Beet Sugar), Salt Kosher Crystal Diamond (Salt), Oil Salad Vegetable Clr GC (Soybean Oil.), Oregano Leaf TE (Oregano.), Basil Leaf TE (Basil Leaves.), Thyme Leaf TE (Thyme Leaves.)",
-              "allergens": "Not Specified"
+              "ingredients": "Unbleached, Enriched Flour (Wheat Flour, Malted Barley Flour, Niacin, Iron, Thiamin Mononitrate, Riboflavin, Folic Acid), Water, Soybean Oil, Contains 2% or less of the following: Sugar, Salt, Yeast, Calcium Propionate (Preservative), Monoglycerides, Italian Garlic Blend (Garlic, Onion, Spices, Red Bell Peppers, Maltodextrin), Artificial Flavor, Ascorbic Acid, Enzymes. COMMON ALLERGENS PRESENT: Wheat.",
+              "allergens": "Wheat"
             }
           ],
           "Mexican": [
@@ -4154,6 +884,89 @@
               },
               "ingredients": "Fresh Peppers, Water, Vinegar, Salt, Calcium Chloride, Sodium Benzoate (preservative), Natural Flavors, Sodium Metabisulfite (preservative), Yellow 5.",
               "allergens": "Not Specified"
+            }
+          ],
+          "Dessert": [
+            {
+              "name": "Chocolate Chip Blondie",
+              "serving_size": "Bars (89g)",
+              "nutrition": {
+                "calories": 360,
+                "calories_from_fat": 135,
+                "total_fat": "15g",
+                "saturated_fat": "9g",
+                "cholesterol": "45mg",
+                "sodium": "220mg",
+                "potassium": "5mg",
+                "total_carbohydrate": "55g",
+                "dietary_fiber": "2g",
+                "sugars": "36g",
+                "protein": "4g"
+              },
+              "daily_values": {
+                "total_fat": "24%",
+                "saturated_fat": "43%",
+                "cholesterol": "15%",
+                "sodium": "9%",
+                "total_carbohydrate": "18%",
+                "protein": "4%"
+              },
+              "ingredients": "Sugar Brown Lt (Sugar, Molasses), Flour All Purpose Bleached Gold Medal (Bleached Wheat Flour, Malted Barley Flour, Niacin, Iron, Thiamin Mononitrate, Riboflavin, Folic Acid. Common Allergens Present: Wheat.), Choc Chips Semi-Sweet GC (Sugar, Unsweetened Chocolate, Cocoa Butter, Soy Lecithin (an emulsifier), Natural Vanilla Extract, Milk. COMMON ALLERGENS PRESENT: Soy, Milk.), Butter Prints Unsalted AA GC (Pasteurized Cream, Natural Flavorings. Contains Milk.), Egg Fresh Lg Grade A (Shelled Eggs. COMMON ALLERGENS PRESENT: Eggs.), Salt Kosher Crystal Diamond (Salt), Baking Soda (Sodium Bicarbonate.), Flavor Vanilla Imitation KE (Water, Artificial Flavor, Caramel Color, Citric Acid, Sodium Benzoate.), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
+              "allergens": "Eggs, Milk, Soy, Wheat"
+            },
+            {
+              "name": "Fresh Double Chocolate Chunk Cookies",
+              "serving_size": "Cookies (57g)",
+              "nutrition": {
+                "calories": 520,
+                "calories_from_fat": 225,
+                "total_fat": "25g",
+                "saturated_fat": "13g",
+                "cholesterol": "35mg",
+                "sodium": "320mg",
+                "potassium": "450mg",
+                "total_carbohydrate": "66g",
+                "dietary_fiber": "4g",
+                "sugars": "45g",
+                "protein": "7g"
+              },
+              "daily_values": {
+                "total_fat": "39%",
+                "saturated_fat": "63%",
+                "cholesterol": "12%",
+                "sodium": "13%",
+                "total_carbohydrate": "22%",
+                "protein": "7%"
+              },
+              "ingredients": "Dough Cookie Double Choc Chnk 2.25z Fz (Sugar, Milk Chocolate Chunks (Sugar, Whole Milk Powder, Cocoa Butter, Unsweetened Chocolate, Unsweetened Chocolate Processed With Alkali, Dextrose, Milkfat, Soy Lecithin [Emulsifier], Artificial Flavor), Wheat Flour, Chocolate Chunks (Sugar, Unsweetened Chocolate, Cocoa Butter, Soy Lecithin [Emulsifier], Natural And Artificial Flavors, Salt, Milk), Butter (Cream, Natural Flavoring), Enriched Wheat Flour (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboflavin, Folic Acid), Cocoa Powder Processed With Alkali, Water, Margarine (Palm Oil, Water, Salt, Mono- And Diglycerides, Soy Lecithin, Sodium Benzoate [Preservative], Artificial Flavor, Beta-Carotene [Color], Vitamin A Palmitate), Shortening (Soybean Oil, Vegetable Mono & Diglycerides, Mixed Tocopherols And Ascorbyl Palmitate [As Antioxidants]), Invert Sugar, Contains Less Than 2% Of Baking Soda, Buttermilk Powder (Milk Solids), Caramel Color, Eggs, Molasses, Natural Flavors, Salt, Soy Lecithin, Whey Protein Concentrate. Common Allergens Present: Wheat, Egg, Milk, Soy. May Contain: Peanuts, Tree Nuts.)",
+              "allergens": "Eggs, Milk, Peanuts, Soy, Tree Nuts, Wheat"
+            },
+            {
+              "name": "Fresh Chocolate Chunk Cookie",
+              "serving_size": "Cookies (28g)",
+              "nutrition": {
+                "calories": 130,
+                "calories_from_fat": 54,
+                "total_fat": "6g",
+                "saturated_fat": "3.5g",
+                "cholesterol": "5mg",
+                "sodium": "65mg",
+                "potassium": "45mg",
+                "total_carbohydrate": "17g",
+                "dietary_fiber": "< 1g",
+                "sugars": "11g",
+                "protein": "1g"
+              },
+              "daily_values": {
+                "total_fat": "9%",
+                "saturated_fat": "16%",
+                "cholesterol": "2%",
+                "sodium": "3%",
+                "total_carbohydrate": "6%",
+                "protein": "1%"
+              },
+              "ingredients": "Dough Cookie Choc Chnk 1.5z Fz Sienna (Sugar, Chocolate Chunks (Sugar, Unsweetened Chocolate, Cocoa Butter, Soy Lecithin [Emulsifier], Natural And Artificial Flavors, Salt, Milk), Enriched Wheat Flour (Wheat Flour, Malted Barley Flour, Niacin, Reduced Iron, Thiamine Mononitrate, Riboflavin, Folic Acid), Wheat Flour, Semi-Sweet Chocolate Chunks (Sugar, Unsweetened Chocolate, Cocoa Butter, Soy Lecithin [Emulsifier], Natural Flavor, Salt, Milk), Butter (Cream, Natural Flavoring), Shortening (Soybean Oil, Vegetable Mono & Diglycerides, Mixed Tocopherols And Ascorbyl Palmitate [As Antioxidants]), Water, Invert Sugar, Margarine (Palm Oil, Water, Salt, Mono- And Diglycerides, Soy Lecithin, Sodium Benzoate [Preservative], Artificial Flavor, Beta-Carotene [Color], Vitamin A Palmitate), Contains Less Than 2% Of Baking Powder (Sodium Bicarbonate, Corn Starch, Sodium Aluminum Sulfate, Calcium Sulfate, Monocalcium Phosphate), Baking Soda, Buttermilk Powder (Milk Solids), Eggs, Molasses, Natural Flavors, Salt, Soy Lecithin. Common Allergens Present: Wheat, Egg, Milk, Soy. May Contain: Peanuts, Tree Nuts.)",
+              "allergens": "Eggs, Milk, Soy, Wheat"
             }
           ],
           "Mexican Tortillas And Chips": [
@@ -5751,6 +2564,60 @@
             }
           ],
           "Plant Based": [
+            {
+              "name": "Steamed Broccoli",
+              "serving_size": "4z Portion (122g)",
+              "nutrition": {
+                "calories": 35,
+                "calories_from_fat": 0,
+                "total_fat": "0g",
+                "saturated_fat": "0g",
+                "cholesterol": "0mg",
+                "sodium": "15mg",
+                "potassium": "170mg",
+                "total_carbohydrate": "6g",
+                "dietary_fiber": "4g",
+                "sugars": "2g",
+                "protein": "4g"
+              },
+              "daily_values": {
+                "total_fat": "0%",
+                "saturated_fat": "0%",
+                "cholesterol": "0%",
+                "sodium": "1%",
+                "total_carbohydrate": "2%",
+                "protein": "4%"
+              },
+              "ingredients": "Broccoli Florets Fz (Broccoli. COMMON ALLERGENS PRESENT: None.)",
+              "allergens": "Not Specified"
+            },
+            {
+              "name": "Baked Sweet Potatoes",
+              "serving_size": "Potatoes (129g)",
+              "nutrition": {
+                "calories": 120,
+                "calories_from_fat": 9,
+                "total_fat": "1g",
+                "saturated_fat": "0g",
+                "cholesterol": "0mg",
+                "sodium": "45mg",
+                "potassium": "610mg",
+                "total_carbohydrate": "27g",
+                "dietary_fiber": "4g",
+                "sugars": "8g",
+                "protein": "3g"
+              },
+              "daily_values": {
+                "total_fat": "1%",
+                "saturated_fat": "0%",
+                "cholesterol": "0%",
+                "sodium": "2%",
+                "total_carbohydrate": "9%",
+                "protein": "3%"
+              },
+              "ingredients": "Potato Sweet (Sweet Potatoes), Oil Spray Pan Coating Allergen Free (Canola Oil, Canola Lecithin, Mono- and Diglycerides, Natural Flavor, and Propellant.)",
+              "allergens": "Not Specified"
+            },
             {
               "name": "Quinoa",
               "serving_size": "2z Portion (57g)",

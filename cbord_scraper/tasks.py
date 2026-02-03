@@ -15,10 +15,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, WebDriverException, TimeoutException
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Set
 from .constants import HALLS, DATE_STR, URL, WAIT_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS, MAX_RETRIES
 import time
 import os
+
 
 def create_chrome_driver() -> webdriver.Chrome:
     """
@@ -37,24 +38,23 @@ def create_chrome_driver() -> webdriver.Chrome:
     opts.add_argument("--disable-background-timer-throttling")
     opts.add_argument("--disable-backgrounding-occluded-windows")
     opts.add_argument("--disable-renderer-backgrounding")
-    
-    # Explicit Chrome binary path provisioned by setup-chrome action
+
     chrome_bin = os.environ.get(
         "CHROME_PATH",
         "/opt/hostedtoolcache/setup-chrome/chrome/stable/x64/chrome",
     )
     opts.binary_location = chrome_bin
 
-    # Explicit Chromedriver path provisioned by setup-chrome action
     chromedriver_bin = os.environ.get(
         "CHROMEDRIVER_PATH",
         "/opt/hostedtoolcache/setup-chrome/chromedriver/stable/x64/chromedriver",
-   )
+    )
     service = Service(chromedriver_bin)
 
     driver = webdriver.Chrome(service=service, options=opts)
     driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT_SECS)
     return driver
+
 
 def fetch_meal_links(hall: str) -> List[Tuple[str, str]]:
     """
@@ -70,58 +70,47 @@ def fetch_meal_links(hall: str) -> List[Tuple[str, str]]:
         wait = WebDriverWait(driver, WAIT_TIMEOUT_SECS)
         print(f"Checking {hall}...")
 
-        # Go to the main URL
         driver.get(URL)
-        
-        # Click the hall link
+
         wait.until(EC.element_to_be_clickable((By.LINK_TEXT, hall))).click()
-        
-        # Wait for the meal-list table to load
         wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "cbo_nn_menuCell")))
-        
-        # Try to find the specific date cell for today
+
         try:
             cell = driver.find_element(
                 By.XPATH,
                 f"//td[@class='cbo_nn_menuCell'][contains(normalize-space(.), '{DATE_STR}')]"
             )
-        
-        # If no cell found, no menu for today
         except NoSuchElementException:
             print(f"  No menu available for {DATE_STR}")
             return []
-        
-        # Grab all meal links from the cell
+
         links = cell.find_elements(By.CSS_SELECTOR, "a.cbo_nn_menuLink")
 
-        # If no links found, no meals for today
         if not links:
             print(f"  No meals found for {DATE_STR}")
             return []
 
-        # Extract meal names from links 
         meals = [a.text.strip() for a in links]
         print(f"  ✓ Found {len(meals)} meals: {', '.join(meals)}")
         return [(hall, meal) for meal in meals]
 
-    # Handle specific Selenium exceptions 
     except TimeoutException:
         print(f"  Timeout loading {hall}")
         return []
-    except WebDriverException as e:
-        print(f"  Browser connection failed")
+    except WebDriverException:
+        print("  Browser connection failed")
         return []
     except Exception as e:
         print(f"  Unexpected error: {type(e).__name__}")
         return []
 
-    # Ensure driver is closed properly
     finally:
         if driver:
             try:
                 driver.quit()
             except:
                 pass
+
 
 def fetch_meal_links_with_retries(hall: str) -> List[Tuple[str, str]]:
     """
@@ -130,8 +119,8 @@ def fetch_meal_links_with_retries(hall: str) -> List[Tuple[str, str]]:
     Attempts up to MAX_RETRIES times with 1-second sleep between attempts.
     Returns meal links from the first successful scrape or an empty list after all retries.
     """
-    
-    for attempt in range(1, MAX_RETRIES+1):
+
+    for attempt in range(1, MAX_RETRIES + 1):
         links = fetch_meal_links(hall)
         if links or attempt == MAX_RETRIES:
             return links
@@ -139,16 +128,21 @@ def fetch_meal_links_with_retries(hall: str) -> List[Tuple[str, str]]:
         time.sleep(1)
     return []
 
-def discover_all_meal_tasks() -> List[Tuple[str, str]]:
+
+def discover_all_meal_tasks(exclude_halls: Optional[Set[str]] = None) -> List[Tuple[str, str]]:
     """
     Build and return a complete list of (hall, meal) scraping tasks for DATE_STR.
 
-    Iterates over all halls in HALLS and aggregates discovered meals into a flat list.
+    Iterates over all halls in HALLS (minus any excluded halls) and aggregates discovered meals.
     """
+
+    exclude_halls = exclude_halls or set()
 
     all_tasks = []
     for hall in HALLS:
+        if hall in exclude_halls:
+            continue
         hall_tasks = fetch_meal_links_with_retries(hall)
         all_tasks.extend(hall_tasks)
-    
+
     return all_tasks

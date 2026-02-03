@@ -40,18 +40,41 @@ jobs:
                   set -euo pipefail
                   mkdir -p /tmp
 
-                  echo "Running Nutrislice scraper (North + South)..."
+                  echo "Running Nutrislice scraper..."
                   python -m nutrislice_scraper.main
                   mv menu_summary.json /tmp/menu_summary_nutri.json
                   mv consolidated_menu.json /tmp/consolidated_menu_nutri.json
 
-                  echo "Running CBORD scraper (Holy Cross + Saint Mary's)..."
-                  python -m cbord_scraper.main
+                  # Exclude halls that Nutrislice actually produced meals for (non-empty dict).
+                  NUTRI_HALLS_CSV="$(python - <<'PY'
+                  import json
+                  p = "/tmp/consolidated_menu_nutri.json"
+                  with open(p, "r", encoding="utf-8") as f:
+                      data = json.load(f)
+
+                  dh = data.get("dining_halls", {})
+                  halls = []
+                  if isinstance(dh, dict):
+                      for hall, meals in dh.items():
+                          if isinstance(meals, dict) and len(meals) > 0:
+                              halls.append(hall)
+
+                  print(",".join(sorted(halls)))
+                  PY
+                  )"
+                  echo "Nutrislice halls with meals: ${NUTRI_HALLS_CSV:-<none>}"
+
+                  echo "Running CBORD scraper (excluding Nutrislice halls)..."
+                  python -m cbord_scraper.main --exclude-halls "$NUTRI_HALLS_CSV"
                   mv menu_summary.json /tmp/menu_summary_cbord.json
                   mv consolidated_menu.json /tmp/consolidated_menu_cbord.json
 
                   echo "Merging into final JSONs..."
-                  python merge_menus.py                     --cbord /tmp/consolidated_menu_cbord.json                     --nutri /tmp/consolidated_menu_nutri.json                     --out-consolidated /tmp/consolidated_menu.json                     --out-summary /tmp/menu_summary.json
+                  python merge_menus.py \
+                    --cbord /tmp/consolidated_menu_cbord.json \
+                    --nutri /tmp/consolidated_menu_nutri.json \
+                    --out-consolidated /tmp/consolidated_menu.json \
+                    --out-summary /tmp/menu_summary.json
 
             # Soft check: measure meal count but don't fail yet
             - name: Soft-check meal count
@@ -92,13 +115,35 @@ jobs:
                   mv menu_summary.json /tmp/menu_summary_nutri.json
                   mv consolidated_menu.json /tmp/consolidated_menu_nutri.json
 
-                  echo "Retry: CBORD..."
-                  python -m cbord_scraper.main
+                  NUTRI_HALLS_CSV="$(python - <<'PY'
+                  import json
+                  p = "/tmp/consolidated_menu_nutri.json"
+                  with open(p, "r", encoding="utf-8") as f:
+                      data = json.load(f)
+
+                  dh = data.get("dining_halls", {})
+                  halls = []
+                  if isinstance(dh, dict):
+                      for hall, meals in dh.items():
+                          if isinstance(meals, dict) and len(meals) > 0:
+                              halls.append(hall)
+
+                  print(",".join(sorted(halls)))
+                  PY
+                  )"
+                  echo "Retry: Nutrislice halls with meals: ${NUTRI_HALLS_CSV:-<none>}"
+
+                  echo "Retry: CBORD (excluding Nutrislice halls)..."
+                  python -m cbord_scraper.main --exclude-halls "$NUTRI_HALLS_CSV"
                   mv menu_summary.json /tmp/menu_summary_cbord.json
                   mv consolidated_menu.json /tmp/consolidated_menu_cbord.json
 
                   echo "Retry: merge..."
-                  python merge_menus.py                     --cbord /tmp/consolidated_menu_cbord.json                     --nutri /tmp/consolidated_menu_nutri.json                     --out-consolidated /tmp/consolidated_menu.json                     --out-summary /tmp/menu_summary.json
+                  python merge_menus.py \
+                    --cbord /tmp/consolidated_menu_cbord.json \
+                    --nutri /tmp/consolidated_menu_nutri.json \
+                    --out-consolidated /tmp/consolidated_menu.json \
+                    --out-summary /tmp/menu_summary.json
 
             - name: Validate consolidated_menu.json has meals
               id: validate_menu

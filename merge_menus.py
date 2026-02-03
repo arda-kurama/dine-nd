@@ -7,9 +7,6 @@ from datetime import datetime
 from typing import Any, Dict
 
 
-PREFER_NUTRISLICE_HALLS = {"North Dining Hall", "South Dining Hall"}
-
-
 def load_json(path: str) -> Dict[str, Any]:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -28,23 +25,16 @@ def merge_consolidated(cbord: Dict[str, Any], nutri: Dict[str, Any]) -> Dict[str
     all_halls = set(cb_dh.keys()) | set(nu_dh.keys())
     for hall in sorted(all_halls):
         cb_meals = cb_dh.get(hall, {})
-        nu_meals = nu_dh.get(hall, {})
+        nu_meals = nu_dh.get(hall, None)
 
         if not isinstance(cb_meals, dict):
             cb_meals = {}
-        if not isinstance(nu_meals, dict):
-            nu_meals = {}
 
-        # Start with CBORD, then overlay Nutrislice where available.
-        merged_meals = dict(cb_meals)
-        merged_meals.update(nu_meals)
-
-        # Explicit preference: Nutrislice should win for NDH/SDH if both exist.
-        if hall in PREFER_NUTRISLICE_HALLS:
-            merged_meals = dict(cb_meals)
-            merged_meals.update(nu_meals)
-
-        merged["dining_halls"][hall] = merged_meals
+        # Nutrislice wins for the hall only if it actually has meals (non-empty dict).
+        if isinstance(nu_meals, dict) and len(nu_meals) > 0:
+            merged["dining_halls"][hall] = nu_meals
+        else:
+            merged["dining_halls"][hall] = cb_meals
 
     return merged
 

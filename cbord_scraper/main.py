@@ -8,14 +8,35 @@ Main responsibilities:
 4. Print a final scrape report to stdout.
 """
 
+import argparse
 import json
 import sys
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from .constants import DATE_STR
+from .constants import DATE_STR, HALLS
 from .tasks import discover_all_meal_tasks
 from .scraper import scrape_meal_with_retries
 from .consolidate import consolidate_meal_data, create_lightweight_summary
+
+
+def _parse_exclude_halls(raw: str) -> set[str]:
+    """
+    Parse a comma-separated list of hall names. Matching is case-insensitive
+    against known HALLS, and preserves canonical names.
+    """
+    if not raw:
+        return set()
+
+    parts = [p.strip() for p in raw.split(",") if p.strip()]
+    hall_map = {h.lower(): h for h in HALLS}
+    exclude: set[str] = set()
+
+    for p in parts:
+        key = p.lower()
+        exclude.add(hall_map.get(key, p))
+
+    return exclude
+
 
 def main() -> None:
     """
@@ -25,10 +46,22 @@ def main() -> None:
     Exits with code 1 if no meals are found.
     """
 
+    ap = argparse.ArgumentParser(description="CBORD (NetNutrition) scraper for DineND.")
+    ap.add_argument(
+        "--exclude-halls",
+        default="",
+        help="Comma-separated hall names to skip (used when Nutrislice already scraped them).",
+    )
+    args = ap.parse_args()
+
+    exclude_halls = _parse_exclude_halls(args.exclude_halls)
+    if exclude_halls:
+        print(f"Excluding halls: {sorted(exclude_halls)}")
+
     print(f"Starting main scraping for {DATE_STR}...")
-    
-    # Discover available meals
-    discovered_tasks = discover_all_meal_tasks()
+
+    # Discover available meals (optionally skipping excluded halls)
+    discovered_tasks = discover_all_meal_tasks(exclude_halls=exclude_halls)
 
     # If no meals were discovered, write empty outputs and exit zero
     if not discovered_tasks:
@@ -57,13 +90,11 @@ def main() -> None:
 
     meal_data_results = []
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        # Submit all scraping jobs to separate processes; each returns a MealData instance
         futures = [
             executor.submit(scrape_meal_with_retries, hall, meal)
             for hall, meal in discovered_tasks
         ]
 
-        # Collect results as they complete
         completed = 0
         failed = 0
         for future in as_completed(futures):
@@ -71,30 +102,25 @@ def main() -> None:
                 result = future.result()
                 meal_data_results.append(result)
                 completed += 1
-            # Handle scraping errors
             except Exception as e:
                 failed += 1
                 print(f"Unhandled task error: {e}")
 
     print(f"\nConsolidating {len(meal_data_results)} meal datasets.")
-    
-    # Consolidate all data in memory
+
     consolidated_data = consolidate_meal_data(meal_data_results)
-    
-    # Create and write main output
+
     output_file = "consolidated_menu.json"
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(consolidated_data, f, indent=2, ensure_ascii=False)
-    
-    # Create and write lightweight summary
+
     lightweight_data = create_lightweight_summary(consolidated_data)
     summary_file = "menu_summary.json"
-    with open(summary_file, 'w', encoding='utf-8') as f:
+    with open(summary_file, "w", encoding="utf-8") as f:
         json.dump(lightweight_data, f, indent=2)
 
-    # Print final summary
     print(f"\n{'='*70}")
-    print(f"SCRAPING COMPLETE!!!")
+    print("SCRAPING COMPLETE!!!")
     print(f"{'='*70}")
     print(f"Successfully processed: {completed} meals.")
     if failed > 0:
@@ -102,6 +128,7 @@ def main() -> None:
     print(f"Full menu data: {output_file} (~{os.path.getsize(output_file) / 1024:.1f} KB)")
     print(f"Lightweight summary: {summary_file} (~{os.path.getsize(summary_file) / 1024:.1f} KB)")
     print("Ready for deployment!")
+
 
 if __name__ == "__main__":
     main()

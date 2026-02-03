@@ -53,6 +53,7 @@ export const MEAL_ORDER = [
     "Lunch",
     "Late Lunch",
     "Dinner",
+    "Special",
 ];
 
 // Shared schedules

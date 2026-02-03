@@ -12,7 +12,7 @@ jobs:
             - name: Checkout main
               uses: actions/checkout@v3
               with:
-                  ref: nutrislice_migration
+                  ref: main
                   fetch-depth: 0
 
             # Still needed for the CBORD (NetNutrition) scraper, which uses Selenium

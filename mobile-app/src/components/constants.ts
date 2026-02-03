@@ -21,7 +21,7 @@ export const CARD_HEIGHT = height * 0.125;
 export const hallImages: Record<string, ImageSourcePropType> = {
     "Holy Cross College Dining Hall": require("../../assets/halls/hcc.jpg"),
     "North Dining Hall": require("../../assets/halls/north.jpg"),
-    "Saint Marys Dining Hall": require("../../assets/halls/smc.jpg"),
+    "Saint Mary's Dining Hall": require("../../assets/halls/smc.jpg"),
     "South Dining Hall": require("../../assets/halls/south.jpg"),
 };
 

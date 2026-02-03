@@ -73,6 +73,7 @@ const southNorthFriday: Record<string, MealWindow> = {
 
 const southNorthWeekend: Record<string, MealWindow> = {
     Brunch: { start: 9, end: 14 },
+    "Late Lunch": { start: 14, end: 16.5 },
     Dinner: { start: 16.5, end: 20 },
 };
 

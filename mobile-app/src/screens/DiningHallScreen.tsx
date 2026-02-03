@@ -334,7 +334,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         return (
             <SafeAreaView style={sharedStyles.screenSurface}>
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={colors.accent} />
+                    <ActivityIndicator size="large" color={colors.surface} />
                     <Text style={styles.loadingText}>Loading menu…</Text>
                 </View>
             </SafeAreaView>
@@ -527,8 +527,10 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     {isNdhSdh && extraMealKeys.length > 0 && (
                         <TouchableOpacity
                             style={[
-                                styles.moreBtn,
-                                moreSelected ? styles.moreBtnActive : null,
+                                styles.morePillBtn,
+                                moreSelected
+                                    ? styles.mealSwitcherBtnActive
+                                    : styles.mealSwitcherBtnUnselected,
                             ]}
                             onPress={() => setMoreOpen((v) => !v)}
                             activeOpacity={0.8}
@@ -545,10 +547,10 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                             <Text
                                 numberOfLines={1}
                                 style={[
-                                    styles.moreBtnText,
+                                    sharedStyles.text,
                                     moreSelected
-                                        ? styles.moreBtnTextActive
-                                        : null,
+                                        ? styles.mealSwitcherTxtActive
+                                        : styles.mealSwitcherTxtUnselected,
                                 ]}
                             >
                                 More
@@ -569,19 +571,19 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                         setMoreOpen(false);
                                     }}
                                     style={[
-                                        styles.moreInlineItem,
+                                        styles.moreInlinePillItem,
                                         isActive
-                                            ? styles.moreInlineItemActive
-                                            : null,
+                                            ? styles.mealSwitcherBtnActive
+                                            : styles.mealSwitcherBtnUnselected,
                                     ]}
                                     activeOpacity={0.8}
                                 >
                                     <Text
                                         style={[
-                                            styles.moreInlineText,
+                                            sharedStyles.text,
                                             isActive
-                                                ? styles.moreInlineTextActive
-                                                : null,
+                                                ? styles.mealSwitcherTxtActive
+                                                : styles.mealSwitcherTxtUnselected,
                                         ]}
                                     >
                                         {meal}
@@ -1169,35 +1171,6 @@ const styles = StyleSheet.create({
         opacity: 0.9,
     },
 
-    moreOverlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.35)",
-        justifyContent: "center",
-        padding: spacing.md,
-    },
-    moreMenu: {
-        backgroundColor: colors.background,
-        borderRadius: spacing.md,
-        overflow: "hidden",
-    },
-    moreMenuItem: {
-        paddingVertical: spacing.md,
-        paddingHorizontal: spacing.lg,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderColor: `${colors.textSecondary}33`,
-    },
-    moreMenuItemDisabled: {
-        opacity: 0.5,
-    },
-    moreMenuText: {
-        ...typography.body,
-        color: colors.textPrimary,
-        fontWeight: "600",
-    },
-
     mealSwitcherContainer: {
         flex: 1,
         flexDirection: "row",
@@ -1205,27 +1178,15 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
 
-    moreBtn: {
-        marginLeft: spacing.sm,
-        paddingHorizontal: spacing.sm,
+    morePillBtn: {
         paddingVertical: spacing.sm,
-        borderRadius: spacing.sm,
-        backgroundColor: `${colors.background}33`,
+        paddingHorizontal: spacing.sm,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
-    },
-    moreBtnActive: {
-        backgroundColor: colors.accent,
-    },
-    moreBtnText: {
-        ...typography.body,
-        color: colors.background,
-        marginLeft: 6,
-        fontWeight: "700",
-    },
-    moreBtnTextActive: {
-        color: colors.surface,
+        flexShrink: 0,
+        borderRadius: spacing.sm,
+        marginLeft: spacing.sm,
     },
 
     moreInline: {
@@ -1236,7 +1197,7 @@ const styles = StyleSheet.create({
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: `${colors.textSecondary}33`,
     },
-    moreInlineItem: {
+    moreInlinePillItem: {
         paddingVertical: spacing.sm,
         paddingHorizontal: spacing.md,
         flexDirection: "row",
@@ -1244,16 +1205,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderColor: `${colors.textSecondary}22`,
-    },
-    moreInlineItemActive: {
-        backgroundColor: `${colors.accent}22`,
-    },
-    moreInlineText: {
-        ...typography.body,
-        fontWeight: "600",
-    },
-    moreInlineTextActive: {
-        color: colors.surface,
     },
 
     // Section / category styles

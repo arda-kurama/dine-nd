@@ -28,7 +28,6 @@
         },
         "android": {
             "package": "com.ardakurama.dinend",
-            "supportsTablet": false,
             "backgroundColor": "#0C2340",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
@@ -40,7 +39,7 @@
         "web": {
             "favicon": "./assets/favicon.png"
         },
-        "plugins": ["expo-asset"],
+        "plugins": ["expo-asset", "expo-font"],
         "owner": "arda-kurama",
         "extra": {
             "eas": {

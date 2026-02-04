@@ -15,6 +15,7 @@ jobs:
                   ref: main
                   fetch-depth: 0
 
+            # Still needed for the CBORD (NetNutrition) scraper, which uses Selenium
             - name: Install Chrome and matching ChromeDriver
               uses: browser-actions/setup-chrome@v2
               with:
@@ -34,14 +35,46 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
 
-            - name: Run the dining-hall scraper and stash menu JSONs
+            - name: Run Nutrislice + CBORD scrapers and merge JSONs
               run: |
                   set -euo pipefail
-                  python -m backend.main
                   mkdir -p /tmp
-                  # Move the freshly generated JSON out of the main workspace and into /tmp
-                  mv menu_summary.json /tmp/menu_summary.json
-                  mv consolidated_menu.json /tmp/consolidated_menu.json
+
+                  echo "Running Nutrislice scraper..."
+                  python -m nutrislice_scraper.main
+                  mv menu_summary.json /tmp/menu_summary_nutri.json
+                  mv consolidated_menu.json /tmp/consolidated_menu_nutri.json
+
+                  # Exclude halls that Nutrislice actually produced meals for (non-empty dict).
+                  NUTRI_HALLS_CSV="$(python - <<'PY'
+                  import json
+                  p = "/tmp/consolidated_menu_nutri.json"
+                  with open(p, "r", encoding="utf-8") as f:
+                      data = json.load(f)
+
+                  dh = data.get("dining_halls", {})
+                  halls = []
+                  if isinstance(dh, dict):
+                      for hall, meals in dh.items():
+                          if isinstance(meals, dict) and len(meals) > 0:
+                              halls.append(hall)
+
+                  print(",".join(sorted(halls)))
+                  PY
+                  )"
+                  echo "Nutrislice halls with meals: ${NUTRI_HALLS_CSV:-<none>}"
+
+                  echo "Running CBORD scraper (excluding Nutrislice halls)..."
+                  python -m cbord_scraper.main --exclude-halls "$NUTRI_HALLS_CSV"
+                  mv menu_summary.json /tmp/menu_summary_cbord.json
+                  mv consolidated_menu.json /tmp/consolidated_menu_cbord.json
+
+                  echo "Merging into final JSONs..."
+                  python merge_menus.py \
+                    --cbord /tmp/consolidated_menu_cbord.json \
+                    --nutri /tmp/consolidated_menu_nutri.json \
+                    --out-consolidated /tmp/consolidated_menu.json \
+                    --out-summary /tmp/menu_summary.json
 
             # Soft check: measure meal count but don't fail yet
             - name: Soft-check meal count
@@ -66,18 +99,51 @@ jobs:
                   print(f"Soft check: total_meals={total_meals}")
                   PY
 
-            # If soft check found 0 meals, wait and scrape once more (full fresh run)
+            # If soft check found 0 meals, wait and retry a full run (both scrapers + merge)
             - name: Retry scrape due to empty menu (soft-check triggered)
               if: steps.soft_check.outputs.total_meals == '0'
               run: |
                   set -euo pipefail
-                  echo "Soft-check found 0 meals. Backing off 90s and retrying scrape..."
+                  echo "Soft-check found 0 meals. Backing off 90s and retrying full scrape..."
                   sleep 90
+
                   rm -f menu_summary.json consolidated_menu.json
-                  rm -f /tmp/menu_summary.json /tmp/consolidated_menu.json
-                  python -m backend.main
-                  mv menu_summary.json /tmp/menu_summary.json
-                  mv consolidated_menu.json /tmp/consolidated_menu.json
+                  rm -f /tmp/menu_summary*.json /tmp/consolidated_menu*.json
+
+                  echo "Retry: Nutrislice..."
+                  python -m nutrislice_scraper.main
+                  mv menu_summary.json /tmp/menu_summary_nutri.json
+                  mv consolidated_menu.json /tmp/consolidated_menu_nutri.json
+
+                  NUTRI_HALLS_CSV="$(python - <<'PY'
+                  import json
+                  p = "/tmp/consolidated_menu_nutri.json"
+                  with open(p, "r", encoding="utf-8") as f:
+                      data = json.load(f)
+
+                  dh = data.get("dining_halls", {})
+                  halls = []
+                  if isinstance(dh, dict):
+                      for hall, meals in dh.items():
+                          if isinstance(meals, dict) and len(meals) > 0:
+                              halls.append(hall)
+
+                  print(",".join(sorted(halls)))
+                  PY
+                  )"
+                  echo "Retry: Nutrislice halls with meals: ${NUTRI_HALLS_CSV:-<none>}"
+
+                  echo "Retry: CBORD (excluding Nutrislice halls)..."
+                  python -m cbord_scraper.main --exclude-halls "$NUTRI_HALLS_CSV"
+                  mv menu_summary.json /tmp/menu_summary_cbord.json
+                  mv consolidated_menu.json /tmp/consolidated_menu_cbord.json
+
+                  echo "Retry: merge..."
+                  python merge_menus.py \
+                    --cbord /tmp/consolidated_menu_cbord.json \
+                    --nutri /tmp/consolidated_menu_nutri.json \
+                    --out-consolidated /tmp/consolidated_menu.json \
+                    --out-summary /tmp/menu_summary.json
 
             - name: Validate consolidated_menu.json has meals
               id: validate_menu
@@ -110,7 +176,6 @@ jobs:
                   print(f"OK: total meals found = {total_meals}")
                   PY
 
-            # Optional: capture artifacts on failure for debugging
             - name: Upload debug artifacts on failure
               if: failure()
               uses: actions/upload-artifact@v4
@@ -118,6 +183,11 @@ jobs:
                   name: failed-scrape
                   path: |
                       /tmp/consolidated_menu.json
+                      /tmp/menu_summary.json
+                      /tmp/consolidated_menu_cbord.json
+                      /tmp/menu_summary_cbord.json
+                      /tmp/consolidated_menu_nutri.json
+                      /tmp/menu_summary_nutri.json
                       **/*.log
 
             - name: Run script to embed and upsert to Pinecone
@@ -150,5 +220,5 @@ jobs:
                     git commit -m "ci: daily menu update $(date -u +'%Y-%m-%d')"
                     git push origin backend-deployment
                   else
-                    echo "No changes to JSON on backend-deployment—skipping commit."
+                    echo "No changes to JSON on backend-deployment, skipping commit."
                   fi

@@ -1,5 +1,8 @@
 [
-    { "title": "Homestyle", "pattern": "Homestyle|Breakfast|Bistro" },
+    {
+        "title": "Homestyle",
+        "pattern": "Homestyle|Breakfast|Bistro|^Curry|Bar, MYOO|^Ramen|Interactive Pancake Station|Omelette Cheese|Sub & Outs"
+    },
     { "title": "Mexican", "pattern": "^Mexican" },
     { "title": "Asian", "pattern": "^Asian" },
     { "title": "Grill", "pattern": "^Grill" },
@@ -12,7 +15,10 @@
     { "title": "Pizza", "pattern": "Pizzaria|^Myo Pizza" },
     { "title": "Pasta", "pattern": "^Pasta" },
     { "title": "Deli", "pattern": "^Deli" },
-    { "title": "Salad", "pattern": "^Salad Bar|.*Salad$|Condiments" },
+    {
+        "title": "Salad",
+        "pattern": "^Salad Bar|.*Salad$|Condiments|Boom Boom$"
+    },
     { "title": "Vegan", "pattern": "^Vegan" },
     { "title": "Soup", "pattern": "Soup" },
     { "title": "Fresh Fruit", "pattern": "Fresh Fruit|Fruit" },

@@ -1,4 +1,4 @@
-import { Dimensions } from "react-native";
+import { Dimensions, ImageSourcePropType } from "react-native";
 import sectionDefs from "./section_defs.json";
 import { HallSchedule, MealWindow } from "./types";
 
@@ -11,9 +11,6 @@ export const SUMMARY_URL = `${GITHUB_PAGES_BASE}/menu_summary.json`;
 // URL to the consolidated full menu JSON
 export const CONSOLIDATED_URL = `${GITHUB_PAGES_BASE}/consolidated_menu.json`;
 
-// Default image placeholder URI
-export const DEFAULT_IMAGE = { uri: "" };
-
 // Get device width and height for responsive layout
 export const { width, height } = Dimensions.get("window");
 
@@ -21,19 +18,11 @@ export const { width, height } = Dimensions.get("window");
 export const CARD_HEIGHT = height * 0.125;
 
 // Map dining halls to their associated images
-export const hallImages: Record<string, { uri: string }> = {
-    "Holy Cross College Dining Hall": {
-        uri: "https://dining.nd.edu/stylesheets/images/hcc_dining_room.jpg",
-    },
-    "North Dining Hall": {
-        uri: "https://dining.nd.edu/stylesheets/images/feature_NDH800.jpg",
-    },
-    "Saint Mary's Dining Hall": {
-        uri: "https://dining.nd.edu/stylesheets/images/saint-marys-dining.jpg",
-    },
-    "South Dining Hall": {
-        uri: "https://dining.nd.edu/stylesheets/images/feature_SDH800.jpg",
-    },
+export const hallImages: Record<string, ImageSourcePropType> = {
+    "Holy Cross College Dining Hall": require("../../assets/halls/hcc.jpg"),
+    "North Dining Hall": require("../../assets/halls/north.jpg"),
+    "Saint Mary's Dining Hall": require("../../assets/halls/smc.jpg"),
+    "South Dining Hall": require("../../assets/halls/south.jpg"),
 };
 
 // Canonical category definitions with matching rules for backend/frontend consistency
@@ -64,6 +53,7 @@ export const MEAL_ORDER = [
     "Lunch",
     "Late Lunch",
     "Dinner",
+    "Special",
 ];
 
 // Shared schedules
@@ -83,6 +73,7 @@ const southNorthFriday: Record<string, MealWindow> = {
 
 const southNorthWeekend: Record<string, MealWindow> = {
     Brunch: { start: 9, end: 14 },
+    "Late Lunch": { start: 14, end: 16.5 },
     Dinner: { start: 16.5, end: 20 },
 };
 

@@ -16,11 +16,11 @@ import { useFocusEffect } from "@react-navigation/native";
 import type { RootStackParamList, MenuSummary } from "../components/types";
 import {
     SUMMARY_URL,
-    DEFAULT_IMAGE,
     width,
     CARD_HEIGHT,
     hallImages,
 } from "../components/constants";
+import ImageFallback from "../components/image_fallback";
 import {
     colors,
     spacing,
@@ -55,7 +55,7 @@ export default function HallList({ navigation }: Props) {
     useFocusEffect(
         React.useCallback(() => {
             pageViewed("HallList");
-        }, [])
+        }, []),
     );
 
     // Fetch the menu summary data on initial render
@@ -136,7 +136,9 @@ export default function HallList({ navigation }: Props) {
                 renderItem={({ item: hallName }) => {
                     const mealCount = summary.dining_halls[hallName] ?? 0;
                     const hasMeals = mealCount > 0;
-                    const imageSource = hallImages[hallName] || DEFAULT_IMAGE;
+
+                    const key = (hallName ?? "").trim();
+                    const imageSource = hallImages[key];
 
                     return (
                         <View style={styles.cardWrapper}>
@@ -149,11 +151,15 @@ export default function HallList({ navigation }: Props) {
                                     });
                                 }}
                             >
-                                <Image
-                                    source={imageSource}
-                                    style={styles.hallImage}
-                                    resizeMode="cover"
-                                />
+                                {imageSource ? (
+                                    <Image
+                                        source={imageSource}
+                                        style={styles.hallImage}
+                                        resizeMode="cover"
+                                    />
+                                ) : (
+                                    <ImageFallback style={styles.hallImage} />
+                                )}
                                 <View style={styles.captionContainer}>
                                     <Text style={styles.hallTitle}>
                                         {hallName}

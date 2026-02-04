@@ -57,7 +57,7 @@ export function pickCurrentMeal(
         string,
         { available: boolean; categories: Record<string, any> }
     >,
-    hallName: string
+    hallName: string,
 ): string {
     const now = new Date();
     const hr = now.getHours() + now.getMinutes() / 60;
@@ -105,6 +105,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
     const [loadError, setLoadError] = useState<string | null>(null);
     const [currentMeal, setCurrentMeal] = useState("");
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+    const [moreOpen, setMoreOpen] = useState(false);
 
     // State vars for my plate
     const [selectedItems, setSelectedItems] = useState<PlateItem[]>([]);
@@ -140,7 +141,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
             currentMeal,
             summarizePlate(latestItems.current),
             computeMacros(latestItems.current),
-            trigger
+            trigger,
         );
         plateLogged.current = true;
     };
@@ -158,8 +159,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     typeof x === "number"
                         ? x
                         : typeof x === "string" && x.trim().startsWith("<")
-                        ? 0.5
-                        : parseFloat(x) || 0;
+                          ? 0.5
+                          : parseFloat(x) || 0;
 
                 return {
                     calories: tot.calories + s * num(it.nutrition.calories),
@@ -168,7 +169,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     fat: tot.fat + s * num(it.nutrition.total_fat),
                 };
             },
-            { calories: 0, protein: 0, carbs: 0, fat: 0 }
+            { calories: 0, protein: 0, carbs: 0, fat: 0 },
         );
 
     // Returns simplified plate summary with item names and numeric servings for analytics
@@ -186,7 +187,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         React.useCallback(() => {
             plateLogged.current = false;
             return () => logPlateOnce("navigate");
-        }, [hallName, currentMeal])
+        }, [hallName, currentMeal]),
     );
 
     // Listens for backgrounding the app—logs plate if user navigates away via OS or swipe
@@ -221,7 +222,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     easing: Easing.out(Easing.ease),
                     useNativeDriver: false,
                 }).start();
-            }
+            },
         );
 
         const hideSub = Keyboard.addListener(
@@ -234,7 +235,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                     easing: Easing.out(Easing.ease),
                     useNativeDriver: false,
                 }).start();
-            }
+            },
         );
 
         return () => {
@@ -272,8 +273,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         setExpanded(
             cats.reduce(
                 (p, n) => ({ ...p, [n]: false }),
-                {} as Record<string, boolean>
-            )
+                {} as Record<string, boolean>,
+            ),
         );
     }, [diningHalls, currentMeal, hallId]);
 
@@ -325,7 +326,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 fat: totals.fat + s * parseNumber(item.nutrition.total_fat),
             };
         },
-        { calories: 0, protein: 0, carbs: 0, fat: 0 } // initial accumulator
+        { calories: 0, protein: 0, carbs: 0, fat: 0 }, // initial accumulator
     );
 
     // Show loading spinner if data is being fetched
@@ -333,7 +334,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
         return (
             <SafeAreaView style={sharedStyles.screenSurface}>
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={colors.accent} />
+                    <ActivityIndicator size="large" color={colors.surface} />
                     <Text style={styles.loadingText}>Loading menu…</Text>
                 </View>
             </SafeAreaView>
@@ -374,8 +375,55 @@ export default function DiningHallScreen({ route, navigation }: Props) {
 
     // Get valid meals in preferred order
     const rawMealKeys = Object.keys(hallObj);
-    const mealKeys = MEAL_ORDER.filter((m) => rawMealKeys.includes(m));
-    const anyMealOpen = mealKeys.some((meal) => hallObj[meal]?.available);
+    const anyMealOpen = rawMealKeys.some(
+        (m) =>
+            typeof hallObj?.[m] === "object" && hallObj[m]?.available === true,
+    );
+
+    const isNdhSdh =
+        hallName === "North Dining Hall" || hallName === "South Dining Hall";
+
+    const now = new Date();
+    const day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
+        now.getDay()
+    ] as Day;
+
+    // Official periods for NDH/SDH
+    const baseMealsSet = new Set([
+        "Breakfast",
+        "Brunch",
+        "Lunch",
+        "Late Lunch",
+        "Dinner",
+    ]);
+
+    const scheduleMeals = Object.keys(HALL_SCHEDULES[hallName]?.[day] || {});
+
+    // Primary pills:
+    // 1) must be in the schedule for today
+    // 2) must be one of the official periods
+    // 3) must exist in scraped data (otherwise it vanishes, not grayed out)
+    const baseMealKeys = isNdhSdh
+        ? scheduleMeals
+              .filter((m) => baseMealsSet.has(m) && rawMealKeys.includes(m))
+              .sort((a, b) => MEAL_ORDER.indexOf(a) - MEAL_ORDER.indexOf(b))
+        : MEAL_ORDER.filter((m) => rawMealKeys.includes(m));
+
+    // Extra meals, only for NDH/SDH:
+    // anything scraped that is not in the primary list goes into More
+    const extraMealKeys = isNdhSdh
+        ? rawMealKeys
+              .filter((m) => !baseMealKeys.includes(m))
+              .sort((a, b) => {
+                  const ai = MEAL_ORDER.indexOf(a);
+                  const bi = MEAL_ORDER.indexOf(b);
+                  const ao = ai === -1 ? 999 : ai;
+                  const bo = bi === -1 ? 999 : bi;
+                  return ao - bo || a.localeCompare(b);
+              })
+        : [];
+
+    const moreSelected = isNdhSdh && extraMealKeys.includes(currentMeal);
 
     // If no meals are open today, show "closed" message
     if (!anyMealOpen) {
@@ -432,33 +480,126 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                 </TouchableOpacity>
             </View>
 
-            {/* Meal period selector (Breakfast / Lunch / Dinner) */}
+            {/* Meal period selector */}
             <View style={styles.pillWrapper}>
-                <View style={styles.mealSwitcherContainer}>
-                    {mealKeys.map((meal) => (
+                <View style={styles.mealBarRow}>
+                    <View style={styles.mealSwitcherContainer}>
+                        {baseMealKeys.map((meal) => {
+                            const isAvailable = !!hallObj[meal]?.available;
+                            const isActive = meal === currentMeal;
+
+                            return (
+                                <TouchableOpacity
+                                    key={meal}
+                                    onPress={() =>
+                                        isAvailable && setCurrentMeal(meal)
+                                    }
+                                    disabled={!isAvailable}
+                                    style={[
+                                        styles.mealSwitcherBtn,
+                                        isActive
+                                            ? styles.mealSwitcherBtnActive
+                                            : styles.mealSwitcherBtnUnselected,
+                                        !isAvailable &&
+                                            styles.mealSwitcherBtnDisabled,
+                                    ]}
+                                >
+                                    <Text
+                                        numberOfLines={1}
+                                        adjustsFontSizeToFit
+                                        minimumFontScale={0.75}
+                                        style={[
+                                            sharedStyles.text,
+                                            isActive
+                                                ? styles.mealSwitcherTxtActive
+                                                : styles.mealSwitcherTxtUnselected,
+                                            !isAvailable &&
+                                                styles.mealSwitcherTxtDisabled,
+                                        ]}
+                                    >
+                                        {meal}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+
+                    {isNdhSdh && extraMealKeys.length > 0 && (
                         <TouchableOpacity
-                            key={meal}
-                            onPress={() => setCurrentMeal(meal)}
                             style={[
-                                styles.mealSwitcherBtn,
-                                meal === currentMeal
+                                styles.morePillBtn,
+                                moreSelected
                                     ? styles.mealSwitcherBtnActive
                                     : styles.mealSwitcherBtnUnselected,
                             ]}
+                            onPress={() => setMoreOpen((v) => !v)}
+                            activeOpacity={0.8}
                         >
+                            <Ionicons
+                                name="ellipsis-horizontal"
+                                size={18}
+                                color={
+                                    moreSelected
+                                        ? colors.surface
+                                        : colors.background
+                                }
+                            />
                             <Text
+                                numberOfLines={1}
                                 style={[
                                     sharedStyles.text,
-                                    meal === currentMeal
+                                    moreSelected
                                         ? styles.mealSwitcherTxtActive
                                         : styles.mealSwitcherTxtUnselected,
                                 ]}
                             >
-                                {meal}
+                                More
                             </Text>
                         </TouchableOpacity>
-                    ))}
+                    )}
                 </View>
+                {isNdhSdh && moreOpen && extraMealKeys.length > 0 && (
+                    <View style={styles.moreInline}>
+                        {extraMealKeys.map((meal) => {
+                            const isActive = meal === currentMeal;
+
+                            return (
+                                <TouchableOpacity
+                                    key={meal}
+                                    onPress={() => {
+                                        setCurrentMeal(meal);
+                                        setMoreOpen(false);
+                                    }}
+                                    style={[
+                                        styles.moreInlinePillItem,
+                                        isActive
+                                            ? styles.mealSwitcherBtnActive
+                                            : styles.mealSwitcherBtnUnselected,
+                                    ]}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text
+                                        style={[
+                                            sharedStyles.text,
+                                            isActive
+                                                ? styles.mealSwitcherTxtActive
+                                                : styles.mealSwitcherTxtUnselected,
+                                        ]}
+                                    >
+                                        {meal}
+                                    </Text>
+                                    {isActive ? (
+                                        <Ionicons
+                                            name="checkmark"
+                                            size={18}
+                                            color={colors.accent}
+                                        />
+                                    ) : null}
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                )}
             </View>
 
             {/* Scrollable list of categorized food sections */}
@@ -614,7 +755,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                         categoryId:
                                                             item.categoryId,
                                                         itemDetail: item,
-                                                    }
+                                                    },
                                                 )
                                             }
                                             style={{
@@ -665,8 +806,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                                               servings:
                                                                                   text,
                                                                           }
-                                                                        : i
-                                                                )
+                                                                        : i,
+                                                                ),
                                                         );
                                                         return;
                                                     }
@@ -688,8 +829,8 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                                               servings:
                                                                                   text,
                                                                           }
-                                                                        : i
-                                                                )
+                                                                        : i,
+                                                                ),
                                                         );
                                                     }
                                                 }}
@@ -698,7 +839,7 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                 }) => {
                                                     let v = parseFloat(
                                                         nativeEvent.text ??
-                                                            item.servings.toString()
+                                                            item.servings.toString(),
                                                     );
                                                     if (isNaN(v) || v < 1)
                                                         v = 1;
@@ -711,14 +852,14 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                                       servings:
                                                                           v,
                                                                   }
-                                                                : i
-                                                        )
+                                                                : i,
+                                                        ),
                                                     );
                                                     servingSizeChanged(
                                                         item.name,
                                                         v,
                                                         hallId,
-                                                        currentMeal
+                                                        currentMeal,
                                                     );
                                                 }}
                                             />
@@ -740,14 +881,15 @@ export default function DiningHallScreen({ route, navigation }: Props) {
                                                 setSelectedItems((prev) =>
                                                     prev.filter(
                                                         (i) =>
-                                                            i.name !== item.name
-                                                    )
+                                                            i.name !==
+                                                            item.name,
+                                                    ),
                                                 );
                                                 itemRemoved(
                                                     item.name,
                                                     hallId,
                                                     currentMeal,
-                                                    "My Plate menu"
+                                                    "My Plate menu",
                                                 );
                                             }}
                                             hitSlop={{
@@ -831,7 +973,7 @@ function CategoryBlock({
                         items.map((item, i) => {
                             // Check if item is already selected
                             const isSelected = selectedItems.some(
-                                (x) => x.name === item.name
+                                (x) => x.name === item.name,
                             );
                             return (
                                 <View
@@ -879,7 +1021,7 @@ function CategoryBlock({
                                         onPress={() => {
                                             setSelectedItems((prev) => {
                                                 const wasSelected = prev.some(
-                                                    (x) => x.name === item.name
+                                                    (x) => x.name === item.name,
                                                 );
 
                                                 if (wasSelected) {
@@ -887,17 +1029,18 @@ function CategoryBlock({
                                                         item.name,
                                                         hallId,
                                                         meal,
-                                                        "Category list"
+                                                        "Category list",
                                                     );
                                                     return prev.filter(
                                                         (x) =>
-                                                            x.name !== item.name
+                                                            x.name !==
+                                                            item.name,
                                                     );
                                                 } else {
                                                     itemAdded(
                                                         item.name,
                                                         hallId,
-                                                        meal
+                                                        meal,
                                                     );
                                                     return [
                                                         ...prev,
@@ -996,11 +1139,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.primary,
         padding: spacing.sm,
     },
-    mealSwitcherContainer: {
-        flexDirection: "row",
-        borderRadius: spacing.sm,
-        overflow: "hidden",
-    },
     mealSwitcherBtn: {
         flex: 1,
         paddingVertical: spacing.sm,
@@ -1020,6 +1158,53 @@ const styles = StyleSheet.create({
     mealSwitcherTxtUnselected: {
         ...typography.body,
         color: colors.background,
+    },
+    mealBarRow: {
+        flexDirection: "row",
+        alignItems: "stretch",
+    },
+
+    mealSwitcherBtnDisabled: {
+        opacity: 0.45,
+    },
+    mealSwitcherTxtDisabled: {
+        opacity: 0.9,
+    },
+
+    mealSwitcherContainer: {
+        flex: 1,
+        flexDirection: "row",
+        borderRadius: spacing.sm,
+        overflow: "hidden",
+    },
+
+    morePillBtn: {
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.sm,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "row",
+        flexShrink: 0,
+        borderRadius: spacing.sm,
+        marginLeft: spacing.sm,
+    },
+
+    moreInline: {
+        marginTop: spacing.sm,
+        borderRadius: spacing.sm,
+        overflow: "hidden",
+        backgroundColor: `${colors.background}33`,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: `${colors.textSecondary}33`,
+    },
+    moreInlinePillItem: {
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderColor: `${colors.textSecondary}22`,
     },
 
     // Section / category styles

@@ -42,7 +42,7 @@ pinecone-plugin-assistant==1.6.1
 pinecone-plugin-interface==0.0.7
 pip-check-reqs==2.5.5
 placebo==0.9.0
-protobuf==6.31.1
+protobuf==6.33.5
 pyasn1==0.6.1
 pydantic==2.11.5
 pydantic_core==2.33.2

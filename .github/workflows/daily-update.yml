@@ -190,28 +190,24 @@ jobs:
                       /tmp/menu_summary_nutri.json
                       **/*.log
 
-            - name: Run script to embed and upsert to Pinecone
+            - name: Checkout backend-deployment (separate folder)
               if: success()
-              env:
-                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-                  PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-                  PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
-              run: python plate_planner/embed_menu.py /tmp/consolidated_menu.json
-
-            - name: Checkout backend-deployment
               uses: actions/checkout@v3
               with:
                   ref: backend-deployment
                   fetch-depth: 0
                   persist-credentials: true
+                  path: backend-deployment
 
             - name: Copy JSON from /tmp into backend-deployment root
+              if: success()
               run: |
-                  cp /tmp/menu_summary.json  ./menu_summary.json
-                  cp /tmp/consolidated_menu.json ./consolidated_menu.json
+                  cp /tmp/menu_summary.json  backend-deployment/menu_summary.json
+                  cp /tmp/consolidated_menu.json backend-deployment/consolidated_menu.json
 
             - name: Commit and push updated menu JSONs
               if: success()
+              working-directory: backend-deployment
               run: |
                   git add menu_summary.json consolidated_menu.json
                   if ! git diff --cached --quiet; then
@@ -222,3 +218,11 @@ jobs:
                   else
                     echo "No changes to JSON on backend-deployment, skipping commit."
                   fi
+
+            - name: Run script to embed and upsert to Pinecone
+              if: success()
+              env:
+                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+                  PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+                  PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
+              run: python plate_planner/embed_menu.py /tmp/consolidated_menu.json

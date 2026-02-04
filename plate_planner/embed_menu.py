@@ -12,6 +12,8 @@ import json
 import os
 import sys
 import re
+import hashlib
+import unicodedata
 
 from typing import Dict, List
 from openai import OpenAI
@@ -50,6 +52,23 @@ def load_menu(path: str) -> Dict:
     """
     with open(path, "r", encoding="utf-8") as fp:
         return json.load(fp)
+
+def make_pinecone_id(raw: str) -> str:
+    """
+    Pinecone requires ASCII-only IDs. We:
+    - normalize/strip accents to ASCII
+    - keep it readable-ish
+    - append a hash so collisions are basically impossible
+    """
+    norm = unicodedata.normalize("NFKD", raw)
+    ascii_part = norm.encode("ascii", "ignore").decode("ascii")
+    ascii_part = re.sub(r"[^A-Za-z0-9|._-]+", "_", ascii_part).strip("_")
+
+    h = hashlib.sha1(raw.encode("utf-8")).hexdigest()[:12]
+
+    if not ascii_part:
+        return h
+    return f"{ascii_part[:200]}|{h}"
 
 def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
     """
@@ -102,8 +121,10 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                     )
                     embedding = embedding_resp.data[0].embedding
 
-                    # Construct a unique doc ID
-                    doc_id: str = f"{hall}|{meal_name}|{category}|{name}"
+                    # Construct a unique doc ID (Pinecone requires ASCII IDs)
+                    raw_id: str = f"{hall}|{meal_name}|{category}|{name}"
+                    doc_id: str = make_pinecone_id(raw_id)
+
                     batch.append(
                         {
                             "id": doc_id,
@@ -112,6 +133,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                                 "hall": hall,
                                 "meal": meal_name,
                                 "category": category,
+                                "raw_id": raw_id,  # keep original for debugging/auditing
                                 **nutrition,
                                 "allergens": allergens,
                                 "section": section,
@@ -119,6 +141,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                             },
                         }
                     )
+
     return batch
 
 def main() -> None:

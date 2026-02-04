@@ -70,7 +70,7 @@ troposphere==4.9.2
 typing-inspection==0.4.1
 typing_extensions==4.13.2
 tzdata==2025.2
-urllib3==2.5.0
+urllib3==2.6.3
 webdriver-manager==4.0.2
 websocket-client==1.8.0
 Werkzeug==3.1.3

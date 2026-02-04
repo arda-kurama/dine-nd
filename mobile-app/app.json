@@ -2,8 +2,8 @@
     "expo": {
         "name": "DineND",
         "slug": "dine-nd",
-        "version": "1.1.4",
-        "runtimeVersion": "1.1.4",
+        "version": "1.1.5",
+        "runtimeVersion": "1.1.5",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",

@@ -3,6 +3,7 @@ Constants and data types used across the scraping pipeline.
 """
 
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from collections import namedtuple
 
 HALLS = [
@@ -13,7 +14,7 @@ HALLS = [
 ]
 
 # Robust date strings (Linux + Windows)
-_now = datetime.now()
+_now = datetime.now(ZoneInfo("America/New_York"))
 DATE_STR = _now.strftime("%A, %B %d, %Y").replace(" 0", " ")
 DATE_ISO = _now.strftime("%Y-%m-%d")
 

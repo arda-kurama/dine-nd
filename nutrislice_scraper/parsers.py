@@ -6,54 +6,58 @@ KNOWN_ALLERGENS = {
     "shellfish", "soy", "tree nuts", "wheat",
 }
 
+def _build_station_maps(day_json: Dict[str, Any]):
+    """
+    Returns:
+      station_name_by_id: dict[id -> name]
+      station_order_by_id: dict[id -> order] (best-effort)
+    """
+    station_name_by_id = {}
+
+    candidates = []
+
+    # Common shapes seen across Nutrislice responses
+    for key in ("stations", "station_list"):
+        v = day_json.get(key)
+        if isinstance(v, list):
+            candidates.append(v)
+
+    mi = day_json.get("menu_info")
+    if isinstance(mi, dict):
+        v = mi.get("stations")
+        if isinstance(v, list):
+            candidates.append(v)
+
+    for stations in candidates:
+        for idx, st in enumerate(stations):
+            if not isinstance(st, dict):
+                continue
+            sid = st.get("id") or st.get("station_id") or st.get("pk")
+            name = (st.get("name") or st.get("text") or "").strip()
+            if sid is None or not name:
+                continue
+
+            station_name_by_id[str(sid)] = name
+
+    return station_name_by_id
+
+
 def parse_nutrislice_day_to_categories(day_json: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
     items = day_json.get("menu_items", [])
     if not isinstance(items, list):
         return {}
 
-    # Build station_id -> station name map (Nutrislice usually includes this)
-    station_name_by_id: Dict[str, str] = {}
-
-    def _ingest_stations(stations_obj: Any) -> None:
-        if not isinstance(stations_obj, list):
-            return
-        for st in stations_obj:
-            if not isinstance(st, dict):
-                continue
-            sid = st.get("id")
-            name = st.get("name") or st.get("text") or st.get("title")
-            if sid is None or not name:
-                continue
-            station_name_by_id[str(sid)] = str(name).strip()
-
-    _ingest_stations(day_json.get("stations"))
-    menu_info = day_json.get("menu_info")
-    if isinstance(menu_info, dict):
-        _ingest_stations(menu_info.get("stations"))
+    station_name_by_id = _build_station_maps(day_json)
 
     categories = defaultdict(list)
     current_section = None
-
-    def _is_header_row(it: Dict[str, Any]) -> bool:
-        txt = (it.get("text") or "").strip()
-        if not txt:
-            return False
-        # header rows usually have no food dict
-        if isinstance(it.get("food"), dict):
-            return False
-        # Nutrislice is inconsistent: any is_* flag might be used
-        for k, v in it.items():
-            if k.startswith("is_") and v is True:
-                return True
-        # fallback: text row with no food
-        return True
 
     for it in items:
         if not isinstance(it, dict):
             continue
 
-        # Update current_section if we hit a header row
-        if _is_header_row(it):
+        # Header rows
+        if it.get("is_section_title") or it.get("is_station_header"):
             txt = (it.get("text") or "").strip()
             if txt:
                 current_section = txt
@@ -74,14 +78,12 @@ def parse_nutrislice_day_to_categories(day_json: Dict[str, Any]) -> Dict[str, Li
             if amt or unit:
                 serving_size = f"{amt or ''} {unit or ''}".strip()
 
-        # Nutrition (keep your existing output shape)
+        # Nutrition
         rni = food.get("rounded_nutrition_info") or {}
-        def g(key):
-            return rni.get(key)
-
+        def g(key): return rni.get(key)
         nutrition = {
             "calories": int(g("calories") or 0),
-            "calories_from_fat": int(g("calories_from_fat") or 0) if g("calories_from_fat") is not None else 0,
+            "calories_from_fat": 0,
             "total_fat": f"{g('g_fat') or 0:g}g",
             "saturated_fat": f"{g('g_saturated_fat') or 0:g}g",
             "cholesterol": f"{g('mg_cholesterol') or 0:g}mg",
@@ -93,8 +95,8 @@ def parse_nutrislice_day_to_categories(day_json: Dict[str, Any]) -> Dict[str, Li
             "protein": f"{g('g_protein') or 0:g}g",
         }
 
-        # Allergens (icons)
-        allergens: List[str] = []
+        # Allergens via icons
+        allergens = []
         icons = food.get("icons") or {}
         food_icons = icons.get("food_icons") if isinstance(icons, dict) else None
         if isinstance(food_icons, list):
@@ -111,13 +113,25 @@ def parse_nutrislice_day_to_categories(day_json: Dict[str, Any]) -> Dict[str, Li
         allergens_txt = ", ".join(sorted(set(allergens))) if allergens else "Not Specified"
         ingredients = (food.get("ingredients") or "").strip() or "Not Specified"
 
-        # The actual fix: group by station_id if present
-        station_name = None
-        station_id = it.get("station_id")
-        if station_id is not None:
-            station_name = station_name_by_id.get(str(station_id))
+        sid = it.get("station_id") or food.get("station_id")
 
-        group = (station_name or current_section or "Ungrouped").strip()
+        st = it.get("station")
+        group = None
+
+        # station can be an object like {"id": 12, "name": "Plant Based"}
+        if sid is None and isinstance(st, dict):
+            sid = st.get("id") or st.get("station_id")
+            group = ((st.get("name") or st.get("text") or "").strip() or None)
+
+        # or station can just be an ID
+        elif sid is None and isinstance(st, (int, str)):
+            sid = st
+
+        if group is None and sid is not None:
+            group = station_name_by_id.get(str(sid))
+
+        if not group:
+            group = (current_section or "Ungrouped").strip()
 
         categories[group].append({
             "name": name,

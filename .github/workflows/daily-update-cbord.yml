@@ -75,7 +75,7 @@ jobs:
                   sleep 90
                   rm -f menu_summary.json consolidated_menu.json
                   rm -f /tmp/menu_summary.json /tmp/consolidated_menu.json
-                  python -m backend.main
+                  python -m cbord_scraper.main
                   mv menu_summary.json /tmp/menu_summary.json
                   mv consolidated_menu.json /tmp/consolidated_menu.json
 

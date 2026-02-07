@@ -1,8 +1,8 @@
 name: daily-update
 
 on:
-    schedule:
-        - cron: "0 5 * * *" # 1:00 AM ET
+    # schedule:
+    # - cron: "0 5 * * *" # 1:00 AM ET
     workflow_dispatch:
 
 jobs:

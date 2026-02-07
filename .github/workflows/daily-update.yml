@@ -1,4 +1,4 @@
-name: daily-update
+name: daily-update-all
 
 on:
     # schedule:

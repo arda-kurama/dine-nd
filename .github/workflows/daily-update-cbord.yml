@@ -1,4 +1,4 @@
-name: daily-update
+name: daily-update-cbord
 
 on:
     schedule:
@@ -37,7 +37,7 @@ jobs:
             - name: Run the dining-hall scraper and stash menu JSONs
               run: |
                   set -euo pipefail
-                  python -m backend.main
+                  python -m cbord_scraper.main
                   mkdir -p /tmp
                   # Move the freshly generated JSON out of the main workspace and into /tmp
                   mv menu_summary.json /tmp/menu_summary.json

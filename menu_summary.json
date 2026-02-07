@@ -1,10 +1,10 @@
 {
-  "last_updated": "2026-02-06T05:59:45.830878",
-  "date": "Friday, February 6, 2026",
+  "last_updated": "2026-02-07T05:50:03.642411",
+  "date": "Saturday, February 7, 2026",
   "dining_halls": {
-    "Holy Cross College Dining Hall": 3,
+    "Holy Cross College Dining Hall": 2,
     "North Dining Hall": 6,
-    "Saint Mary's Dining Hall": 3,
-    "South Dining Hall": 4
+    "Saint Mary's Dining Hall": 2,
+    "South Dining Hall": 2
   }
 }

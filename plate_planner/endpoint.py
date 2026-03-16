@@ -260,7 +260,7 @@ def plan_plate():
     candidates = []
     for m in matches:
         meta = getattr(m, "metadata", m.get("metadata", {}))
-        dish = m.id.split("|")[-1].strip()
+        dish = meta.get("name", "Unnamed Dish").strip()
         candidates.append({
             "name": dish,
             "servingSize": meta.get("serving_size", ""),

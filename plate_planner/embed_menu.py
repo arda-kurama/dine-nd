@@ -130,6 +130,7 @@ def build_vectors(menu: Dict, client: OpenAI) -> List[Dict]:
                             "id": doc_id,
                             "values": embedding,
                             "metadata": {
+                                "name": name,
                                 "hall": hall,
                                 "meal": meal_name,
                                 "category": category,

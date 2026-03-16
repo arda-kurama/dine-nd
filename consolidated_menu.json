@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-16T06:23:43.983738",
+  "last_updated": "2026-03-16T19:54:03.731280",
   "date": "Monday, March 16, 2026",
   "dining_halls": {
     "Holy Cross College Dining Hall": {
@@ -1356,7 +1356,7 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "Potato Fries Sidewinder DH",
+              "name": "Seasoned Sidewinder Fries",
               "serving_size": "3z Portion (85g)",
               "nutrition": {
                 "calories": 150,
@@ -28477,7 +28477,7 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "Roasted Baby Potatoes",
+              "name": "Roasted Baby Golden Potatoes",
               "serving_size": "Ounce (28g)",
               "nutrition": {
                 "calories": 30,
@@ -34541,7 +34541,7 @@
           ],
           "Homestyle": [
             {
-              "name": "Roasted Baby Potatoes",
+              "name": "Roasted Baby Golden Potatoes",
               "serving_size": "Ounce (28g)",
               "nutrition": {
                 "calories": 30,
@@ -34568,7 +34568,7 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "Fish & Chips",
+              "name": "Fighting Irish Fish & Chips",
               "serving_size": "Basket (311g)",
               "nutrition": {
                 "calories": 360,
@@ -34705,7 +34705,7 @@
           ],
           "Homestyle 2": [
             {
-              "name": "Steak New York Strip 8z DH",
+              "name": "New York Strip Steak",
               "serving_size": "6z Portion (164g)",
               "nutrition": {
                 "calories": 220,
@@ -35114,7 +35114,7 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "The All American Double",
+              "name": "1988 Champions Double Cheeseburger",
               "serving_size": "Burger (460g)",
               "nutrition": {
                 "calories": 0,
@@ -35141,7 +35141,7 @@
               "allergens": "Eggs, Milk, Sesame Seed, Soy, Wheat"
             },
             {
-              "name": "Potato Fries Sidewinder DH",
+              "name": "Seasoned Sidewinder Fries",
               "serving_size": "3z Portion (85g)",
               "nutrition": {
                 "calories": 150,
@@ -35415,7 +35415,7 @@
               "allergens": "Not Specified"
             },
             {
-              "name": "Meat Lasagna",
+              "name": "Lasagna Bolognese",
               "serving_size": "24 cut piece (275g)",
               "nutrition": {
                 "calories": 0,
@@ -35442,7 +35442,7 @@
               "allergens": "Eggs, Milk, Missing Nutrition/Allergen Items, Pork"
             },
             {
-              "name": "PH Knots Garlic",
+              "name": "Garlic Knots",
               "serving_size": "Pound (0g)",
               "nutrition": {
                 "calories": 0,

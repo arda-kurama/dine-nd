@@ -5,12 +5,15 @@ on:
         - cron: "0 5 * * *" # 1:00 AM ET
     workflow_dispatch:
 
+permissions:
+    contents: write
+
 jobs:
     scrape_and_embed:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout main
-              uses: actions/checkout@v3
+              uses: actions/checkout@v6
               with:
                   ref: main
                   fetch-depth: 0
@@ -23,9 +26,9 @@ jobs:
                   install-chromedriver: true
 
             - name: Install Python 3.12 with pip caching
-              uses: actions/setup-python@v4
+              uses: actions/setup-python@v6
               with:
-                  python-version: "3.12.3"
+                  python-version: "3.12"
                   cache: "pip"
                   cache-dependency-path: requirements.txt
 
@@ -113,12 +116,13 @@ jobs:
             # Optional: capture artifacts on failure for debugging
             - name: Upload debug artifacts on failure
               if: failure()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v6
               with:
                   name: failed-scrape
                   path: |
                       /tmp/consolidated_menu.json
                       **/*.log
+                  if-no-files-found: ignore
 
             - name: Run script to embed and upsert to Pinecone
               if: success()
@@ -129,7 +133,7 @@ jobs:
               run: python plate_planner/embed_menu.py /tmp/consolidated_menu.json
 
             - name: Checkout backend-deployment
-              uses: actions/checkout@v3
+              uses: actions/checkout@v6
               with:
                   ref: backend-deployment
                   fetch-depth: 0
